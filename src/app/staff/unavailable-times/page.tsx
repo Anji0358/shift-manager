@@ -15,8 +15,9 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table";
-import { mockUnavailableTimes } from "@/features/shared/mock-data";
-import type { DayOfWeek, UnavailableType } from "@/features/shared/types";
+import { getUnavailableTimesByEmployeeId } from "@/features/unavailable-times/queries";
+import { formatDate } from "@/lib/format";
+import type { DayOfWeek, UnavailableType } from "@prisma/client";
 
 const unavailableTypeLabel: Record<UnavailableType, string> = {
     FULL_DAY: "一日NG",
@@ -35,12 +36,11 @@ const dayOfWeekLabel: Record<DayOfWeek, string> = {
     SUNDAY: "日曜日",
 };
 
-const StaffUnavailableTimesPage = () => {
+const StaffUnavailableTimesPage = async () => {
     const currentEmployeeId = "emp_2";
 
-    const myUnavailableTimes = mockUnavailableTimes.filter(
-        (unavailableTime) => unavailableTime.employeeId === currentEmployeeId,
-    );
+    const myUnavailableTimes =
+        await getUnavailableTimesByEmployeeId(currentEmployeeId);
 
     return (
         <div className="space-y-6">
@@ -54,7 +54,9 @@ const StaffUnavailableTimesPage = () => {
 
                 <div className="flex gap-3">
                     <Button asChild variant="outline">
-                        <Link href="/staff/unavailable-times/weekly">毎週固定NGを登録</Link>
+                        <Link href="/staff/unavailable-times/weekly">
+                            毎週固定NGを登録
+                        </Link>
                     </Button>
                     <Button asChild>
                         <Link href="/staff/unavailable-times/new">勤務不可を追加</Link>
@@ -87,7 +89,11 @@ const StaffUnavailableTimesPage = () => {
                                             {unavailableTypeLabel[unavailableTime.type]}
                                         </Badge>
                                     </TableCell>
-                                    <TableCell>{unavailableTime.date ?? "-"}</TableCell>
+                                    <TableCell>
+                                        {unavailableTime.date
+                                            ? formatDate(unavailableTime.date)
+                                            : "-"}
+                                    </TableCell>
                                     <TableCell>
                                         {unavailableTime.dayOfWeek
                                             ? dayOfWeekLabel[unavailableTime.dayOfWeek]
