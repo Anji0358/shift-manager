@@ -9,6 +9,13 @@ import {
     CardTitle,
 } from "@/components/ui/card";
 import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select";
+import {
     Table,
     TableBody,
     TableCell,
@@ -16,6 +23,7 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table";
+import { createShiftAssignment } from "@/features/shift-assignments/actions";
 import { getActiveStaffCandidates, getJobById } from "@/features/jobs/queries";
 import { getAssignmentsByJobId } from "@/features/shift-assignments/queries";
 import { formatDate, formatMonth, formatYen } from "@/lib/format";
@@ -57,15 +65,41 @@ const AdminJobAssignmentsPage = async ({
 
             <Card>
                 <CardHeader>
-                    <CardTitle>案件情報</CardTitle>
+                    <CardTitle>シフト確定フォーム</CardTitle>
                 </CardHeader>
-                <CardContent className="grid gap-3 text-sm md:grid-cols-2">
-                    <p>勤務日：{formatDate(job.workDate)}</p>
-                    <p>場所：{job.location}</p>
-                    <p>集合場所：{job.meetingPlace}</p>
-                    <p>
-                        勤務時間：{job.startTime}〜{job.endTime}
-                    </p>
+
+                <CardContent>
+                    <form action={createShiftAssignment} className="grid gap-4 md:grid-cols-[1fr_1fr_auto]">
+                        <input type="hidden" name="jobId" value={job.id} />
+
+                        <Select name="slotId" required>
+                            <SelectTrigger>
+                                <SelectValue placeholder="勤務枠を選択" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                {job.shiftSlots.map((slot) => (
+                                    <SelectItem key={slot.id} value={slot.id}>
+                                        {slot.name}：{slot.startTime}〜{slot.endTime}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+
+                        <Select name="employeeId" required>
+                            <SelectTrigger>
+                                <SelectValue placeholder="従業員を選択" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                {candidates.map((candidate) => (
+                                    <SelectItem key={candidate.id} value={candidate.id}>
+                                        {candidate.name}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+
+                        <Button type="submit">確定する</Button>
+                    </form>
                 </CardContent>
             </Card>
 
@@ -157,6 +191,7 @@ const AdminJobAssignmentsPage = async ({
                                 <TableHead>従業員</TableHead>
                                 <TableHead>勤務枠</TableHead>
                                 <TableHead>勤務時間</TableHead>
+                                <TableHead>勤務日</TableHead>
                                 <TableHead>状態</TableHead>
                             </TableRow>
                         </TableHeader>
@@ -171,6 +206,7 @@ const AdminJobAssignmentsPage = async ({
                                     <TableCell>
                                         {assignment.slot.startTime}〜{assignment.slot.endTime}
                                     </TableCell>
+                                    <TableCell>{formatDate(assignment.job.workDate)}</TableCell>
                                     <TableCell>
                                         <Badge variant="secondary">確定</Badge>
                                     </TableCell>
