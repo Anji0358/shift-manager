@@ -13,39 +13,17 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table";
-import {
-    mockJobs,
-    mockJobShiftSlots,
-    mockShiftAssignments,
-    mockWorkReports,
-} from "@/features/shared/mock-data";
+import { getAssignmentsByEmployeeId } from "@/features/shift-assignments/queries";
+import { formatDate } from "@/lib/format";
 
-const getDayNumber = (dateText: string) => {
-    return Number(dateText.split("-")[2]);
+const getDayNumber = (date: Date) => {
+    return date.getDate();
 };
 
-const StaffCalendarPage = () => {
+const StaffCalendarPage = async () => {
     const currentEmployeeId = "emp_2";
 
-    const myAssignments = mockShiftAssignments.filter(
-        (assignment) => assignment.employeeId === currentEmployeeId,
-    );
-
-    const shiftRows = myAssignments.map((assignment) => {
-        const job = mockJobs.find((job) => job.id === assignment.jobId);
-        const slot = mockJobShiftSlots.find((slot) => slot.id === assignment.slotId);
-        const report = mockWorkReports.find(
-            (report) =>
-                report.employeeId === currentEmployeeId && report.jobId === job?.id,
-        );
-
-        return {
-            assignment,
-            job,
-            slot,
-            report,
-        };
-    });
+    const assignments = await getAssignmentsByEmployeeId(currentEmployeeId);
 
     const days = Array.from({ length: 31 }, (_, index) => index + 1);
 
@@ -75,12 +53,8 @@ const StaffCalendarPage = () => {
                         ))}
 
                         {days.map((day) => {
-                            const shiftsOfDay = shiftRows.filter(({ job }) => {
-                                if (!job) {
-                                    return false;
-                                }
-
-                                return getDayNumber(job.workDate) === day;
+                            const assignmentsOfDay = assignments.filter((assignment) => {
+                                return getDayNumber(assignment.job.workDate) === day;
                             });
 
                             return (
@@ -88,23 +62,21 @@ const StaffCalendarPage = () => {
                                     <p className="mb-2 text-sm font-medium">{day}</p>
 
                                     <div className="space-y-2">
-                                        {shiftsOfDay.map(({ assignment, job, slot, report }) => (
+                                        {assignmentsOfDay.map((assignment) => (
                                             <div
                                                 key={assignment.id}
                                                 className="rounded-md border bg-white p-2 text-xs shadow-sm"
                                             >
-                                                <p className="font-medium">{job?.title}</p>
+                                                <p className="font-medium">{assignment.job.title}</p>
                                                 <p className="text-slate-500">
-                                                    {slot?.startTime}〜{slot?.endTime}
+                                                    {assignment.slot.startTime}〜{assignment.slot.endTime}
                                                 </p>
                                                 <p className="text-slate-500">
-                                                    集合：{job?.meetingPlace}
+                                                    集合：{assignment.job.meetingPlace}
                                                 </p>
-                                                {report?.status === "NOT_SUBMITTED" && (
-                                                    <Badge variant="destructive" className="mt-2">
-                                                        報告未提出
-                                                    </Badge>
-                                                )}
+                                                <Badge variant="secondary" className="mt-2">
+                                                    確定
+                                                </Badge>
                                             </div>
                                         ))}
                                     </div>
@@ -126,46 +98,42 @@ const StaffCalendarPage = () => {
                             <TableRow>
                                 <TableHead>日付</TableHead>
                                 <TableHead>案件名</TableHead>
+                                <TableHead>勤務枠</TableHead>
                                 <TableHead>勤務時間</TableHead>
                                 <TableHead>場所</TableHead>
                                 <TableHead>集合場所</TableHead>
                                 <TableHead>食事</TableHead>
-                                <TableHead>報告状態</TableHead>
                             </TableRow>
                         </TableHeader>
 
                         <TableBody>
-                            {shiftRows.map(({ assignment, job, slot, report }) => (
+                            {assignments.map((assignment) => (
                                 <TableRow key={assignment.id}>
-                                    <TableCell>{job?.workDate}</TableCell>
-                                    <TableCell className="font-medium">{job?.title}</TableCell>
-                                    <TableCell>
-                                        {slot?.startTime}〜{slot?.endTime}
+                                    <TableCell>{formatDate(assignment.job.workDate)}</TableCell>
+                                    <TableCell className="font-medium">
+                                        {assignment.job.title}
                                     </TableCell>
-                                    <TableCell>{job?.location}</TableCell>
-                                    <TableCell>{job?.meetingPlace}</TableCell>
+                                    <TableCell>{assignment.slot.name}</TableCell>
                                     <TableCell>
-                                        <Badge variant={job?.hasMeal ? "default" : "outline"}>
-                                            {job?.hasMeal ? "あり" : "なし"}
-                                        </Badge>
+                                        {assignment.slot.startTime}〜{assignment.slot.endTime}
                                     </TableCell>
+                                    <TableCell>{assignment.job.location}</TableCell>
+                                    <TableCell>{assignment.job.meetingPlace}</TableCell>
                                     <TableCell>
-                                        <Badge
-                                            variant={
-                                                report?.status === "NOT_SUBMITTED"
-                                                    ? "destructive"
-                                                    : "secondary"
-                                            }
-                                        >
-                                            {report?.status === "NOT_SUBMITTED"
-                                                ? "未提出"
-                                                : "提出済み"}
+                                        <Badge variant={assignment.job.hasMeal ? "default" : "outline"}>
+                                            {assignment.job.hasMeal ? "あり" : "なし"}
                                         </Badge>
                                     </TableCell>
                                 </TableRow>
                             ))}
                         </TableBody>
                     </Table>
+
+                    {assignments.length === 0 && (
+                        <p className="mt-4 text-sm text-slate-500">
+                            確定しているシフトはありません。
+                        </p>
+                    )}
                 </CardContent>
             </Card>
         </div>
