@@ -20,6 +20,10 @@ import {
     mockWorkReports,
 } from "@/features/shared/mock-data";
 import type { WorkReportStatus } from "@/features/shared/types";
+import {
+    calculateEstimatedSalary,
+    calculateWorkHours,
+} from "@/features/payroll/services";
 
 const workReportStatusLabel: Record<WorkReportStatus, string> = {
     NOT_SUBMITTED: "未提出",
@@ -36,23 +40,6 @@ const workReportStatusBadgeVariant: Record<
     SUBMITTED: "secondary",
     APPROVED: "default",
     REJECTED: "destructive",
-};
-
-const calculateActualWorkHours = (
-    startTime: string,
-    endTime: string,
-    breakMinutes: number,
-) => {
-    const startHour = Number(startTime.split(":")[0]);
-    const startMinute = Number(startTime.split(":")[1]);
-    const endHour = Number(endTime.split(":")[0]);
-    const endMinute = Number(endTime.split(":")[1]);
-
-    const startTotalMinutes = startHour * 60 + startMinute;
-    const endTotalMinutes = endHour * 60 + endMinute;
-    const workMinutes = endTotalMinutes - startTotalMinutes - breakMinutes;
-
-    return workMinutes / 60;
 };
 
 const AdminWorkReportsPage = () => {
@@ -79,6 +66,7 @@ const AdminWorkReportsPage = () => {
                                 <TableHead>勤務日</TableHead>
                                 <TableHead>報告状態</TableHead>
                                 <TableHead className="text-right">実勤務時間</TableHead>
+                                <TableHead className="text-right">給与見込み</TableHead>
                                 <TableHead className="text-right">操作</TableHead>
                             </TableRow>
                         </TableHeader>
@@ -90,11 +78,16 @@ const AdminWorkReportsPage = () => {
                                 );
                                 const job = mockJobs.find((job) => job.id === report.jobId);
 
-                                const actualWorkHours = calculateActualWorkHours(
+                                const actualWorkHours = calculateWorkHours(
                                     report.actualStartTime,
                                     report.actualEndTime,
                                     report.actualBreakMinutes,
                                 );
+
+                                const estimatedSalary =
+                                    employee && job
+                                        ? calculateEstimatedSalary(report, job, employee)
+                                        : 0;
 
                                 return (
                                     <TableRow key={report.id}>
@@ -104,12 +97,17 @@ const AdminWorkReportsPage = () => {
                                         <TableCell>{job?.title ?? "不明な案件"}</TableCell>
                                         <TableCell>{job?.workDate ?? "-"}</TableCell>
                                         <TableCell>
-                                            <Badge variant={workReportStatusBadgeVariant[report.status]}>
+                                            <Badge
+                                                variant={workReportStatusBadgeVariant[report.status]}
+                                            >
                                                 {workReportStatusLabel[report.status]}
                                             </Badge>
                                         </TableCell>
                                         <TableCell className="text-right">
                                             {actualWorkHours}時間
+                                        </TableCell>
+                                        <TableCell className="text-right">
+                                            {estimatedSalary.toLocaleString()}円
                                         </TableCell>
                                         <TableCell className="text-right">
                                             <div className="flex justify-end gap-2">
