@@ -4,6 +4,7 @@ import type {
   Job,
   JobShiftSlot,
   ShiftAssignment,
+  UnavailableTime,
   WorkReport,
 } from "./types";
 
@@ -136,5 +137,48 @@ export const mockWorkReports: WorkReport[] = [
     hasMeal: true,
     transportationFee: 800,
     status: "NOT_SUBMITTED",
+  },
+];
+
+export const mockUnavailableTimes: UnavailableTime[] = [
+  {
+    id: "unavailable_1",
+    employeeId: "emp_2",
+    type: "FULL_DAY",
+    date: "2026-05-22",
+    dayOfWeek: null,
+    startTime: null,
+    endTime: null,
+    reason: "大学の予定",
+  },
+  {
+    id: "unavailable_2",
+    employeeId: "emp_2",
+    type: "TIME_RANGE",
+    date: "2026-05-23",
+    dayOfWeek: null,
+    startTime: "10:00",
+    endTime: "14:00",
+    reason: "授業",
+  },
+  {
+    id: "unavailable_3",
+    employeeId: "emp_2",
+    type: "WEEKLY_FIXED",
+    date: null,
+    dayOfWeek: "MONDAY",
+    startTime: "09:00",
+    endTime: "12:00",
+    reason: "毎週の授業",
+  },
+  {
+    id: "unavailable_4",
+    employeeId: "emp_2",
+    type: "TEMPORARY",
+    date: "2026-05-25",
+    dayOfWeek: null,
+    startTime: "18:00",
+    endTime: "21:00",
+    reason: "予定あり",
   },
 ];
