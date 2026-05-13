@@ -23,11 +23,15 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table";
-import { createShiftAssignment } from "@/features/shift-assignments/actions";
+import {
+    createShiftAssignment,
+    cancelShiftAssignment,
+} from "@/features/shift-assignments/actions";
 import { getActiveStaffCandidates, getJobById } from "@/features/jobs/queries";
 import { getAssignmentsByJobId } from "@/features/shift-assignments/queries";
 import { isUnavailableForSlot } from "@/features/unavailable-times/services";
 import { formatDate, formatMonth, formatYen } from "@/lib/format";
+
 
 type AdminJobAssignmentsPageProps = {
     params: Promise<{
@@ -208,7 +212,6 @@ const AdminJobAssignmentsPage = async ({
                     </Table>
                 </CardContent>
             </Card>
-
             <Card>
                 <CardHeader>
                     <CardTitle>確定済みシフト</CardTitle>
@@ -223,6 +226,7 @@ const AdminJobAssignmentsPage = async ({
                                 <TableHead>勤務時間</TableHead>
                                 <TableHead>勤務日</TableHead>
                                 <TableHead>状態</TableHead>
+                                <TableHead className="text-right">操作</TableHead>
                             </TableRow>
                         </TableHeader>
 
@@ -239,6 +243,15 @@ const AdminJobAssignmentsPage = async ({
                                     <TableCell>{formatDate(assignment.job.workDate)}</TableCell>
                                     <TableCell>
                                         <Badge variant="secondary">確定</Badge>
+                                    </TableCell>
+                                    <TableCell className="text-right">
+                                        <form action={cancelShiftAssignment}>
+                                            <input type="hidden" name="assignmentId" value={assignment.id} />
+                                            <input type="hidden" name="jobId" value={job.id} />
+                                            <Button size="sm" type="submit" variant="outline">
+                                                キャンセル
+                                            </Button>
+                                        </form>
                                     </TableCell>
                                 </TableRow>
                             ))}

@@ -98,3 +98,28 @@ export const createShiftAssignment = async (formData: FormData) => {
 
   redirect(`/admin/jobs/${jobId}/assignments`);
 };
+
+export const cancelShiftAssignment = async (formData: FormData) => {
+  const assignmentId = String(formData.get("assignmentId"));
+  const jobId = String(formData.get("jobId"));
+
+  if (!assignmentId || !jobId) {
+    throw new Error("キャンセルに必要な情報が不足しています。");
+  }
+
+  await prisma.shiftAssignment.update({
+    where: {
+      id: assignmentId,
+    },
+    data: {
+      status: "CANCELED",
+    },
+  });
+
+  revalidatePath(`/admin/jobs/${jobId}`);
+  revalidatePath(`/admin/jobs/${jobId}/assignments`);
+  revalidatePath("/staff/shifts");
+  revalidatePath("/staff/calendar");
+
+  redirect(`/admin/jobs/${jobId}/assignments`);
+};
