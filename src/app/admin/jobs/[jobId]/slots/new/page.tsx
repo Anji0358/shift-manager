@@ -1,0 +1,85 @@
+import Link from "next/link";
+import { notFound } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import {
+    Card,
+    CardContent,
+    CardHeader,
+    CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { mockJobs } from "@/features/shared/mock-data";
+
+type AdminNewJobSlotPageProps = {
+    params: Promise<{
+        jobId: string;
+    }>;
+};
+
+const AdminNewJobSlotPage = async ({ params }: AdminNewJobSlotPageProps) => {
+    const { jobId } = await params;
+
+    const job = mockJobs.find((job) => job.id === jobId);
+
+    if (!job) {
+        notFound();
+    }
+
+    return (
+        <div className="space-y-6">
+            <section>
+                <h1 className="text-3xl font-bold">勤務枠追加</h1>
+                <p className="mt-2 text-slate-600">
+                    「{job.title}」に勤務枠を追加します。
+                </p>
+            </section>
+
+            <Card>
+                <CardHeader>
+                    <CardTitle>勤務枠情報</CardTitle>
+                </CardHeader>
+
+                <CardContent>
+                    <form className="space-y-6">
+                        <div className="grid gap-4 md:grid-cols-2">
+                            <div className="space-y-2">
+                                <Label htmlFor="name">勤務枠名</Label>
+                                <Input id="name" name="name" placeholder="例：本番" />
+                            </div>
+
+                            <div className="space-y-2">
+                                <Label htmlFor="requiredPeople">必要人数</Label>
+                                <Input
+                                    id="requiredPeople"
+                                    name="requiredPeople"
+                                    type="number"
+                                    placeholder="例：8"
+                                />
+                            </div>
+
+                            <div className="space-y-2">
+                                <Label htmlFor="startTime">開始時間</Label>
+                                <Input id="startTime" name="startTime" type="time" />
+                            </div>
+
+                            <div className="space-y-2">
+                                <Label htmlFor="endTime">終了時間</Label>
+                                <Input id="endTime" name="endTime" type="time" />
+                            </div>
+                        </div>
+
+                        <div className="flex justify-end gap-3">
+                            <Button asChild variant="outline">
+                                <Link href={`/admin/jobs/${job.id}`}>キャンセル</Link>
+                            </Button>
+                            <Button type="submit">追加する</Button>
+                        </div>
+                    </form>
+                </CardContent>
+            </Card>
+        </div>
+    );
+};
+
+export default AdminNewJobSlotPage;

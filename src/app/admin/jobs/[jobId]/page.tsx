@@ -220,7 +220,14 @@ const AdminJobDetailPage = async ({ params }: AdminJobDetailPageProps) => {
 
             <Card>
                 <CardHeader>
-                    <CardTitle>勤務枠一覧</CardTitle>
+                    <div className="flex items-center justify-between gap-4">
+                        <CardTitle>勤務枠一覧</CardTitle>
+                        <Button asChild size="sm">
+                            <Link href={`/admin/jobs/${job.id}/slots/new`}>
+                                勤務枠を追加
+                            </Link>
+                        </Button>
+                    </div>
                 </CardHeader>
 
                 <CardContent>
