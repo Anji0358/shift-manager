@@ -26,6 +26,7 @@ import {
 import { createShiftAssignment } from "@/features/shift-assignments/actions";
 import { getActiveStaffCandidates, getJobById } from "@/features/jobs/queries";
 import { getAssignmentsByJobId } from "@/features/shift-assignments/queries";
+import { isUnavailableForSlot } from "@/features/unavailable-times/services";
 import { formatDate, formatMonth, formatYen } from "@/lib/format";
 
 type AdminJobAssignmentsPageProps = {
@@ -47,6 +48,7 @@ const AdminJobAssignmentsPage = async ({
 
     const candidates = await getActiveStaffCandidates();
     const assignments = await getAssignmentsByJobId(job.id);
+    const firstSlot = job.shiftSlots[0];
 
     return (
         <div className="space-y-8">
@@ -69,7 +71,10 @@ const AdminJobAssignmentsPage = async ({
                 </CardHeader>
 
                 <CardContent>
-                    <form action={createShiftAssignment} className="grid gap-4 md:grid-cols-[1fr_1fr_auto]">
+                    <form
+                        action={createShiftAssignment}
+                        className="grid gap-4 md:grid-cols-[1fr_1fr_auto]"
+                    >
                         <input type="hidden" name="jobId" value={job.id} />
 
                         <Select name="slotId" required>
@@ -100,6 +105,65 @@ const AdminJobAssignmentsPage = async ({
 
                         <Button type="submit">確定する</Button>
                     </form>
+                </CardContent>
+            </Card>
+
+            <Card>
+                <CardHeader>
+                    <CardTitle>候補者一覧</CardTitle>
+                </CardHeader>
+
+                <CardContent>
+                    {!firstSlot && (
+                        <p className="text-sm text-slate-500">
+                            勤務枠が登録されていないため、勤務不可判定は表示できません。
+                        </p>
+                    )}
+
+                    {firstSlot && (
+                        <Table>
+                            <TableHeader>
+                                <TableRow>
+                                    <TableHead>名前</TableHead>
+                                    <TableHead>メールアドレス</TableHead>
+                                    <TableHead>勤め始めた年月</TableHead>
+                                    <TableHead className="text-right">時給</TableHead>
+                                    <TableHead>勤務可否</TableHead>
+                                </TableRow>
+                            </TableHeader>
+
+                            <TableBody>
+                                {candidates.map((candidate) => {
+                                    const unavailable = isUnavailableForSlot(
+                                        candidate.unavailableTimes,
+                                        job.workDate,
+                                        firstSlot.startTime,
+                                        firstSlot.endTime,
+                                    );
+
+                                    return (
+                                        <TableRow key={candidate.id}>
+                                            <TableCell className="font-medium">
+                                                {candidate.name}
+                                            </TableCell>
+                                            <TableCell>{candidate.email}</TableCell>
+                                            <TableCell>
+                                                {formatMonth(candidate.startedWorkingAt)}
+                                            </TableCell>
+                                            <TableCell className="text-right">
+                                                {formatYen(candidate.hourlyWage)}
+                                            </TableCell>
+                                            <TableCell>
+                                                <Badge variant={unavailable ? "destructive" : "secondary"}>
+                                                    {unavailable ? "勤務不可あり" : "勤務可能"}
+                                                </Badge>
+                                            </TableCell>
+                                        </TableRow>
+                                    );
+                                })}
+                            </TableBody>
+                        </Table>
+                    )}
                 </CardContent>
             </Card>
 
@@ -140,40 +204,6 @@ const AdminJobAssignmentsPage = async ({
                                     </TableRow>
                                 );
                             })}
-                        </TableBody>
-                    </Table>
-                </CardContent>
-            </Card>
-
-            <Card>
-                <CardHeader>
-                    <CardTitle>候補者一覧</CardTitle>
-                </CardHeader>
-
-                <CardContent>
-                    <Table>
-                        <TableHeader>
-                            <TableRow>
-                                <TableHead>名前</TableHead>
-                                <TableHead>メールアドレス</TableHead>
-                                <TableHead>勤め始めた年月</TableHead>
-                                <TableHead className="text-right">時給</TableHead>
-                            </TableRow>
-                        </TableHeader>
-
-                        <TableBody>
-                            {candidates.map((candidate) => (
-                                <TableRow key={candidate.id}>
-                                    <TableCell className="font-medium">
-                                        {candidate.name}
-                                    </TableCell>
-                                    <TableCell>{candidate.email}</TableCell>
-                                    <TableCell>{formatMonth(candidate.startedWorkingAt)}</TableCell>
-                                    <TableCell className="text-right">
-                                        {formatYen(candidate.hourlyWage)}
-                                    </TableCell>
-                                </TableRow>
-                            ))}
                         </TableBody>
                     </Table>
                 </CardContent>

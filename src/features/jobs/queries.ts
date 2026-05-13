@@ -35,6 +35,9 @@ export const getActiveStaffCandidates = async () => {
       role: "STAFF",
       employmentStatus: "ACTIVE",
     },
+    include: {
+      unavailableTimes: true,
+    },
     orderBy: {
       startedWorkingAt: "asc",
     },
