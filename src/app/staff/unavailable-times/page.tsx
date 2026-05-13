@@ -52,9 +52,14 @@ const StaffUnavailableTimesPage = () => {
                     </p>
                 </div>
 
-                <Button asChild>
-                    <Link href="/staff/unavailable-times/new">勤務不可を追加</Link>
-                </Button>
+                <div className="flex gap-3">
+                    <Button asChild variant="outline">
+                        <Link href="/staff/unavailable-times/weekly">毎週固定NGを登録</Link>
+                    </Button>
+                    <Button asChild>
+                        <Link href="/staff/unavailable-times/new">勤務不可を追加</Link>
+                    </Button>
+                </div>
             </section>
 
             <Card>
