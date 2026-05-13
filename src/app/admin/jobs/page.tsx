@@ -15,14 +15,18 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table";
-import { mockJobs } from "@/features/shared/mock-data";
+import { getJobs } from "@/features/jobs/queries";
+import { formatDate, formatYen } from "@/lib/format";
+import type { WageType } from "@prisma/client";
 
-const wageTypeLabel = {
+const wageTypeLabel: Record<WageType, string> = {
     EMPLOYEE: "従業員ごとの時給",
     JOB_FIXED: "案件一律時給",
 };
 
-const AdminJobsPage = () => {
+const AdminJobsPage = async () => {
+    const jobs = await getJobs();
+
     return (
         <div className="space-y-6">
             <section className="flex items-start justify-between gap-4">
@@ -59,10 +63,10 @@ const AdminJobsPage = () => {
                         </TableHeader>
 
                         <TableBody>
-                            {mockJobs.map((job) => (
+                            {jobs.map((job) => (
                                 <TableRow key={job.id}>
                                     <TableCell className="font-medium">{job.title}</TableCell>
-                                    <TableCell>{job.workDate}</TableCell>
+                                    <TableCell>{formatDate(job.workDate)}</TableCell>
                                     <TableCell>{job.location}</TableCell>
                                     <TableCell>{job.meetingPlace}</TableCell>
                                     <TableCell>
@@ -80,7 +84,7 @@ const AdminJobsPage = () => {
                                             </Badge>
                                             {job.fixedHourlyWage !== null && (
                                                 <p className="text-xs text-slate-500">
-                                                    {job.fixedHourlyWage.toLocaleString()}円
+                                                    {formatYen(job.fixedHourlyWage)}
                                                 </p>
                                             )}
                                         </div>
