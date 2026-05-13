@@ -54,3 +54,37 @@ export const createJob = async (formData: FormData) => {
   revalidatePath("/admin/jobs");
   redirect("/admin/jobs");
 };
+
+export const deleteJob = async (formData: FormData) => {
+  const jobId = String(formData.get("jobId"));
+
+  if (!jobId) {
+    throw new Error("削除対象の案件IDが取得できません。");
+  }
+
+  await prisma.$transaction([
+    prisma.workReport.deleteMany({
+      where: {
+        jobId,
+      },
+    }),
+    prisma.shiftAssignment.deleteMany({
+      where: {
+        jobId,
+      },
+    }),
+    prisma.jobShiftSlot.deleteMany({
+      where: {
+        jobId,
+      },
+    }),
+    prisma.job.delete({
+      where: {
+        id: jobId,
+      },
+    }),
+  ]);
+
+  revalidatePath("/admin/jobs");
+  redirect("/admin/jobs");
+};
