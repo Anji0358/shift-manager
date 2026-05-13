@@ -15,6 +15,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
+import { createEmployee } from "@/features/employees/actions";
 
 const AdminNewEmployeePage = () => {
     return (
@@ -32,11 +33,11 @@ const AdminNewEmployeePage = () => {
                 </CardHeader>
 
                 <CardContent>
-                    <form className="space-y-6">
+                    <form action={createEmployee} className="space-y-6">
                         <div className="grid gap-4 md:grid-cols-2">
                             <div className="space-y-2">
                                 <Label htmlFor="name">名前</Label>
-                                <Input id="name" name="name" placeholder="例：佐藤 花子" />
+                                <Input id="name" name="name" placeholder="例：佐藤 花子" required />
                             </div>
 
                             <div className="space-y-2">
@@ -46,12 +47,13 @@ const AdminNewEmployeePage = () => {
                                     name="email"
                                     type="email"
                                     placeholder="例：sato@example.com"
+                                    required
                                 />
                             </div>
 
                             <div className="space-y-2">
                                 <Label htmlFor="role">権限</Label>
-                                <Select name="role">
+                                <Select name="role" defaultValue="STAFF">
                                     <SelectTrigger id="role">
                                         <SelectValue placeholder="権限を選択" />
                                     </SelectTrigger>
@@ -69,6 +71,7 @@ const AdminNewEmployeePage = () => {
                                     name="hourlyWage"
                                     type="number"
                                     placeholder="例：1400"
+                                    required
                                 />
                             </div>
 
@@ -78,12 +81,13 @@ const AdminNewEmployeePage = () => {
                                     id="startedWorkingAt"
                                     name="startedWorkingAt"
                                     type="date"
+                                    required
                                 />
                             </div>
 
                             <div className="space-y-2">
                                 <Label htmlFor="employmentStatus">在籍状況</Label>
-                                <Select name="employmentStatus">
+                                <Select name="employmentStatus" defaultValue="ACTIVE">
                                     <SelectTrigger id="employmentStatus">
                                         <SelectValue placeholder="在籍状況を選択" />
                                     </SelectTrigger>
