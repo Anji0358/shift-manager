@@ -14,7 +14,10 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table";
-import { approveWorkReport } from "@/features/work-reports/actions";
+import {
+    approveWorkReport,
+    rejectWorkReport,
+} from "@/features/work-reports/actions";
 import { getWorkReports } from "@/features/work-reports/queries";
 import {
     calculateEstimatedSalary,
@@ -86,6 +89,8 @@ const AdminWorkReportsPage = async () => {
                                     report.employee,
                                 );
 
+                                const canReview = report.status === "SUBMITTED";
+
                                 return (
                                     <TableRow key={report.id}>
                                         <TableCell>{formatDate(report.job.workDate)}</TableCell>
@@ -108,17 +113,30 @@ const AdminWorkReportsPage = async () => {
                                             </Badge>
                                         </TableCell>
                                         <TableCell className="text-right">
-                                            {report.status === "SUBMITTED" ? (
-                                                <form action={approveWorkReport}>
-                                                    <input
-                                                        type="hidden"
-                                                        name="reportId"
-                                                        value={report.id}
-                                                    />
-                                                    <Button size="sm" type="submit">
-                                                        承認
-                                                    </Button>
-                                                </form>
+                                            {canReview ? (
+                                                <div className="flex justify-end gap-2">
+                                                    <form action={approveWorkReport}>
+                                                        <input
+                                                            type="hidden"
+                                                            name="reportId"
+                                                            value={report.id}
+                                                        />
+                                                        <Button size="sm" type="submit">
+                                                            承認
+                                                        </Button>
+                                                    </form>
+
+                                                    <form action={rejectWorkReport}>
+                                                        <input
+                                                            type="hidden"
+                                                            name="reportId"
+                                                            value={report.id}
+                                                        />
+                                                        <Button size="sm" type="submit" variant="outline">
+                                                            差し戻し
+                                                        </Button>
+                                                    </form>
+                                                </div>
                                             ) : (
                                                 <span className="text-sm text-slate-400">-</span>
                                             )}
