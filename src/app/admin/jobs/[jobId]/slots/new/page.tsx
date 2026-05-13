@@ -9,7 +9,8 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { mockJobs } from "@/features/shared/mock-data";
+import { getJobById } from "@/features/jobs/queries";
+import { createJobShiftSlot } from "@/features/job-shift-slots/actions";
 
 type AdminNewJobSlotPageProps = {
     params: Promise<{
@@ -20,7 +21,7 @@ type AdminNewJobSlotPageProps = {
 const AdminNewJobSlotPage = async ({ params }: AdminNewJobSlotPageProps) => {
     const { jobId } = await params;
 
-    const job = mockJobs.find((job) => job.id === jobId);
+    const job = await getJobById(jobId);
 
     if (!job) {
         notFound();
@@ -41,11 +42,13 @@ const AdminNewJobSlotPage = async ({ params }: AdminNewJobSlotPageProps) => {
                 </CardHeader>
 
                 <CardContent>
-                    <form className="space-y-6">
+                    <form action={createJobShiftSlot} className="space-y-6">
+                        <input type="hidden" name="jobId" value={job.id} />
+
                         <div className="grid gap-4 md:grid-cols-2">
                             <div className="space-y-2">
                                 <Label htmlFor="name">勤務枠名</Label>
-                                <Input id="name" name="name" placeholder="例：本番" />
+                                <Input id="name" name="name" placeholder="例：本番" required />
                             </div>
 
                             <div className="space-y-2">
@@ -55,17 +58,18 @@ const AdminNewJobSlotPage = async ({ params }: AdminNewJobSlotPageProps) => {
                                     name="requiredPeople"
                                     type="number"
                                     placeholder="例：8"
+                                    required
                                 />
                             </div>
 
                             <div className="space-y-2">
                                 <Label htmlFor="startTime">開始時間</Label>
-                                <Input id="startTime" name="startTime" type="time" />
+                                <Input id="startTime" name="startTime" type="time" required />
                             </div>
 
                             <div className="space-y-2">
                                 <Label htmlFor="endTime">終了時間</Label>
-                                <Input id="endTime" name="endTime" type="time" />
+                                <Input id="endTime" name="endTime" type="time" required />
                             </div>
                         </div>
 
