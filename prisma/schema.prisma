@@ -4,10 +4,172 @@
 // Get a free hosted Postgres database in seconds: `npx create-db`
 
 generator client {
-  provider = "prisma-client"
-  output   = "../src/generated/prisma"
+  provider = "prisma-client-js"
 }
 
 datasource db {
   provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum EmployeeRole {
+  ADMIN
+  STAFF
+}
+
+enum EmploymentStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum WageType {
+  EMPLOYEE
+  JOB_FIXED
+}
+
+enum UnavailableType {
+  FULL_DAY
+  TIME_RANGE
+  WEEKLY_FIXED
+  TEMPORARY
+}
+
+enum DayOfWeek {
+  MONDAY
+  TUESDAY
+  WEDNESDAY
+  THURSDAY
+  FRIDAY
+  SATURDAY
+  SUNDAY
+}
+
+enum ShiftAssignmentStatus {
+  ASSIGNED
+  CANCELED
+}
+
+enum WorkReportStatus {
+  NOT_SUBMITTED
+  SUBMITTED
+  APPROVED
+  REJECTED
+}
+
+model Employee {
+  id                String             @id @default(cuid())
+  name              String
+  email             String             @unique
+  passwordHash      String?
+  role              EmployeeRole       @default(STAFF)
+  hourlyWage        Int
+  startedWorkingAt  DateTime
+  employmentStatus  EmploymentStatus   @default(ACTIVE)
+
+  unavailableTimes  UnavailableTime[]
+  shiftAssignments  ShiftAssignment[]
+  workReports       WorkReport[]
+
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+}
+
+model Job {
+  id                 String              @id @default(cuid())
+  title              String
+  workDate           DateTime
+  location           String
+  meetingPlace       String
+  startTime          String
+  endTime            String
+  breakMinutes       Int
+  hasMeal            Boolean             @default(false)
+  transportationFee  Int
+  dressCode          String
+  belongings         String
+  note               String
+  wageType           WageType            @default(EMPLOYEE)
+  fixedHourlyWage    Int?
+
+  shiftSlots         JobShiftSlot[]
+  shiftAssignments   ShiftAssignment[]
+  workReports        WorkReport[]
+
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+}
+
+model JobShiftSlot {
+  id               String            @id @default(cuid())
+  jobId            String
+  name             String
+  startTime        String
+  endTime          String
+  requiredPeople   Int
+
+  job              Job               @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  shiftAssignments ShiftAssignment[]
+
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+
+  @@index([jobId])
+}
+
+model ShiftAssignment {
+  id          String                  @id @default(cuid())
+  jobId       String
+  slotId      String
+  employeeId  String
+  status      ShiftAssignmentStatus   @default(ASSIGNED)
+
+  job         Job                     @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  slot        JobShiftSlot            @relation(fields: [slotId], references: [id], onDelete: Cascade)
+  employee    Employee                @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+
+  createdAt   DateTime                @default(now())
+  updatedAt   DateTime                @updatedAt
+
+  @@index([jobId])
+  @@index([slotId])
+  @@index([employeeId])
+}
+
+model UnavailableTime {
+  id          String             @id @default(cuid())
+  employeeId  String
+  type        UnavailableType
+  date        DateTime?
+  dayOfWeek   DayOfWeek?
+  startTime   String?
+  endTime     String?
+  reason      String
+
+  employee    Employee           @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+
+  @@index([employeeId])
+}
+
+model WorkReport {
+  id                  String            @id @default(cuid())
+  jobId               String
+  employeeId          String
+  actualStartTime     String
+  actualEndTime       String
+  actualBreakMinutes  Int
+  transportationFee   Int
+  hasMeal             Boolean           @default(false)
+  status              WorkReportStatus  @default(NOT_SUBMITTED)
+
+  job                 Job               @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  employee            Employee          @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+
+  createdAt           DateTime          @default(now())
+  updatedAt           DateTime          @updatedAt
+
+  @@index([jobId])
+  @@index([employeeId])
 }
