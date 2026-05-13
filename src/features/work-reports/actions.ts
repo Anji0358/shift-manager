@@ -55,3 +55,24 @@ export const createWorkReport = async (formData: FormData) => {
 
   redirect("/staff/work-history");
 };
+
+export const approveWorkReport = async (formData: FormData) => {
+  const reportId = String(formData.get("reportId"));
+
+  if (!reportId) {
+    throw new Error("就労報告IDが取得できません。");
+  }
+
+  await prisma.workReport.update({
+    where: {
+      id: reportId,
+    },
+    data: {
+      status: "APPROVED",
+    },
+  });
+
+  revalidatePath("/admin/work-reports");
+  revalidatePath("/admin/monthly-summary");
+  revalidatePath("/staff/work-history");
+};

@@ -14,16 +14,14 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table";
-import {
-    mockEmployees,
-    mockJobs,
-    mockWorkReports,
-} from "@/features/shared/mock-data";
-import type { WorkReportStatus } from "@/features/shared/types";
+import { approveWorkReport } from "@/features/work-reports/actions";
+import { getWorkReports } from "@/features/work-reports/queries";
 import {
     calculateEstimatedSalary,
     calculateWorkHours,
 } from "@/features/payroll/services";
+import { formatDate, formatYen } from "@/lib/format";
+import type { WorkReportStatus } from "@prisma/client";
 
 const workReportStatusLabel: Record<WorkReportStatus, string> = {
     NOT_SUBMITTED: "未提出",
@@ -42,13 +40,15 @@ const workReportStatusBadgeVariant: Record<
     REJECTED: "destructive",
 };
 
-const AdminWorkReportsPage = () => {
+const AdminWorkReportsPage = async () => {
+    const reports = await getWorkReports();
+
     return (
         <div className="space-y-6">
             <section>
                 <h1 className="text-3xl font-bold">就労報告管理</h1>
                 <p className="mt-2 text-slate-600">
-                    従業員から提出された就労報告を確認し、承認または差し戻しを行います。
+                    従業員から提出された就労報告を確認します。
                 </p>
             </section>
 
@@ -61,67 +61,79 @@ const AdminWorkReportsPage = () => {
                     <Table>
                         <TableHeader>
                             <TableRow>
-                                <TableHead>従業員名</TableHead>
-                                <TableHead>案件名</TableHead>
                                 <TableHead>勤務日</TableHead>
-                                <TableHead>報告状態</TableHead>
-                                <TableHead className="text-right">実勤務時間</TableHead>
+                                <TableHead>案件名</TableHead>
+                                <TableHead>従業員</TableHead>
+                                <TableHead>実勤務時間</TableHead>
+                                <TableHead className="text-right">勤務時間</TableHead>
                                 <TableHead className="text-right">給与見込み</TableHead>
+                                <TableHead>状態</TableHead>
                                 <TableHead className="text-right">操作</TableHead>
                             </TableRow>
                         </TableHeader>
 
                         <TableBody>
-                            {mockWorkReports.map((report) => {
-                                const employee = mockEmployees.find(
-                                    (employee) => employee.id === report.employeeId,
-                                );
-                                const job = mockJobs.find((job) => job.id === report.jobId);
-
-                                const actualWorkHours = calculateWorkHours(
+                            {reports.map((report) => {
+                                const workHours = calculateWorkHours(
                                     report.actualStartTime,
                                     report.actualEndTime,
                                     report.actualBreakMinutes,
                                 );
 
-                                const estimatedSalary =
-                                    employee && job
-                                        ? calculateEstimatedSalary(report, job, employee)
-                                        : 0;
+                                const estimatedSalary = calculateEstimatedSalary(
+                                    report,
+                                    report.job,
+                                    report.employee,
+                                );
 
                                 return (
                                     <TableRow key={report.id}>
+                                        <TableCell>{formatDate(report.job.workDate)}</TableCell>
                                         <TableCell className="font-medium">
-                                            {employee?.name ?? "不明な従業員"}
+                                            {report.job.title}
                                         </TableCell>
-                                        <TableCell>{job?.title ?? "不明な案件"}</TableCell>
-                                        <TableCell>{job?.workDate ?? "-"}</TableCell>
+                                        <TableCell>{report.employee.name}</TableCell>
                                         <TableCell>
-                                            <Badge
-                                                variant={workReportStatusBadgeVariant[report.status]}
-                                            >
+                                            {report.actualStartTime}〜{report.actualEndTime}
+                                        </TableCell>
+                                        <TableCell className="text-right">
+                                            {workHours}時間
+                                        </TableCell>
+                                        <TableCell className="text-right">
+                                            {formatYen(estimatedSalary)}
+                                        </TableCell>
+                                        <TableCell>
+                                            <Badge variant={workReportStatusBadgeVariant[report.status]}>
                                                 {workReportStatusLabel[report.status]}
                                             </Badge>
                                         </TableCell>
                                         <TableCell className="text-right">
-                                            {actualWorkHours}時間
-                                        </TableCell>
-                                        <TableCell className="text-right">
-                                            {estimatedSalary.toLocaleString()}円
-                                        </TableCell>
-                                        <TableCell className="text-right">
-                                            <div className="flex justify-end gap-2">
-                                                <Button size="sm">承認</Button>
-                                                <Button size="sm" variant="outline">
-                                                    差し戻し
-                                                </Button>
-                                            </div>
+                                            {report.status === "SUBMITTED" ? (
+                                                <form action={approveWorkReport}>
+                                                    <input
+                                                        type="hidden"
+                                                        name="reportId"
+                                                        value={report.id}
+                                                    />
+                                                    <Button size="sm" type="submit">
+                                                        承認
+                                                    </Button>
+                                                </form>
+                                            ) : (
+                                                <span className="text-sm text-slate-400">-</span>
+                                            )}
                                         </TableCell>
                                     </TableRow>
                                 );
                             })}
                         </TableBody>
                     </Table>
+
+                    {reports.length === 0 && (
+                        <p className="mt-4 text-sm text-slate-500">
+                            まだ就労報告がありません。
+                        </p>
+                    )}
                 </CardContent>
             </Card>
         </div>
