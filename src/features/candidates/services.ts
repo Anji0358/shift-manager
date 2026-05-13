@@ -17,9 +17,24 @@ export const candidateStatusBadgeVariant: Record<
   UNAVAILABLE: "destructive",
 };
 
+const candidateStatusOrder: Record<CandidateStatus, number> = {
+  AVAILABLE: 1,
+  NOT_SUBMITTED: 2,
+  PARTIALLY_AVAILABLE: 3,
+  UNAVAILABLE: 4,
+};
+
+export const sortCandidatesByStatus = (
+  candidates: Candidate[],
+): Candidate[] => {
+  return [...candidates].sort((a, b) => {
+    return candidateStatusOrder[a.status] - candidateStatusOrder[b.status];
+  });
+};
+
 export const getCandidatesForJob = (
   candidates: Candidate[],
   _jobId: string,
 ): Candidate[] => {
-  return candidates;
+  return sortCandidatesByStatus(candidates);
 };
