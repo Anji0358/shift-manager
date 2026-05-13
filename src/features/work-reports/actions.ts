@@ -24,6 +24,17 @@ export const createWorkReport = async (formData: FormData) => {
     throw new Error("就労報告の入力内容が不足しています。");
   }
 
+  const existingReport = await prisma.workReport.findFirst({
+    where: {
+      employeeId,
+      jobId,
+    },
+  });
+
+  if (existingReport) {
+    throw new Error("この案件の就労報告はすでに提出済みです。");
+  }
+
   await prisma.workReport.create({
     data: {
       employeeId,
@@ -37,6 +48,7 @@ export const createWorkReport = async (formData: FormData) => {
     },
   });
 
+  revalidatePath("/staff/shifts");
   revalidatePath("/staff/work-history");
   revalidatePath("/staff/monthly-summary");
   revalidatePath("/admin/work-reports");

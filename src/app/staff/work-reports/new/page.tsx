@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
     Card,
@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/select";
 import { getAssignmentById } from "@/features/shift-assignments/queries";
 import { createWorkReport } from "@/features/work-reports/actions";
+import { getWorkReportByEmployeeIdAndJobId } from "@/features/work-reports/queries";
 import { formatDate } from "@/lib/format";
 
 type StaffNewWorkReportPageProps = {
@@ -39,6 +40,15 @@ const StaffNewWorkReportPage = async ({
 
     if (!assignment) {
         notFound();
+    }
+
+    const existingReport = await getWorkReportByEmployeeIdAndJobId(
+        assignment.employeeId,
+        assignment.jobId,
+    );
+
+    if (existingReport) {
+        redirect("/staff/shifts");
     }
 
     const { job, slot, employee } = assignment;

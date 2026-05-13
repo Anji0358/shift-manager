@@ -16,12 +16,16 @@ import {
     TableRow,
 } from "@/components/ui/table";
 import { getAssignmentsByEmployeeId } from "@/features/shift-assignments/queries";
+import { getWorkReportsByEmployeeId } from "@/features/work-reports/queries";
 import { formatDate } from "@/lib/format";
 
 const StaffShiftsPage = async () => {
     const currentEmployeeId = "emp_2";
 
     const assignments = await getAssignmentsByEmployeeId(currentEmployeeId);
+    const reports = await getWorkReportsByEmployeeId(currentEmployeeId);
+
+    const reportedJobIds = new Set(reports.map((report) => report.jobId));
 
     return (
         <div className="space-y-6">
@@ -53,34 +57,44 @@ const StaffShiftsPage = async () => {
                         </TableHeader>
 
                         <TableBody>
-                            {assignments.map((assignment) => (
-                                <TableRow key={assignment.id}>
-                                    <TableCell>{formatDate(assignment.job.workDate)}</TableCell>
-                                    <TableCell className="font-medium">
-                                        {assignment.job.title}
-                                    </TableCell>
-                                    <TableCell>{assignment.slot.name}</TableCell>
-                                    <TableCell>
-                                        {assignment.slot.startTime}〜{assignment.slot.endTime}
-                                    </TableCell>
-                                    <TableCell>{assignment.job.location}</TableCell>
-                                    <TableCell>{assignment.job.meetingPlace}</TableCell>
-                                    <TableCell>
-                                        <Badge variant={assignment.job.hasMeal ? "default" : "outline"}>
-                                            {assignment.job.hasMeal ? "あり" : "なし"}
-                                        </Badge>
-                                    </TableCell>
-                                    <TableCell className="text-right">
-                                        <Button asChild size="sm" variant="outline">
-                                            <Link
-                                                href={`/staff/work-reports/new?assignmentId=${assignment.id}`}
+                            {assignments.map((assignment) => {
+                                const alreadyReported = reportedJobIds.has(assignment.jobId);
+
+                                return (
+                                    <TableRow key={assignment.id}>
+                                        <TableCell>{formatDate(assignment.job.workDate)}</TableCell>
+                                        <TableCell className="font-medium">
+                                            {assignment.job.title}
+                                        </TableCell>
+                                        <TableCell>{assignment.slot.name}</TableCell>
+                                        <TableCell>
+                                            {assignment.slot.startTime}〜{assignment.slot.endTime}
+                                        </TableCell>
+                                        <TableCell>{assignment.job.location}</TableCell>
+                                        <TableCell>{assignment.job.meetingPlace}</TableCell>
+                                        <TableCell>
+                                            <Badge
+                                                variant={assignment.job.hasMeal ? "default" : "outline"}
                                             >
-                                                報告する
-                                            </Link>
-                                        </Button>
-                                    </TableCell>
-                                </TableRow>
-                            ))}
+                                                {assignment.job.hasMeal ? "あり" : "なし"}
+                                            </Badge>
+                                        </TableCell>
+                                        <TableCell className="text-right">
+                                            {alreadyReported ? (
+                                                <Badge variant="secondary">提出済み</Badge>
+                                            ) : (
+                                                <Button asChild size="sm" variant="outline">
+                                                    <Link
+                                                        href={`/staff/work-reports/new?assignmentId=${assignment.id}`}
+                                                    >
+                                                        報告する
+                                                    </Link>
+                                                </Button>
+                                            )}
+                                        </TableCell>
+                                    </TableRow>
+                                );
+                            })}
                         </TableBody>
                     </Table>
 

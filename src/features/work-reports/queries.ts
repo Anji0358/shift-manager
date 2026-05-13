@@ -26,3 +26,15 @@ export const getWorkReports = async () => {
     },
   });
 };
+
+export const getWorkReportByEmployeeIdAndJobId = async (
+  employeeId: string,
+  jobId: string,
+) => {
+  return await prisma.workReport.findFirst({
+    where: {
+      employeeId,
+      jobId,
+    },
+  });
+};
