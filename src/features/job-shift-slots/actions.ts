@@ -3,17 +3,20 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
+import {
+  getPositiveNumber,
+  getRequiredString,
+  validateTimeOrder,
+} from "@/lib/validation";
 
 export const createJobShiftSlot = async (formData: FormData) => {
-  const jobId = String(formData.get("jobId"));
-  const name = String(formData.get("name"));
-  const startTime = String(formData.get("startTime"));
-  const endTime = String(formData.get("endTime"));
-  const requiredPeople = Number(formData.get("requiredPeople"));
+  const jobId = getRequiredString(formData, "jobId");
+  const name = getRequiredString(formData, "name");
+  const startTime = getRequiredString(formData, "startTime");
+  const endTime = getRequiredString(formData, "endTime");
+  const requiredPeople = getPositiveNumber(formData, "requiredPeople");
 
-  if (!jobId || !name || !startTime || !endTime || !requiredPeople) {
-    throw new Error("勤務枠の入力内容が不足しています。");
-  }
+  validateTimeOrder(startTime, endTime);
 
   await prisma.jobShiftSlot.create({
     data: {

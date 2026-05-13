@@ -3,38 +3,31 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
+import {
+  getNonNegativeNumber,
+  getOptionalString,
+  getRequiredString,
+  validateTimeOrder,
+} from "@/lib/validation";
 import type { WageType } from "@prisma/client";
 
 export const createJob = async (formData: FormData) => {
-  const title = String(formData.get("title"));
-  const workDate = String(formData.get("workDate"));
-  const location = String(formData.get("location"));
-  const meetingPlace = String(formData.get("meetingPlace"));
-  const startTime = String(formData.get("startTime"));
-  const endTime = String(formData.get("endTime"));
-  const breakMinutes = Number(formData.get("breakMinutes"));
+  const title = getRequiredString(formData, "title");
+  const workDate = getRequiredString(formData, "workDate");
+  const location = getRequiredString(formData, "location");
+  const meetingPlace = getRequiredString(formData, "meetingPlace");
+  const startTime = getRequiredString(formData, "startTime");
+  const endTime = getRequiredString(formData, "endTime");
+  const breakMinutes = getNonNegativeNumber(formData, "breakMinutes");
   const hasMeal = String(formData.get("hasMeal")) === "true";
-  const transportationFee = Number(formData.get("transportationFee"));
-  const dressCode = String(formData.get("dressCode"));
-  const belongings = String(formData.get("belongings"));
-  const note = String(formData.get("note"));
-  const wageType = String(formData.get("wageType")) as WageType;
-  const fixedHourlyWageText = String(formData.get("fixedHourlyWage") ?? "");
+  const transportationFee = getNonNegativeNumber(formData, "transportationFee");
+  const dressCode = getRequiredString(formData, "dressCode");
+  const belongings = getRequiredString(formData, "belongings");
+  const note = getOptionalString(formData, "note");
+  const wageType = getRequiredString(formData, "wageType") as WageType;
+  const fixedHourlyWageText = getOptionalString(formData, "fixedHourlyWage");
 
-  if (
-    !title ||
-    !workDate ||
-    !location ||
-    !meetingPlace ||
-    !startTime ||
-    !endTime ||
-    !breakMinutes ||
-    !dressCode ||
-    !belongings ||
-    !wageType
-  ) {
-    throw new Error("案件の入力内容が不足しています。");
-  }
+  validateTimeOrder(startTime, endTime);
 
   await prisma.job.create({
     data: {
