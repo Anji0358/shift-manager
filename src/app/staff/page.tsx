@@ -1,4 +1,6 @@
+import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
     Card,
     CardContent,
@@ -13,106 +15,74 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table";
-import { getWorkReports } from "@/features/work-reports/queries";
-import {
-    calculateEstimatedSalary,
-    calculateWorkHours,
-} from "@/features/payroll/services";
-import { formatDate, formatYen } from "@/lib/format";
-import type { WorkReportStatus } from "@prisma/client";
+import { getAssignmentsByEmployeeId } from "@/features/shift-assignments/queries";
+import { formatDate } from "@/lib/format";
 
-const workReportStatusLabel: Record<WorkReportStatus, string> = {
-    NOT_SUBMITTED: "未提出",
-    SUBMITTED: "提出済み",
-    APPROVED: "承認済み",
-    REJECTED: "差し戻し",
-};
+const StaffShiftsPage = async () => {
+    const currentEmployeeId = "emp_2";
 
-const workReportStatusBadgeVariant: Record<
-    WorkReportStatus,
-    "default" | "secondary" | "outline" | "destructive"
-> = {
-    NOT_SUBMITTED: "outline",
-    SUBMITTED: "secondary",
-    APPROVED: "default",
-    REJECTED: "destructive",
-};
-
-const AdminWorkReportsPage = async () => {
-    const reports = await getWorkReports();
+    const assignments = await getAssignmentsByEmployeeId(currentEmployeeId);
 
     return (
         <div className="space-y-6">
             <section>
-                <h1 className="text-3xl font-bold">就労報告管理</h1>
+                <h1 className="text-3xl font-bold">確定シフト</h1>
                 <p className="mt-2 text-slate-600">
-                    従業員から提出された就労報告を確認します。
+                    自分に確定された勤務予定を確認します。
                 </p>
             </section>
 
             <Card>
                 <CardHeader>
-                    <CardTitle>就労報告一覧</CardTitle>
+                    <CardTitle>確定シフト一覧</CardTitle>
                 </CardHeader>
 
                 <CardContent>
                     <Table>
                         <TableHeader>
                             <TableRow>
-                                <TableHead>勤務日</TableHead>
+                                <TableHead>日付</TableHead>
                                 <TableHead>案件名</TableHead>
-                                <TableHead>従業員</TableHead>
-                                <TableHead>実勤務時間</TableHead>
-                                <TableHead className="text-right">勤務時間</TableHead>
-                                <TableHead className="text-right">給与見込み</TableHead>
-                                <TableHead>状態</TableHead>
+                                <TableHead>勤務枠</TableHead>
+                                <TableHead>勤務時間</TableHead>
+                                <TableHead>場所</TableHead>
+                                <TableHead>集合場所</TableHead>
+                                <TableHead>食事</TableHead>
+                                <TableHead className="text-right">報告</TableHead>
                             </TableRow>
                         </TableHeader>
 
                         <TableBody>
-                            {reports.map((report) => {
-                                const workHours = calculateWorkHours(
-                                    report.actualStartTime,
-                                    report.actualEndTime,
-                                    report.actualBreakMinutes,
-                                );
-
-                                const estimatedSalary = calculateEstimatedSalary(
-                                    report,
-                                    report.job,
-                                    report.employee,
-                                );
-
-                                return (
-                                    <TableRow key={report.id}>
-                                        <TableCell>{formatDate(report.job.workDate)}</TableCell>
-                                        <TableCell className="font-medium">
-                                            {report.job.title}
-                                        </TableCell>
-                                        <TableCell>{report.employee.name}</TableCell>
-                                        <TableCell>
-                                            {report.actualStartTime}〜{report.actualEndTime}
-                                        </TableCell>
-                                        <TableCell className="text-right">
-                                            {workHours}時間
-                                        </TableCell>
-                                        <TableCell className="text-right">
-                                            {formatYen(estimatedSalary)}
-                                        </TableCell>
-                                        <TableCell>
-                                            <Badge variant={workReportStatusBadgeVariant[report.status]}>
-                                                {workReportStatusLabel[report.status]}
-                                            </Badge>
-                                        </TableCell>
-                                    </TableRow>
-                                );
-                            })}
+                            {assignments.map((assignment) => (
+                                <TableRow key={assignment.id}>
+                                    <TableCell>{formatDate(assignment.job.workDate)}</TableCell>
+                                    <TableCell className="font-medium">
+                                        {assignment.job.title}
+                                    </TableCell>
+                                    <TableCell>{assignment.slot.name}</TableCell>
+                                    <TableCell>
+                                        {assignment.slot.startTime}〜{assignment.slot.endTime}
+                                    </TableCell>
+                                    <TableCell>{assignment.job.location}</TableCell>
+                                    <TableCell>{assignment.job.meetingPlace}</TableCell>
+                                    <TableCell>
+                                        <Badge variant={assignment.job.hasMeal ? "default" : "outline"}>
+                                            {assignment.job.hasMeal ? "あり" : "なし"}
+                                        </Badge>
+                                    </TableCell>
+                                    <TableCell className="text-right">
+                                        <Button asChild size="sm" variant="outline">
+                                            <Link href="/staff/work-reports/new">報告する</Link>
+                                        </Button>
+                                    </TableCell>
+                                </TableRow>
+                            ))}
                         </TableBody>
                     </Table>
 
-                    {reports.length === 0 && (
+                    {assignments.length === 0 && (
                         <p className="mt-4 text-sm text-slate-500">
-                            まだ就労報告がありません。
+                            確定しているシフトはありません。
                         </p>
                     )}
                 </CardContent>
@@ -121,4 +91,4 @@ const AdminWorkReportsPage = async () => {
     );
 };
 
-export default AdminWorkReportsPage;
+export default StaffShiftsPage;
