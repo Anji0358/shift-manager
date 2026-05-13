@@ -16,8 +16,11 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
+import { createUnavailableTime } from "@/features/unavailable-times/actions";
 
 const StaffNewUnavailableTimePage = () => {
+    const currentEmployeeId = "emp_2";
+
     return (
         <div className="space-y-6">
             <section>
@@ -33,10 +36,12 @@ const StaffNewUnavailableTimePage = () => {
                 </CardHeader>
 
                 <CardContent>
-                    <form className="space-y-6">
+                    <form action={createUnavailableTime} className="space-y-6">
+                        <input type="hidden" name="employeeId" value={currentEmployeeId} />
+
                         <div className="space-y-2">
                             <Label htmlFor="type">種別</Label>
-                            <Select name="type">
+                            <Select name="type" defaultValue="FULL_DAY">
                                 <SelectTrigger id="type">
                                     <SelectValue placeholder="勤務不可の種別を選択" />
                                 </SelectTrigger>
