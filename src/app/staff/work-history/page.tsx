@@ -13,16 +13,13 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table";
-import {
-    mockEmployees,
-    mockJobs,
-    mockWorkReports,
-} from "@/features/shared/mock-data";
-import type { WorkReportStatus } from "@/features/shared/types";
+import { getWorkReportsByEmployeeId } from "@/features/work-reports/queries";
 import {
     calculateEstimatedSalary,
     calculateWorkHours,
 } from "@/features/payroll/services";
+import { formatDate, formatYen } from "@/lib/format";
+import type { WorkReportStatus } from "@prisma/client";
 
 const workReportStatusLabel: Record<WorkReportStatus, string> = {
     NOT_SUBMITTED: "未提出",
@@ -41,16 +38,10 @@ const workReportStatusBadgeVariant: Record<
     REJECTED: "destructive",
 };
 
-const StaffWorkHistoryPage = () => {
+const StaffWorkHistoryPage = async () => {
     const currentEmployeeId = "emp_2";
 
-    const employee = mockEmployees.find(
-        (employee) => employee.id === currentEmployeeId,
-    );
-
-    const myReports = mockWorkReports.filter(
-        (report) => report.employeeId === currentEmployeeId,
-    );
+    const reports = await getWorkReportsByEmployeeId(currentEmployeeId);
 
     return (
         <div className="space-y-6">
@@ -81,25 +72,24 @@ const StaffWorkHistoryPage = () => {
                         </TableHeader>
 
                         <TableBody>
-                            {myReports.map((report) => {
-                                const job = mockJobs.find((job) => job.id === report.jobId);
-
+                            {reports.map((report) => {
                                 const workHours = calculateWorkHours(
                                     report.actualStartTime,
                                     report.actualEndTime,
                                     report.actualBreakMinutes,
                                 );
 
-                                const estimatedSalary =
-                                    employee && job
-                                        ? calculateEstimatedSalary(report, job, employee)
-                                        : 0;
+                                const estimatedSalary = calculateEstimatedSalary(
+                                    report,
+                                    report.job,
+                                    report.employee,
+                                );
 
                                 return (
                                     <TableRow key={report.id}>
-                                        <TableCell>{job?.workDate ?? "-"}</TableCell>
+                                        <TableCell>{formatDate(report.job.workDate)}</TableCell>
                                         <TableCell className="font-medium">
-                                            {job?.title ?? "不明な案件"}
+                                            {report.job.title}
                                         </TableCell>
                                         <TableCell>
                                             {report.actualStartTime}〜{report.actualEndTime}
@@ -108,7 +98,7 @@ const StaffWorkHistoryPage = () => {
                                             {workHours}時間
                                         </TableCell>
                                         <TableCell className="text-right">
-                                            {estimatedSalary.toLocaleString()}円
+                                            {formatYen(estimatedSalary)}
                                         </TableCell>
                                         <TableCell>
                                             <Badge variant={report.hasMeal ? "default" : "outline"}>
@@ -125,6 +115,12 @@ const StaffWorkHistoryPage = () => {
                             })}
                         </TableBody>
                     </Table>
+
+                    {reports.length === 0 && (
+                        <p className="mt-4 text-sm text-slate-500">
+                            まだ勤務履歴がありません。
+                        </p>
+                    )}
                 </CardContent>
             </Card>
         </div>

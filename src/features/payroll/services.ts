@@ -1,14 +1,24 @@
-import type { Employee, Job, WorkReport } from "@/features/shared/types";
+import type { Employee, Job, WorkReport } from "@prisma/client";
+
+type SalaryWorkReport = Pick<
+  WorkReport,
+  | "actualStartTime"
+  | "actualEndTime"
+  | "actualBreakMinutes"
+  | "transportationFee"
+>;
+
+type SalaryJob = Pick<Job, "wageType" | "fixedHourlyWage">;
+
+type SalaryEmployee = Pick<Employee, "hourlyWage">;
 
 export const calculateWorkHours = (
   startTime: string,
   endTime: string,
   breakMinutes: number,
 ): number => {
-  const startHour = Number(startTime.split(":")[0]);
-  const startMinute = Number(startTime.split(":")[1]);
-  const endHour = Number(endTime.split(":")[0]);
-  const endMinute = Number(endTime.split(":")[1]);
+  const [startHour, startMinute] = startTime.split(":").map(Number);
+  const [endHour, endMinute] = endTime.split(":").map(Number);
 
   const startTotalMinutes = startHour * 60 + startMinute;
   const endTotalMinutes = endHour * 60 + endMinute;
@@ -18,8 +28,8 @@ export const calculateWorkHours = (
 };
 
 export const getAppliedHourlyWage = (
-  job: Job,
-  employee: Employee,
+  job: SalaryJob,
+  employee: SalaryEmployee,
 ): number => {
   if (job.wageType === "JOB_FIXED" && job.fixedHourlyWage !== null) {
     return job.fixedHourlyWage;
@@ -29,9 +39,9 @@ export const getAppliedHourlyWage = (
 };
 
 export const calculateEstimatedSalary = (
-  report: WorkReport,
-  job: Job,
-  employee: Employee,
+  report: SalaryWorkReport,
+  job: SalaryJob,
+  employee: SalaryEmployee,
 ): number => {
   const workHours = calculateWorkHours(
     report.actualStartTime,
