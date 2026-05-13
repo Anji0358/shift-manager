@@ -22,7 +22,11 @@ import {
     mockJobShiftSlots,
     mockShiftAssignments,
 } from "@/features/shared/mock-data";
-import type { CandidateStatus } from "@/features/shared/types";
+import {
+    candidateStatusBadgeVariant,
+    candidateStatusLabel,
+    getCandidatesForJob,
+} from "@/features/candidates/services";
 
 type AdminJobDetailPageProps = {
     params: Promise<{
@@ -35,23 +39,6 @@ const wageTypeLabel = {
     JOB_FIXED: "案件一律時給",
 };
 
-const candidateStatusLabel: Record<CandidateStatus, string> = {
-    AVAILABLE: "勤務可能",
-    NOT_SUBMITTED: "未提出",
-    PARTIALLY_AVAILABLE: "一部可能",
-    UNAVAILABLE: "勤務不可",
-};
-
-const candidateStatusBadgeVariant: Record<
-    CandidateStatus,
-    "default" | "secondary" | "outline" | "destructive"
-> = {
-    AVAILABLE: "default",
-    NOT_SUBMITTED: "secondary",
-    PARTIALLY_AVAILABLE: "outline",
-    UNAVAILABLE: "destructive",
-};
-
 const AdminJobDetailPage = async ({ params }: AdminJobDetailPageProps) => {
     const { jobId } = await params;
 
@@ -62,6 +49,8 @@ const AdminJobDetailPage = async ({ params }: AdminJobDetailPageProps) => {
     }
 
     const slots = mockJobShiftSlots.filter((slot) => slot.jobId === job.id);
+
+    const candidates = getCandidatesForJob(mockCandidates, job.id);
 
     const totalRequiredPeople = slots.reduce(
         (total, slot) => total + slot.requiredPeople,
@@ -78,6 +67,7 @@ const AdminJobDetailPage = async ({ params }: AdminJobDetailPageProps) => {
         totalRequiredPeople === 0
             ? 0
             : Math.round((assignedPeople / totalRequiredPeople) * 100);
+
 
     return (
         <div className="space-y-8">
@@ -275,7 +265,7 @@ const AdminJobDetailPage = async ({ params }: AdminJobDetailPageProps) => {
                         </TableHeader>
 
                         <TableBody>
-                            {mockCandidates.map((candidate) => (
+                            {candidates.map((candidate) => (
                                 <TableRow key={candidate.employee.id}>
                                     <TableCell className="font-medium">
                                         {candidate.employee.name}
