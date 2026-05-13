@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/table";
 import { getUnavailableTimesByEmployeeId } from "@/features/unavailable-times/queries";
 import { formatDate } from "@/lib/format";
+import { deleteUnavailableTime } from "@/features/unavailable-times/actions";
 import type { DayOfWeek, UnavailableType } from "@prisma/client";
 
 const unavailableTypeLabel: Record<UnavailableType, string> = {
@@ -78,6 +79,7 @@ const StaffUnavailableTimesPage = async () => {
                                 <TableHead>曜日</TableHead>
                                 <TableHead>時間</TableHead>
                                 <TableHead>理由</TableHead>
+                                <TableHead className="text-right">操作</TableHead>
                             </TableRow>
                         </TableHeader>
 
@@ -105,6 +107,18 @@ const StaffUnavailableTimesPage = async () => {
                                             : "終日"}
                                     </TableCell>
                                     <TableCell>{unavailableTime.reason}</TableCell>
+                                    <TableCell className="text-right">
+                                        <form action={deleteUnavailableTime}>
+                                            <input
+                                                type="hidden"
+                                                name="unavailableTimeId"
+                                                value={unavailableTime.id}
+                                            />
+                                            <Button size="sm" type="submit" variant="outline">
+                                                削除
+                                            </Button>
+                                        </form>
+                                    </TableCell>
                                 </TableRow>
                             ))}
                         </TableBody>

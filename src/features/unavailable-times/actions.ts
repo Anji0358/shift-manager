@@ -33,3 +33,19 @@ export const createUnavailableTime = async (formData: FormData) => {
   revalidatePath("/staff/unavailable-times");
   redirect("/staff/unavailable-times");
 };
+
+export const deleteUnavailableTime = async (formData: FormData) => {
+  const unavailableTimeId = String(formData.get("unavailableTimeId"));
+
+  if (!unavailableTimeId) {
+    throw new Error("削除対象の勤務不可情報が取得できません。");
+  }
+
+  await prisma.unavailableTime.delete({
+    where: {
+      id: unavailableTimeId,
+    },
+  });
+
+  revalidatePath("/staff/unavailable-times");
+};
