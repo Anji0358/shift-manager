@@ -15,19 +15,23 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table";
-import { mockEmployees } from "@/features/shared/mock-data";
+import { getEmployees } from "@/features/employees/queries";
+import { formatMonth, formatYen } from "@/lib/format";
+import type { EmployeeRole, EmploymentStatus } from "@prisma/client";
 
-const roleLabel = {
+const roleLabel: Record<EmployeeRole, string> = {
     ADMIN: "管理者",
     STAFF: "従業員",
 };
 
-const employmentStatusLabel = {
+const employmentStatusLabel: Record<EmploymentStatus, string> = {
     ACTIVE: "在籍中",
     INACTIVE: "退職済み",
 };
 
-const AdminEmployeesPage = () => {
+const AdminEmployeesPage = async () => {
+    const employees = await getEmployees();
+
     return (
         <div className="space-y-6">
             <section className="flex items-start justify-between gap-4">
@@ -62,7 +66,7 @@ const AdminEmployeesPage = () => {
                         </TableHeader>
 
                         <TableBody>
-                            {mockEmployees.map((employee) => (
+                            {employees.map((employee) => (
                                 <TableRow key={employee.id}>
                                     <TableCell className="font-medium">{employee.name}</TableCell>
                                     <TableCell>{employee.email}</TableCell>
@@ -76,9 +80,9 @@ const AdminEmployeesPage = () => {
                                         </Badge>
                                     </TableCell>
                                     <TableCell className="text-right">
-                                        {employee.hourlyWage.toLocaleString()}円
+                                        {formatYen(employee.hourlyWage)}
                                     </TableCell>
-                                    <TableCell>{employee.startedWorkingAt}</TableCell>
+                                    <TableCell>{formatMonth(employee.startedWorkingAt)}</TableCell>
                                     <TableCell>
                                         <Badge
                                             variant={
