@@ -16,6 +16,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
+import { createJob } from "@/features/jobs/actions";
 
 const AdminNewJobPage = () => {
     return (
@@ -33,7 +34,7 @@ const AdminNewJobPage = () => {
                 </CardHeader>
 
                 <CardContent>
-                    <form className="space-y-8">
+                    <form action={createJob} className="space-y-8">
                         <section className="space-y-4">
                             <h2 className="text-lg font-semibold">基本情報</h2>
 
@@ -44,12 +45,13 @@ const AdminNewJobPage = () => {
                                         id="title"
                                         name="title"
                                         placeholder="例：横浜ホテル宴会"
+                                        required
                                     />
                                 </div>
 
                                 <div className="space-y-2">
                                     <Label htmlFor="workDate">日付</Label>
-                                    <Input id="workDate" name="workDate" type="date" />
+                                    <Input id="workDate" name="workDate" type="date" required />
                                 </div>
 
                                 <div className="space-y-2">
@@ -58,6 +60,7 @@ const AdminNewJobPage = () => {
                                         id="location"
                                         name="location"
                                         placeholder="例：横浜ホテル"
+                                        required
                                     />
                                 </div>
 
@@ -67,6 +70,7 @@ const AdminNewJobPage = () => {
                                         id="meetingPlace"
                                         name="meetingPlace"
                                         placeholder="例：横浜駅中央改札"
+                                        required
                                     />
                                 </div>
                             </div>
@@ -78,12 +82,12 @@ const AdminNewJobPage = () => {
                             <div className="grid gap-4 md:grid-cols-3">
                                 <div className="space-y-2">
                                     <Label htmlFor="startTime">勤務開始時間</Label>
-                                    <Input id="startTime" name="startTime" type="time" />
+                                    <Input id="startTime" name="startTime" type="time" required />
                                 </div>
 
                                 <div className="space-y-2">
                                     <Label htmlFor="endTime">勤務終了時間</Label>
-                                    <Input id="endTime" name="endTime" type="time" />
+                                    <Input id="endTime" name="endTime" type="time" required />
                                 </div>
 
                                 <div className="space-y-2">
@@ -93,12 +97,13 @@ const AdminNewJobPage = () => {
                                         name="breakMinutes"
                                         type="number"
                                         placeholder="例：30"
+                                        required
                                     />
                                 </div>
 
                                 <div className="space-y-2">
                                     <Label htmlFor="hasMeal">食事の有無</Label>
-                                    <Select name="hasMeal">
+                                    <Select name="hasMeal" defaultValue="false">
                                         <SelectTrigger id="hasMeal">
                                             <SelectValue placeholder="食事の有無を選択" />
                                         </SelectTrigger>
@@ -116,6 +121,7 @@ const AdminNewJobPage = () => {
                                         name="transportationFee"
                                         type="number"
                                         placeholder="例：800"
+                                        required
                                     />
                                 </div>
 
@@ -125,6 +131,7 @@ const AdminNewJobPage = () => {
                                         id="dressCode"
                                         name="dressCode"
                                         placeholder="例：黒スラックス・白シャツ"
+                                        required
                                     />
                                 </div>
                             </div>
@@ -135,6 +142,7 @@ const AdminNewJobPage = () => {
                                     id="belongings"
                                     name="belongings"
                                     placeholder="例：メモ帳、黒靴"
+                                    required
                                 />
                             </div>
 
@@ -154,7 +162,7 @@ const AdminNewJobPage = () => {
                             <div className="grid gap-4 md:grid-cols-2">
                                 <div className="space-y-2">
                                     <Label htmlFor="wageType">時給タイプ</Label>
-                                    <Select name="wageType">
+                                    <Select name="wageType" defaultValue="EMPLOYEE">
                                         <SelectTrigger id="wageType">
                                             <SelectValue placeholder="時給タイプを選択" />
                                         </SelectTrigger>
