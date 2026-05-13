@@ -79,9 +79,16 @@ const AdminJobDetailPage = async ({ params }: AdminJobDetailPageProps) => {
                     </p>
                 </div>
 
-                <Button asChild variant="outline">
-                    <Link href="/admin/jobs">案件一覧へ戻る</Link>
-                </Button>
+                <div className="flex gap-3">
+                    <Button asChild variant="outline">
+                        <Link href="/admin/jobs">案件一覧へ戻る</Link>
+                    </Button>
+                    <Button asChild>
+                        <Link href={`/admin/jobs/${job.id}/assignments`}>
+                            シフトを確定する
+                        </Link>
+                    </Button>
+                </div>
             </section>
 
             <section className="grid gap-4 md:grid-cols-4">
