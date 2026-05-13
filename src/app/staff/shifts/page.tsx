@@ -72,7 +72,11 @@ const StaffShiftsPage = async () => {
                                     </TableCell>
                                     <TableCell className="text-right">
                                         <Button asChild size="sm" variant="outline">
-                                            <Link href="/staff/work-reports/new">報告する</Link>
+                                            <Link
+                                                href={`/staff/work-reports/new?assignmentId=${assignment.id}`}
+                                            >
+                                                報告する
+                                            </Link>
                                         </Button>
                                     </TableCell>
                                 </TableRow>

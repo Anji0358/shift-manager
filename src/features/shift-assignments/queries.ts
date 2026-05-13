@@ -49,3 +49,16 @@ export const getAssignmentsByJobId = async (jobId: string) => {
     },
   });
 };
+
+export const getAssignmentById = async (assignmentId: string) => {
+  return await prisma.shiftAssignment.findUnique({
+    where: {
+      id: assignmentId,
+    },
+    include: {
+      job: true,
+      slot: true,
+      employee: true,
+    },
+  });
+};

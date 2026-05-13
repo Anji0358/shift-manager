@@ -16,20 +16,32 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
-import { getFirstAssignmentByEmployeeId } from "@/features/shift-assignments/queries";
+import { getAssignmentById } from "@/features/shift-assignments/queries";
 import { createWorkReport } from "@/features/work-reports/actions";
 import { formatDate } from "@/lib/format";
 
-const StaffNewWorkReportPage = async () => {
-    const currentEmployeeId = "emp_2";
+type StaffNewWorkReportPageProps = {
+    searchParams: Promise<{
+        assignmentId?: string;
+    }>;
+};
 
-    const assignment = await getFirstAssignmentByEmployeeId(currentEmployeeId);
+const StaffNewWorkReportPage = async ({
+    searchParams,
+}: StaffNewWorkReportPageProps) => {
+    const { assignmentId } = await searchParams;
+
+    if (!assignmentId) {
+        notFound();
+    }
+
+    const assignment = await getAssignmentById(assignmentId);
 
     if (!assignment) {
         notFound();
     }
 
-    const { job, slot } = assignment;
+    const { job, slot, employee } = assignment;
 
     return (
         <div className="space-y-6">
@@ -51,6 +63,7 @@ const StaffNewWorkReportPage = async () => {
                     <CardTitle>報告対象の案件</CardTitle>
                 </CardHeader>
                 <CardContent className="grid gap-3 text-sm md:grid-cols-2">
+                    <p>従業員：{employee.name}</p>
                     <p>案件名：{job.title}</p>
                     <p>勤務日：{formatDate(job.workDate)}</p>
                     <p>勤務枠：{slot.name}</p>
@@ -69,7 +82,8 @@ const StaffNewWorkReportPage = async () => {
 
                 <CardContent>
                     <form action={createWorkReport} className="space-y-6">
-                        <input type="hidden" name="employeeId" value={currentEmployeeId} />
+                        <input type="hidden" name="assignmentId" value={assignment.id} />
+                        <input type="hidden" name="employeeId" value={employee.id} />
                         <input type="hidden" name="jobId" value={job.id} />
 
                         <div className="grid gap-4 md:grid-cols-2">
