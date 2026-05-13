@@ -19,7 +19,24 @@ export const getJobById = async (jobId: string) => {
           startTime: "asc",
         },
       },
-      shiftAssignments: true,
+      shiftAssignments: {
+        include: {
+          employee: true,
+          slot: true,
+        },
+      },
+    },
+  });
+};
+
+export const getActiveStaffCandidates = async () => {
+  return await prisma.employee.findMany({
+    where: {
+      role: "STAFF",
+      employmentStatus: "ACTIVE",
+    },
+    orderBy: {
+      startedWorkingAt: "asc",
     },
   });
 };

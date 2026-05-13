@@ -16,17 +16,9 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table";
-import {
-    mockCandidates,
-    mockJobs,
-    mockJobShiftSlots,
-    mockShiftAssignments,
-} from "@/features/shared/mock-data";
-import {
-    candidateStatusBadgeVariant,
-    candidateStatusLabel,
-    getCandidatesForJob,
-} from "@/features/candidates/services";
+import { getActiveStaffCandidates, getJobById } from "@/features/jobs/queries";
+import { formatDate, formatMonth, formatYen } from "@/lib/format";
+import type { WageType } from "@prisma/client";
 
 type AdminJobDetailPageProps = {
     params: Promise<{
@@ -34,7 +26,7 @@ type AdminJobDetailPageProps = {
     }>;
 };
 
-const wageTypeLabel = {
+const wageTypeLabel: Record<WageType, string> = {
     EMPLOYEE: "従業員ごとの時給",
     JOB_FIXED: "案件一律時給",
 };
@@ -42,24 +34,19 @@ const wageTypeLabel = {
 const AdminJobDetailPage = async ({ params }: AdminJobDetailPageProps) => {
     const { jobId } = await params;
 
-    const job = mockJobs.find((job) => job.id === jobId);
+    const job = await getJobById(jobId);
 
     if (!job) {
         notFound();
     }
 
-    const slots = mockJobShiftSlots.filter((slot) => slot.jobId === job.id);
+    const candidates = await getActiveStaffCandidates();
 
-    const candidates = getCandidatesForJob(mockCandidates, job.id);
+    const totalRequiredPeople = job.shiftSlots.reduce((total, slot) => {
+        return total + slot.requiredPeople;
+    }, 0);
 
-    const totalRequiredPeople = slots.reduce(
-        (total, slot) => total + slot.requiredPeople,
-        0,
-    );
-
-    const assignedPeople = mockShiftAssignments.filter(
-        (assignment) => assignment.jobId === job.id,
-    ).length;
+    const assignedPeople = job.shiftAssignments.length;
 
     const shortagePeople = Math.max(totalRequiredPeople - assignedPeople, 0);
 
@@ -67,7 +54,6 @@ const AdminJobDetailPage = async ({ params }: AdminJobDetailPageProps) => {
         totalRequiredPeople === 0
             ? 0
             : Math.round((assignedPeople / totalRequiredPeople) * 100);
-
 
     return (
         <div className="space-y-8">
@@ -137,7 +123,7 @@ const AdminJobDetailPage = async ({ params }: AdminJobDetailPageProps) => {
                     <CardContent className="space-y-3 text-sm">
                         <div className="flex justify-between gap-4">
                             <span className="text-slate-500">日付</span>
-                            <span className="font-medium">{job.workDate}</span>
+                            <span className="font-medium">{formatDate(job.workDate)}</span>
                         </div>
 
                         <div className="flex justify-between gap-4">
@@ -172,7 +158,7 @@ const AdminJobDetailPage = async ({ params }: AdminJobDetailPageProps) => {
                         <div className="flex justify-between gap-4">
                             <span className="text-slate-500">交通費</span>
                             <span className="font-medium">
-                                {job.transportationFee.toLocaleString()}円
+                                {formatYen(job.transportationFee)}
                             </span>
                         </div>
                     </CardContent>
@@ -192,7 +178,7 @@ const AdminJobDetailPage = async ({ params }: AdminJobDetailPageProps) => {
                             <span className="text-slate-500">案件一律時給</span>
                             <span className="font-medium">
                                 {job.fixedHourlyWage !== null
-                                    ? `${job.fixedHourlyWage.toLocaleString()}円`
+                                    ? formatYen(job.fixedHourlyWage)
                                     : "未設定"}
                             </span>
                         </div>
@@ -239,7 +225,7 @@ const AdminJobDetailPage = async ({ params }: AdminJobDetailPageProps) => {
                         </TableHeader>
 
                         <TableBody>
-                            {slots.map((slot) => (
+                            {job.shiftSlots.map((slot) => (
                                 <TableRow key={slot.id}>
                                     <TableCell className="font-medium">{slot.name}</TableCell>
                                     <TableCell>{slot.startTime}</TableCell>
@@ -264,30 +250,22 @@ const AdminJobDetailPage = async ({ params }: AdminJobDetailPageProps) => {
                         <TableHeader>
                             <TableRow>
                                 <TableHead>名前</TableHead>
-                                <TableHead>勤務可否</TableHead>
+                                <TableHead>メールアドレス</TableHead>
                                 <TableHead>勤め始めた年月</TableHead>
-                                <TableHead>勤務歴</TableHead>
                                 <TableHead className="text-right">時給</TableHead>
                             </TableRow>
                         </TableHeader>
 
                         <TableBody>
                             {candidates.map((candidate) => (
-                                <TableRow key={candidate.employee.id}>
+                                <TableRow key={candidate.id}>
                                     <TableCell className="font-medium">
-                                        {candidate.employee.name}
+                                        {candidate.name}
                                     </TableCell>
-                                    <TableCell>
-                                        <Badge
-                                            variant={candidateStatusBadgeVariant[candidate.status]}
-                                        >
-                                            {candidateStatusLabel[candidate.status]}
-                                        </Badge>
-                                    </TableCell>
-                                    <TableCell>{candidate.employee.startedWorkingAt}</TableCell>
-                                    <TableCell>{candidate.workExperienceText}</TableCell>
+                                    <TableCell>{candidate.email}</TableCell>
+                                    <TableCell>{formatMonth(candidate.startedWorkingAt)}</TableCell>
                                     <TableCell className="text-right">
-                                        {candidate.employee.hourlyWage.toLocaleString()}円
+                                        {formatYen(candidate.hourlyWage)}
                                     </TableCell>
                                 </TableRow>
                             ))}
