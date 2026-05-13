@@ -1,4 +1,6 @@
+import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
     Card,
     CardContent,
@@ -13,29 +15,13 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table";
-import {
-    mockJobs,
-    mockJobShiftSlots,
-    mockShiftAssignments,
-} from "@/features/shared/mock-data";
+import { getAssignmentsByEmployeeId } from "@/features/shift-assignments/queries";
+import { formatDate } from "@/lib/format";
 
-const StaffShiftsPage = () => {
+const StaffShiftsPage = async () => {
     const currentEmployeeId = "emp_2";
 
-    const myAssignments = mockShiftAssignments.filter(
-        (assignment) => assignment.employeeId === currentEmployeeId,
-    );
-
-    const shiftRows = myAssignments.map((assignment) => {
-        const job = mockJobs.find((job) => job.id === assignment.jobId);
-        const slot = mockJobShiftSlots.find((slot) => slot.id === assignment.slotId);
-
-        return {
-            assignment,
-            job,
-            slot,
-        };
-    });
+    const assignments = await getAssignmentsByEmployeeId(currentEmployeeId);
 
     return (
         <div className="space-y-6">
@@ -62,35 +48,43 @@ const StaffShiftsPage = () => {
                                 <TableHead>場所</TableHead>
                                 <TableHead>集合場所</TableHead>
                                 <TableHead>食事</TableHead>
-                                <TableHead>状態</TableHead>
+                                <TableHead className="text-right">報告</TableHead>
                             </TableRow>
                         </TableHeader>
 
                         <TableBody>
-                            {shiftRows.map(({ assignment, job, slot }) => (
+                            {assignments.map((assignment) => (
                                 <TableRow key={assignment.id}>
-                                    <TableCell>{job?.workDate ?? "-"}</TableCell>
+                                    <TableCell>{formatDate(assignment.job.workDate)}</TableCell>
                                     <TableCell className="font-medium">
-                                        {job?.title ?? "不明な案件"}
+                                        {assignment.job.title}
                                     </TableCell>
-                                    <TableCell>{slot?.name ?? "-"}</TableCell>
+                                    <TableCell>{assignment.slot.name}</TableCell>
                                     <TableCell>
-                                        {slot ? `${slot.startTime}〜${slot.endTime}` : "-"}
+                                        {assignment.slot.startTime}〜{assignment.slot.endTime}
                                     </TableCell>
-                                    <TableCell>{job?.location ?? "-"}</TableCell>
-                                    <TableCell>{job?.meetingPlace ?? "-"}</TableCell>
+                                    <TableCell>{assignment.job.location}</TableCell>
+                                    <TableCell>{assignment.job.meetingPlace}</TableCell>
                                     <TableCell>
-                                        <Badge variant={job?.hasMeal ? "default" : "outline"}>
-                                            {job?.hasMeal ? "あり" : "なし"}
+                                        <Badge variant={assignment.job.hasMeal ? "default" : "outline"}>
+                                            {assignment.job.hasMeal ? "あり" : "なし"}
                                         </Badge>
                                     </TableCell>
-                                    <TableCell>
-                                        <Badge variant="secondary">確定</Badge>
+                                    <TableCell className="text-right">
+                                        <Button asChild size="sm" variant="outline">
+                                            <Link href="/staff/work-reports/new">報告する</Link>
+                                        </Button>
                                     </TableCell>
                                 </TableRow>
                             ))}
                         </TableBody>
                     </Table>
+
+                    {assignments.length === 0 && (
+                        <p className="mt-4 text-sm text-slate-500">
+                            確定しているシフトはありません。
+                        </p>
+                    )}
                 </CardContent>
             </Card>
         </div>
