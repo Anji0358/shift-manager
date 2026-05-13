@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { notFound } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
     Card,
@@ -15,16 +16,20 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
-import { mockJobs, mockShiftAssignments } from "@/features/shared/mock-data";
+import { getFirstAssignmentByEmployeeId } from "@/features/shift-assignments/queries";
+import { createWorkReport } from "@/features/work-reports/actions";
+import { formatDate } from "@/lib/format";
 
-const StaffNewWorkReportPage = () => {
+const StaffNewWorkReportPage = async () => {
     const currentEmployeeId = "emp_2";
 
-    const assignment = mockShiftAssignments.find(
-        (assignment) => assignment.employeeId === currentEmployeeId,
-    );
+    const assignment = await getFirstAssignmentByEmployeeId(currentEmployeeId);
 
-    const job = mockJobs.find((job) => job.id === assignment?.jobId);
+    if (!assignment) {
+        notFound();
+    }
+
+    const { job, slot } = assignment;
 
     return (
         <div className="space-y-6">
@@ -46,10 +51,14 @@ const StaffNewWorkReportPage = () => {
                     <CardTitle>報告対象の案件</CardTitle>
                 </CardHeader>
                 <CardContent className="grid gap-3 text-sm md:grid-cols-2">
-                    <p>案件名：{job?.title ?? "不明な案件"}</p>
-                    <p>勤務日：{job?.workDate ?? "-"}</p>
-                    <p>場所：{job?.location ?? "-"}</p>
-                    <p>集合場所：{job?.meetingPlace ?? "-"}</p>
+                    <p>案件名：{job.title}</p>
+                    <p>勤務日：{formatDate(job.workDate)}</p>
+                    <p>勤務枠：{slot.name}</p>
+                    <p>
+                        勤務時間：{slot.startTime}〜{slot.endTime}
+                    </p>
+                    <p>場所：{job.location}</p>
+                    <p>集合場所：{job.meetingPlace}</p>
                 </CardContent>
             </Card>
 
@@ -59,7 +68,10 @@ const StaffNewWorkReportPage = () => {
                 </CardHeader>
 
                 <CardContent>
-                    <form className="space-y-6">
+                    <form action={createWorkReport} className="space-y-6">
+                        <input type="hidden" name="employeeId" value={currentEmployeeId} />
+                        <input type="hidden" name="jobId" value={job.id} />
+
                         <div className="grid gap-4 md:grid-cols-2">
                             <div className="space-y-2">
                                 <Label htmlFor="actualStartTime">実勤務開始時間</Label>
@@ -67,7 +79,8 @@ const StaffNewWorkReportPage = () => {
                                     id="actualStartTime"
                                     name="actualStartTime"
                                     type="time"
-                                    defaultValue={job?.startTime}
+                                    defaultValue={slot.startTime}
+                                    required
                                 />
                             </div>
 
@@ -77,7 +90,8 @@ const StaffNewWorkReportPage = () => {
                                     id="actualEndTime"
                                     name="actualEndTime"
                                     type="time"
-                                    defaultValue={job?.endTime}
+                                    defaultValue={slot.endTime}
+                                    required
                                 />
                             </div>
 
@@ -87,7 +101,8 @@ const StaffNewWorkReportPage = () => {
                                     id="actualBreakMinutes"
                                     name="actualBreakMinutes"
                                     type="number"
-                                    defaultValue={job?.breakMinutes}
+                                    defaultValue={job.breakMinutes}
+                                    required
                                 />
                             </div>
 
@@ -97,13 +112,17 @@ const StaffNewWorkReportPage = () => {
                                     id="transportationFee"
                                     name="transportationFee"
                                     type="number"
-                                    defaultValue={job?.transportationFee}
+                                    defaultValue={job.transportationFee}
+                                    required
                                 />
                             </div>
 
                             <div className="space-y-2">
                                 <Label htmlFor="hasMeal">食事の有無</Label>
-                                <Select name="hasMeal" defaultValue={job?.hasMeal ? "true" : "false"}>
+                                <Select
+                                    name="hasMeal"
+                                    defaultValue={job.hasMeal ? "true" : "false"}
+                                >
                                     <SelectTrigger id="hasMeal">
                                         <SelectValue placeholder="食事の有無を選択" />
                                     </SelectTrigger>
