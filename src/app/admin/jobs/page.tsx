@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
     Card,
@@ -18,14 +17,27 @@ import {
 import { getJobs } from "@/features/jobs/queries";
 import { formatDate, formatYen } from "@/lib/format";
 import type { WageType } from "@prisma/client";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { getCurrentYearMonth, getMonthRange } from "@/lib/month";
+
+type AdminJobsPageProps = {
+    searchParams: Promise<{
+        month?: string;
+    }>;
+};
 
 const wageTypeLabel: Record<WageType, string> = {
     EMPLOYEE: "従業員ごとの時給",
     JOB_FIXED: "案件一律時給",
 };
 
-const AdminJobsPage = async () => {
-    const jobs = await getJobs();
+const AdminJobsPage = async ({ searchParams }: AdminJobsPageProps) => {
+    const { month } = await searchParams;
+    const targetMonth = month ?? getCurrentYearMonth();
+    const { startDate, endDate } = getMonthRange(targetMonth);
+
+    const jobs = await getJobs(startDate, endDate);
 
     return (
         <div className="space-y-6">
@@ -36,6 +48,16 @@ const AdminJobsPage = async () => {
                         案件情報、勤務時間、集合場所、時給設定を管理します。
                     </p>
                 </div>
+
+                <form className="flex items-end gap-3" action="/admin/jobs">
+                    <div className="space-y-2">
+                        <label htmlFor="month" className="text-sm font-medium">
+                            対象月
+                        </label>
+                        <Input id="month" name="month" type="month" defaultValue={targetMonth} />
+                    </div>
+                    <Button type="submit">表示</Button>
+                </form>
 
                 <Button asChild>
                     <Link href="/admin/jobs/new">案件を追加</Link>

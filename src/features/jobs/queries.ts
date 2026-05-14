@@ -1,7 +1,16 @@
 import { prisma } from "@/lib/prisma";
 
-export const getJobs = async () => {
+export const getJobs = async (startDate?: Date, endDate?: Date) => {
   return await prisma.job.findMany({
+    where:
+      startDate && endDate
+        ? {
+            workDate: {
+              gte: startDate,
+              lt: endDate,
+            },
+          }
+        : undefined,
     orderBy: {
       workDate: "asc",
     },
