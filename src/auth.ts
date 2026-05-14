@@ -1,22 +1,15 @@
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
-import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
-import type { EmployeeRole } from "@prisma/client";
+import authConfig from "./auth.config";
+import { prisma } from "@/lib/prisma";
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
-  session: {
-    strategy: "jwt",
-  },
-
-  pages: {
-    signIn: "/login",
-  },
+  ...authConfig,
 
   providers: [
     Credentials({
       name: "Credentials",
-
       credentials: {
         email: {
           label: "メールアドレス",
@@ -72,24 +65,4 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       },
     }),
   ],
-
- callbacks: {
-  async jwt({ token, user }) {
-    if (user) {
-      token.id = user.id;
-      token.role = user.role;
-    }
-
-    return token;
-  },
-  
-   async session({ session, token }) {
-  if (session.user) {
-    session.user.id = String(token.id);
-    session.user.role = token.role as EmployeeRole;
-  }
-
-  return session;
-},
-  },
 });
