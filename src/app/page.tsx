@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { auth } from "@/auth";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -7,7 +8,9 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-const HomePage = () => {
+const HomePage = async () => {
+  const session = await auth();
+
   return (
     <div className="mx-auto flex min-h-[70vh] max-w-5xl flex-col justify-center space-y-8">
       <section className="space-y-3 text-center">
@@ -23,28 +26,32 @@ const HomePage = () => {
       <section className="grid gap-4 md:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle>管理者として使う</CardTitle>
+            <CardTitle>管理者画面</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <p className="text-sm text-slate-600">
               案件作成、勤務枠作成、シフト確定、就労報告の承認を行います。
             </p>
             <Button asChild className="w-full">
-              <Link href="/admin">管理者画面へ</Link>
+              <Link href={session ? "/admin" : "/login"}>
+                管理者画面へ
+              </Link>
             </Button>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader>
-            <CardTitle>従業員として使う</CardTitle>
+            <CardTitle>勤務者画面</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <p className="text-sm text-slate-600">
               確定シフトの確認、勤務不可情報の登録、就労報告の提出を行います。
             </p>
             <Button asChild variant="outline" className="w-full">
-              <Link href="/staff">従業員画面へ</Link>
+              <Link href={session ? "/staff" : "/login"}>
+                勤務者画面へ
+              </Link>
             </Button>
           </CardContent>
         </Card>

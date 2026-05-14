@@ -1,11 +1,14 @@
 import Link from "next/link";
 import { LogoutButton } from "@/components/shared/logout-button";
+import { requireLogin } from "@/lib/auth/guards";
 
 type StaffLayoutProps = {
     children: React.ReactNode;
 };
 
-const StaffLayout = ({ children }: StaffLayoutProps) => {
+const StaffLayout = async ({ children }: StaffLayoutProps) => {
+    await requireLogin();
+
     return (
         <div className="min-h-screen bg-slate-50">
             <header className="border-b bg-white">
