@@ -7,9 +7,11 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { getAdminDashboardStats } from "@/features/dashboard/admin-queries";
+import { getCurrentAdmin } from "@/lib/auth/current-user";
 
 const AdminPage = async () => {
     const stats = await getAdminDashboardStats();
+    const currentAdmin = await getCurrentAdmin();
 
     return (
         <div className="space-y-8">
@@ -19,6 +21,11 @@ const AdminPage = async () => {
                     <p className="mt-2 text-slate-600">
                         案件、シフト、就労報告、従業員の状況を確認します。
                     </p>
+                    {currentAdmin && (
+                        <p className="mt-1 text-sm text-slate-500">
+                            現在の管理者：{currentAdmin.name}
+                        </p>
+                    )}
                 </div>
 
                 <Button asChild>

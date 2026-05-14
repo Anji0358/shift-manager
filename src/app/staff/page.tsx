@@ -10,10 +10,12 @@ import {
 import { getStaffDashboardStats } from "@/features/dashboard/staff-queries";
 import { getCurrentEmployeeId } from "@/lib/auth/current-user";
 import { formatDate } from "@/lib/format";
+import { getCurrentEmployee } from "@/lib/auth/current-user";
 
 const StaffPage = async () => {
     const currentEmployeeId = getCurrentEmployeeId();
     const stats = await getStaffDashboardStats(currentEmployeeId);
+    const currentEmployee = await getCurrentEmployee();
 
     return (
         <div className="space-y-8">
@@ -22,6 +24,11 @@ const StaffPage = async () => {
                 <p className="mt-2 text-slate-600">
                     自分のシフト、勤務不可情報、就労報告を確認します。
                 </p>
+                {currentEmployee && (
+                    <p className="mt-1 text-sm text-slate-500">
+                        現在の従業員：{currentEmployee.name}
+                    </p>
+                )}
             </section>
 
             <section className="grid gap-4 md:grid-cols-3">
