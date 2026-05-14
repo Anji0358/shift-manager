@@ -20,6 +20,7 @@ import { getAssignmentById } from "@/features/shift-assignments/queries";
 import { createWorkReport } from "@/features/work-reports/actions";
 import { getWorkReportByEmployeeIdAndJobId } from "@/features/work-reports/queries";
 import { formatDate } from "@/lib/format";
+import { getCurrentEmployeeId } from "@/lib/auth/current-user";
 
 type StaffNewWorkReportPageProps = {
     searchParams: Promise<{
@@ -36,14 +37,20 @@ const StaffNewWorkReportPage = async ({
         notFound();
     }
 
+    const currentEmployeeId = await getCurrentEmployeeId();
+
     const assignment = await getAssignmentById(assignmentId);
 
     if (!assignment) {
         notFound();
     }
 
+    if (assignment.employeeId !== currentEmployeeId) {
+        notFound();
+    }
+
     const existingReport = await getWorkReportByEmployeeIdAndJobId(
-        assignment.employeeId,
+        currentEmployeeId,
         assignment.jobId,
     );
 
@@ -72,6 +79,7 @@ const StaffNewWorkReportPage = async ({
                 <CardHeader>
                     <CardTitle>報告対象の案件</CardTitle>
                 </CardHeader>
+
                 <CardContent className="grid gap-3 text-sm md:grid-cols-2">
                     <p>従業員：{employee.name}</p>
                     <p>案件名：{job.title}</p>
@@ -92,8 +100,6 @@ const StaffNewWorkReportPage = async ({
 
                 <CardContent>
                     <form action={createWorkReport} className="space-y-6">
-                        <input type="hidden" name="assignmentId" value={assignment.id} />
-                        <input type="hidden" name="employeeId" value={employee.id} />
                         <input type="hidden" name="jobId" value={job.id} />
 
                         <div className="grid gap-4 md:grid-cols-2">
@@ -125,6 +131,7 @@ const StaffNewWorkReportPage = async ({
                                     id="actualBreakMinutes"
                                     name="actualBreakMinutes"
                                     type="number"
+                                    min={0}
                                     defaultValue={job.breakMinutes}
                                     required
                                 />
@@ -136,6 +143,7 @@ const StaffNewWorkReportPage = async ({
                                     id="transportationFee"
                                     name="transportationFee"
                                     type="number"
+                                    min={0}
                                     defaultValue={job.transportationFee}
                                     required
                                 />
