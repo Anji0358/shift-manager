@@ -13,6 +13,7 @@ import { formatYen } from "@/lib/format";
 import { getCurrentYearMonth, getMonthRange } from "@/lib/month";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { getCurrentEmployeeId } from "@/lib/auth/current-user";
 
 type StaffMonthlySummaryPageProps = {
     searchParams: Promise<{
@@ -23,7 +24,7 @@ type StaffMonthlySummaryPageProps = {
 const StaffMonthlySummaryPage = async ({
     searchParams,
 }: StaffMonthlySummaryPageProps) => {
-    const currentEmployeeId = "emp_2";
+    const currentEmployeeId = getCurrentEmployeeId();
     const { month } = await searchParams;
     const targetMonth = month ?? getCurrentYearMonth();
     const { startDate, endDate } = getMonthRange(targetMonth);

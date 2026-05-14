@@ -18,6 +18,7 @@ import {
 import { getAssignmentsByEmployeeIdAndMonth } from "@/features/shift-assignments/queries";
 import { formatDate } from "@/lib/format";
 import { getCurrentYearMonth, getMonthRange } from "@/lib/month";
+import { getCurrentEmployeeId } from "@/lib/auth/current-user";
 
 type StaffCalendarPageProps = {
     searchParams: Promise<{
@@ -38,7 +39,7 @@ const getDaysInMonth = (yearMonth: string) => {
 };
 
 const StaffCalendarPage = async ({ searchParams }: StaffCalendarPageProps) => {
-    const currentEmployeeId = "emp_2";
+    const currentEmployeeId = getCurrentEmployeeId();
 
     const { month } = await searchParams;
     const targetMonth = month ?? getCurrentYearMonth();

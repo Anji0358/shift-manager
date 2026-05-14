@@ -20,6 +20,7 @@ import {
 } from "@/features/payroll/services";
 import { formatDate, formatYen } from "@/lib/format";
 import type { WorkReportStatus } from "@prisma/client";
+import { getCurrentEmployeeId } from "@/lib/auth/current-user";
 
 const workReportStatusLabel: Record<WorkReportStatus, string> = {
     NOT_SUBMITTED: "未提出",

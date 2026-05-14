@@ -18,9 +18,10 @@ import {
 import { getAssignmentsByEmployeeId } from "@/features/shift-assignments/queries";
 import { getWorkReportsByEmployeeId } from "@/features/work-reports/queries";
 import { formatDate } from "@/lib/format";
+import { getCurrentEmployeeId } from "@/lib/auth/current-user";
 
 const StaffShiftsPage = async () => {
-    const currentEmployeeId = "emp_2";
+    const currentEmployeeId = getCurrentEmployeeId();
 
     const assignments = await getAssignmentsByEmployeeId(currentEmployeeId);
     const reports = await getWorkReportsByEmployeeId(currentEmployeeId);
