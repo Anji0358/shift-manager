@@ -19,6 +19,7 @@ import { getEmployees } from "@/features/employees/queries";
 import { formatMonth, formatYen } from "@/lib/format";
 import type { EmployeeRole, EmploymentStatus } from "@prisma/client";
 import { deactivateEmployee } from "@/features/employees/actions";
+import { SuccessMessage } from "@/components/shared/success-message";
 
 const roleLabel: Record<EmployeeRole, string> = {
     ADMIN: "管理者",
@@ -30,7 +31,16 @@ const employmentStatusLabel: Record<EmploymentStatus, string> = {
     INACTIVE: "退職済み",
 };
 
-const AdminEmployeesPage = async () => {
+type AdminEmployeesPageProps = {
+    searchParams: Promise<{
+        message?: string;
+    }>;
+};
+
+const AdminEmployeesPage = async ({
+    searchParams,
+}: AdminEmployeesPageProps) => {
+    const { message } = await searchParams;
     const employees = await getEmployees();
 
     return (
@@ -47,6 +57,8 @@ const AdminEmployeesPage = async () => {
                     <Link href="/admin/employees/new">従業員を追加</Link>
                 </Button>
             </section>
+
+            <SuccessMessage message={message} />
 
             <Card>
                 <CardHeader>

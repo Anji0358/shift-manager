@@ -52,7 +52,7 @@ export const createJob = async (formData: FormData) => {
   });
 
   revalidatePath("/admin/jobs");
-  redirect("/admin/jobs");
+  redirect("/admin/jobs?message=created");
 };
 
 export const deleteJob = async (formData: FormData) => {
@@ -86,5 +86,5 @@ export const deleteJob = async (formData: FormData) => {
   ]);
 
   revalidatePath("/admin/jobs");
-  redirect("/admin/jobs");
+  redirect("/admin/jobs?message=deleted");
 };

@@ -19,6 +19,7 @@ import { getUnavailableTimesByEmployeeId } from "@/features/unavailable-times/qu
 import { formatDate } from "@/lib/format";
 import { deleteUnavailableTime } from "@/features/unavailable-times/actions";
 import type { DayOfWeek, UnavailableType } from "@prisma/client";
+import { SuccessMessage } from "@/components/shared/success-message";
 
 const unavailableTypeLabel: Record<UnavailableType, string> = {
     FULL_DAY: "一日NG",
@@ -37,7 +38,16 @@ const dayOfWeekLabel: Record<DayOfWeek, string> = {
     SUNDAY: "日曜日",
 };
 
-const StaffUnavailableTimesPage = async () => {
+type StaffUnavailableTimesPageProps = {
+    searchParams: Promise<{
+        message?: string;
+    }>;
+};
+
+const StaffUnavailableTimesPage = async ({
+    searchParams,
+}: StaffUnavailableTimesPageProps) => {
+    const { message } = await searchParams;
     const currentEmployeeId = "emp_2";
 
     const myUnavailableTimes =
@@ -52,6 +62,8 @@ const StaffUnavailableTimesPage = async () => {
                         一日NG、時間指定NG、毎週固定NG、一時的な予定NGを確認します。
                     </p>
                 </div>
+
+                <SuccessMessage message={message} />
 
                 <div className="flex gap-3">
                     <Button asChild variant="outline">

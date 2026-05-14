@@ -31,18 +31,24 @@ import { getActiveStaffCandidates, getJobById } from "@/features/jobs/queries";
 import { getAssignmentsByJobId } from "@/features/shift-assignments/queries";
 import { isUnavailableForSlot } from "@/features/unavailable-times/services";
 import { formatDate, formatMonth, formatYen } from "@/lib/format";
-
+import { SuccessMessage } from "@/components/shared/success-message";
 
 type AdminJobAssignmentsPageProps = {
     params: Promise<{
         jobId: string;
     }>;
+    searchParams: Promise<{
+        message?: string;
+    }>;
 };
 
 const AdminJobAssignmentsPage = async ({
     params,
+    searchParams,
 }: AdminJobAssignmentsPageProps) => {
     const { jobId } = await params;
+    const { message } = await searchParams;
+
 
     const job = await getJobById(jobId);
 
@@ -68,6 +74,8 @@ const AdminJobAssignmentsPage = async ({
                     <Link href={`/admin/jobs/${job.id}`}>案件詳細へ戻る</Link>
                 </Button>
             </section>
+
+            <SuccessMessage message={message} />
 
             <Card>
                 <CardHeader>

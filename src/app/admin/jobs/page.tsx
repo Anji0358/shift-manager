@@ -20,10 +20,12 @@ import type { WageType } from "@prisma/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { getCurrentYearMonth, getMonthRange } from "@/lib/month";
+import { SuccessMessage } from "@/components/shared/success-message";
 
 type AdminJobsPageProps = {
     searchParams: Promise<{
         month?: string;
+        message?: string;
     }>;
 };
 
@@ -33,7 +35,7 @@ const wageTypeLabel: Record<WageType, string> = {
 };
 
 const AdminJobsPage = async ({ searchParams }: AdminJobsPageProps) => {
-    const { month } = await searchParams;
+    const { month, message } = await searchParams;
     const targetMonth = month ?? getCurrentYearMonth();
     const { startDate, endDate } = getMonthRange(targetMonth);
 
@@ -48,6 +50,8 @@ const AdminJobsPage = async ({ searchParams }: AdminJobsPageProps) => {
                         案件情報、勤務時間、集合場所、時給設定を管理します。
                     </p>
                 </div>
+
+                <SuccessMessage message={message} />
 
                 <form className="flex items-end gap-3" action="/admin/jobs">
                     <div className="space-y-2">

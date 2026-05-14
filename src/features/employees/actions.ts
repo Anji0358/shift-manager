@@ -36,7 +36,7 @@ export const createEmployee = async (formData: FormData) => {
   });
 
   revalidatePath("/admin/employees");
-  redirect("/admin/employees");
+  redirect("/admin/employees?message=created");
 };
 
 export const deactivateEmployee = async (formData: FormData) => {
@@ -68,4 +68,6 @@ export const deactivateEmployee = async (formData: FormData) => {
   revalidatePath("/admin/employees");
   revalidatePath("/admin/jobs");
   revalidatePath("/staff/shifts");
+
+  redirect("/admin/employees?message=deactivated");
 };

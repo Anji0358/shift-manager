@@ -96,7 +96,7 @@ export const createShiftAssignment = async (formData: FormData) => {
   revalidatePath("/staff/shifts");
   revalidatePath("/staff/calendar");
 
-  redirect(`/admin/jobs/${jobId}/assignments`);
+  redirect(`/admin/jobs/${jobId}/assignments?message=assigned`);
 };
 
 export const cancelShiftAssignment = async (formData: FormData) => {
@@ -121,5 +121,5 @@ export const cancelShiftAssignment = async (formData: FormData) => {
   revalidatePath("/staff/shifts");
   revalidatePath("/staff/calendar");
 
-  redirect(`/admin/jobs/${jobId}/assignments`);
+  redirect(`/admin/jobs/${jobId}/assignments?message=canceled`);
 };

@@ -48,4 +48,5 @@ export const deleteUnavailableTime = async (formData: FormData) => {
   });
 
   revalidatePath("/staff/unavailable-times");
+  redirect("/staff/unavailable-times?message=deleted");
 };
