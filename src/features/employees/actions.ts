@@ -1,27 +1,41 @@
 "use server";
 
+import bcrypt from "bcryptjs";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
-import {
-  getPositiveNumber,
-  getRequiredString,
-  validateEmail,
-} from "@/lib/validation";
-import type { EmployeeRole, EmploymentStatus } from "@prisma/client";
 
 export const createEmployee = async (formData: FormData) => {
-  const name = getRequiredString(formData, "name");
-  const email = getRequiredString(formData, "email");
-  const role = getRequiredString(formData, "role") as EmployeeRole;
-  const hourlyWage = getPositiveNumber(formData, "hourlyWage");
-  const startedWorkingAt = getRequiredString(formData, "startedWorkingAt");
-  const employmentStatus = getRequiredString(
-    formData,
-    "employmentStatus",
-  ) as EmploymentStatus;
+  const name = String(formData.get("name") ?? "");
+  const email = String(formData.get("email") ?? "");
+  const role = String(formData.get("role") ?? "STAFF");
+  const hourlyWage = Number(formData.get("hourlyWage") ?? 0);
+  const startedWorkingAt = String(formData.get("startedWorkingAt") ?? "");
+  const password = String(formData.get("password") ?? "");
 
-  validateEmail(email);
+  if (!name || !email || !startedWorkingAt || !password) {
+    throw new Error("従業員登録に必要な情報が不足しています。");
+  }
+
+  if (password.length < 8) {
+    throw new Error("パスワードは8文字以上で入力してください。");
+  }
+
+  if (role !== "ADMIN" && role !== "STAFF") {
+    throw new Error("権限の値が不正です。");
+  }
+
+  const existingEmployee = await prisma.employee.findUnique({
+    where: {
+      email,
+    },
+  });
+
+  if (existingEmployee) {
+    throw new Error("このメールアドレスはすでに登録されています。");
+  }
+
+  const passwordHash = await bcrypt.hash(password, 10);
 
   await prisma.employee.create({
     data: {
@@ -30,8 +44,8 @@ export const createEmployee = async (formData: FormData) => {
       role,
       hourlyWage,
       startedWorkingAt: new Date(startedWorkingAt),
-      employmentStatus,
-      passwordHash: "not_set_yet",
+      employmentStatus: "ACTIVE",
+      passwordHash,
     },
   });
 

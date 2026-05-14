@@ -52,6 +52,19 @@ const AdminNewEmployeePage = () => {
                             </div>
 
                             <div className="space-y-2">
+                                <label htmlFor="password" className="text-sm font-medium">
+                                    初期パスワード
+                                </label>
+                                <Input
+                                    id="password"
+                                    name="password"
+                                    type="password"
+                                    placeholder="8文字以上"
+                                    required
+                                />
+                            </div>
+
+                            <div className="space-y-2">
                                 <Label htmlFor="role">権限</Label>
                                 <Select name="role" defaultValue="STAFF">
                                     <SelectTrigger id="role">
