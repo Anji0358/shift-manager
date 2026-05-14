@@ -21,6 +21,7 @@ import { deleteUnavailableTime } from "@/features/unavailable-times/actions";
 import type { DayOfWeek, UnavailableType } from "@prisma/client";
 import { SuccessMessage } from "@/components/shared/success-message";
 import { ConfirmSubmitButton } from "@/components/shared/confirm-submit-button";
+import { getCurrentEmployeeId } from "@/lib/auth/current-user";
 
 const unavailableTypeLabel: Record<UnavailableType, string> = {
     FULL_DAY: "一日NG",
@@ -49,8 +50,7 @@ const StaffUnavailableTimesPage = async ({
     searchParams,
 }: StaffUnavailableTimesPageProps) => {
     const { message } = await searchParams;
-    const currentEmployeeId = "emp_2";
-
+    const currentEmployeeId = await getCurrentEmployeeId();
     const myUnavailableTimes =
         await getUnavailableTimesByEmployeeId(currentEmployeeId);
 

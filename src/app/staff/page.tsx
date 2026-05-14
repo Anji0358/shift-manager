@@ -13,7 +13,7 @@ import { formatDate } from "@/lib/format";
 import { getCurrentEmployee } from "@/lib/auth/current-user";
 
 const StaffPage = async () => {
-    const currentEmployeeId = getCurrentEmployeeId();
+    const currentEmployeeId = await getCurrentEmployeeId();
     const stats = await getStaffDashboardStats(currentEmployeeId);
     const currentEmployee = await getCurrentEmployee();
 

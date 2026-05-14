@@ -39,7 +39,7 @@ const getDaysInMonth = (yearMonth: string) => {
 };
 
 const StaffCalendarPage = async ({ searchParams }: StaffCalendarPageProps) => {
-    const currentEmployeeId = getCurrentEmployeeId();
+    const currentEmployeeId = await getCurrentEmployeeId();
 
     const { month } = await searchParams;
     const targetMonth = month ?? getCurrentYearMonth();

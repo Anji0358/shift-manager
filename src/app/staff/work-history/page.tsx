@@ -40,8 +40,7 @@ const workReportStatusBadgeVariant: Record<
 };
 
 const StaffWorkHistoryPage = async () => {
-    const currentEmployeeId = "emp_2";
-
+    const currentEmployeeId = await getCurrentEmployeeId();
     const reports = await getWorkReportsByEmployeeId(currentEmployeeId);
 
     return (

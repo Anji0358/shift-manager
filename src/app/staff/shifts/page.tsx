@@ -21,7 +21,7 @@ import { formatDate } from "@/lib/format";
 import { getCurrentEmployeeId } from "@/lib/auth/current-user";
 
 const StaffShiftsPage = async () => {
-    const currentEmployeeId = getCurrentEmployeeId();
+    const currentEmployeeId = await getCurrentEmployeeId();
 
     const assignments = await getAssignmentsByEmployeeId(currentEmployeeId);
     const reports = await getWorkReportsByEmployeeId(currentEmployeeId);

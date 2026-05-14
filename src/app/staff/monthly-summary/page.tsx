@@ -24,7 +24,7 @@ type StaffMonthlySummaryPageProps = {
 const StaffMonthlySummaryPage = async ({
     searchParams,
 }: StaffMonthlySummaryPageProps) => {
-    const currentEmployeeId = getCurrentEmployeeId();
+    const currentEmployeeId = await getCurrentEmployeeId();
     const { month } = await searchParams;
     const targetMonth = month ?? getCurrentYearMonth();
     const { startDate, endDate } = getMonthRange(targetMonth);
