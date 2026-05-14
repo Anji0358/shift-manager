@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { getCurrentEmployeeId } from "@/lib/auth/current-user";
+import { requireAdmin } from "@/lib/auth/guards";
 
 export const createWorkReport = async (formData: FormData) => {
   const employeeId = await getCurrentEmployeeId();
@@ -70,6 +71,9 @@ export const createWorkReport = async (formData: FormData) => {
 };
 
 export const approveWorkReport = async (formData: FormData) => {
+
+  await requireAdmin();
+
   const reportId = String(formData.get("reportId"));
 
   if (!reportId) {
@@ -91,6 +95,9 @@ export const approveWorkReport = async (formData: FormData) => {
 };
 
 export const rejectWorkReport = async (formData: FormData) => {
+
+  await requireAdmin();
+
   const reportId = String(formData.get("reportId"));
 
   if (!reportId) {

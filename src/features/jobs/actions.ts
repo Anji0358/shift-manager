@@ -10,8 +10,11 @@ import {
   validateTimeOrder,
 } from "@/lib/validation";
 import type { WageType } from "@prisma/client";
+import { requireAdmin } from "@/lib/auth/guards";
 
 export const createJob = async (formData: FormData) => {
+   await requireAdmin();
+
   const title = getRequiredString(formData, "title");
   const workDate = getRequiredString(formData, "workDate");
   const location = getRequiredString(formData, "location");
@@ -56,6 +59,8 @@ export const createJob = async (formData: FormData) => {
 };
 
 export const deleteJob = async (formData: FormData) => {
+  await requireAdmin();
+
   const jobId = String(formData.get("jobId"));
 
   if (!jobId) {

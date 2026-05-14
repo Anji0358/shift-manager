@@ -4,8 +4,12 @@ import bcrypt from "bcryptjs";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
+import { requireAdmin } from "@/lib/auth/guards";
 
 export const createEmployee = async (formData: FormData) => {
+
+  await requireAdmin();
+
   const name = String(formData.get("name") ?? "");
   const email = String(formData.get("email") ?? "");
   const role = String(formData.get("role") ?? "STAFF");
@@ -54,6 +58,9 @@ export const createEmployee = async (formData: FormData) => {
 };
 
 export const deactivateEmployee = async (formData: FormData) => {
+
+  await requireAdmin();
+
   const employeeId = String(formData.get("employeeId"));
 
   if (!employeeId) {
@@ -87,6 +94,9 @@ export const deactivateEmployee = async (formData: FormData) => {
 };
 
 export const resetEmployeePassword = async (formData: FormData) => {
+
+  await requireAdmin();
+
   const employeeId = String(formData.get("employeeId") ?? "");
   const password = String(formData.get("password") ?? "");
 

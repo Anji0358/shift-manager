@@ -4,8 +4,12 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { isUnavailableForSlot } from "@/features/unavailable-times/services";
+import { requireAdmin } from "@/lib/auth/guards";
 
 export const createShiftAssignment = async (formData: FormData) => {
+
+  await requireAdmin();
+
   const jobId = String(formData.get("jobId"));
   const slotId = String(formData.get("slotId"));
   const employeeId = String(formData.get("employeeId"));
@@ -100,6 +104,9 @@ export const createShiftAssignment = async (formData: FormData) => {
 };
 
 export const cancelShiftAssignment = async (formData: FormData) => {
+
+  await requireAdmin();
+  
   const assignmentId = String(formData.get("assignmentId"));
   const jobId = String(formData.get("jobId"));
 

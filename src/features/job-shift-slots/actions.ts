@@ -8,8 +8,11 @@ import {
   getRequiredString,
   validateTimeOrder,
 } from "@/lib/validation";
+import { requireAdmin } from "@/lib/auth/guards";
 
 export const createJobShiftSlot = async (formData: FormData) => {
+  await requireAdmin();
+
   const jobId = getRequiredString(formData, "jobId");
   const name = getRequiredString(formData, "name");
   const startTime = getRequiredString(formData, "startTime");
