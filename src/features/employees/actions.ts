@@ -85,3 +85,30 @@ export const deactivateEmployee = async (formData: FormData) => {
 
   redirect("/admin/employees?message=deactivated");
 };
+
+export const resetEmployeePassword = async (formData: FormData) => {
+  const employeeId = String(formData.get("employeeId") ?? "");
+  const password = String(formData.get("password") ?? "");
+
+  if (!employeeId || !password) {
+    throw new Error("パスワードリセットに必要な情報が不足しています。");
+  }
+
+  if (password.length < 8) {
+    throw new Error("パスワードは8文字以上で入力してください。");
+  }
+
+  const passwordHash = await bcrypt.hash(password, 10);
+
+  await prisma.employee.update({
+    where: {
+      id: employeeId,
+    },
+    data: {
+      passwordHash,
+    },
+  });
+
+  revalidatePath("/admin/employees");
+  redirect("/admin/employees?message=updated");
+};

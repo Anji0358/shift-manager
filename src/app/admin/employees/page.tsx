@@ -21,6 +21,8 @@ import type { EmployeeRole, EmploymentStatus } from "@prisma/client";
 import { deactivateEmployee } from "@/features/employees/actions";
 import { SuccessMessage } from "@/components/shared/success-message";
 import { ConfirmSubmitButton } from "@/components/shared/confirm-submit-button";
+import { resetEmployeePassword } from "@/features/employees/actions";
+import { Input } from '@/components/ui/input';
 
 const roleLabel: Record<EmployeeRole, string> = {
     ADMIN: "管理者",
@@ -124,6 +126,21 @@ const AdminEmployeesPage = async ({
                                         ) : (
                                             <span className="text-sm text-slate-400">退職済み</span>
                                         )}
+
+                                        <form action={resetEmployeePassword} className="mt-2 flex justify-end gap-2">
+                                            <input type="hidden" name="employeeId" value={employee.id} />
+                                            <Input
+                                                name="password"
+                                                type="password"
+                                                placeholder="新パスワード"
+                                                className="h-8 w-36"
+                                                minLength={8}
+                                                required
+                                            />
+                                            <Button size="sm" type="submit" variant="outline">
+                                                リセット
+                                            </Button>
+                                        </form>
                                     </TableCell>
                                 </TableRow>
                             ))}
