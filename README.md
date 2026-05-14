@@ -150,3 +150,22 @@ http://localhost:3000
 - Vercel へのデプロイ
 - フォームエラーのインライン表示
 - toast による通知表示
+
+## 環境変数
+
+このアプリでは以下の環境変数を使用します。
+
+| 変数名            | 内容                                          |
+| ----------------- | --------------------------------------------- |
+| `DATABASE_URL`    | PostgreSQL の接続URL                          |
+| `AUTH_SECRET`     | Auth.js の署名用シークレット                  |
+| `AUTH_TRUST_HOST` | Vercelなど本番環境でAuth.jsを動かすための設定 |
+
+`.env.example` をコピーして `.env.local` を作成してください。
+
+```bash
+cp .env.example .env.local
+
+---
+
+```
