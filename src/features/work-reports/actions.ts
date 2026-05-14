@@ -3,18 +3,19 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
+import { getCurrentEmployeeId } from "@/lib/auth/current-user";
 
 export const createWorkReport = async (formData: FormData) => {
-  const employeeId = String(formData.get("employeeId"));
-  const jobId = String(formData.get("jobId"));
-  const actualStartTime = String(formData.get("actualStartTime"));
-  const actualEndTime = String(formData.get("actualEndTime"));
-  const actualBreakMinutes = Number(formData.get("actualBreakMinutes"));
-  const transportationFee = Number(formData.get("transportationFee"));
+  const employeeId = await getCurrentEmployeeId();
+
+  const jobId = String(formData.get("jobId") ?? "");
+  const actualStartTime = String(formData.get("actualStartTime") ?? "");
+  const actualEndTime = String(formData.get("actualEndTime") ?? "");
+  const actualBreakMinutes = Number(formData.get("actualBreakMinutes") ?? 0);
+  const transportationFee = Number(formData.get("transportationFee") ?? 0);
   const hasMeal = String(formData.get("hasMeal")) === "true";
 
   if (
-    !employeeId ||
     !jobId ||
     !actualStartTime ||
     !actualEndTime ||
@@ -22,6 +23,18 @@ export const createWorkReport = async (formData: FormData) => {
     Number.isNaN(transportationFee)
   ) {
     throw new Error("就労報告の入力内容が不足しています。");
+  }
+
+  const assignment = await prisma.shiftAssignment.findFirst({
+    where: {
+      employeeId,
+      jobId,
+      status: "ASSIGNED",
+    },
+  });
+
+  if (!assignment) {
+    throw new Error("自分に割り当てられていない案件の就労報告は提出できません。");
   }
 
   const existingReport = await prisma.workReport.findFirst({

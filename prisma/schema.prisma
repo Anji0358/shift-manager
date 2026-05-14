@@ -142,7 +142,7 @@ model UnavailableTime {
   dayOfWeek   DayOfWeek?
   startTime   String?
   endTime     String?
-  reason      String
+  reason      String?
 
   employee    Employee           @relation(fields: [employeeId], references: [id], onDelete: Cascade)
 
