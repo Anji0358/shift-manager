@@ -4,17 +4,35 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card";
-import { getWorkReportsByEmployeeId } from "@/features/work-reports/queries";
+import { getWorkReportsByEmployeeIdAndMonth } from "@/features/work-reports/queries";
 import {
     calculateEstimatedSalary,
     calculateWorkHours,
 } from "@/features/payroll/services";
 import { formatYen } from "@/lib/format";
+import { getCurrentYearMonth, getMonthRange } from "@/lib/month";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
-const StaffMonthlySummaryPage = async () => {
+type StaffMonthlySummaryPageProps = {
+    searchParams: Promise<{
+        month?: string;
+    }>;
+};
+
+const StaffMonthlySummaryPage = async ({
+    searchParams,
+}: StaffMonthlySummaryPageProps) => {
     const currentEmployeeId = "emp_2";
+    const { month } = await searchParams;
+    const targetMonth = month ?? getCurrentYearMonth();
+    const { startDate, endDate } = getMonthRange(targetMonth);
 
-    const reports = await getWorkReportsByEmployeeId(currentEmployeeId);
+    const reports = await getWorkReportsByEmployeeIdAndMonth(
+        currentEmployeeId,
+        startDate,
+        endDate,
+    );
 
     const totalWorkHours = reports.reduce((total, report) => {
         return (
@@ -42,6 +60,16 @@ const StaffMonthlySummaryPage = async () => {
                     今月の勤務回数、勤務時間、給与見込みを確認します。
                 </p>
             </section>
+
+            <form className="flex items-end gap-3" action="/staff/monthly-summary">
+                <div className="space-y-2">
+                    <label htmlFor="month" className="text-sm font-medium">
+                        対象月
+                    </label>
+                    <Input id="month" name="month" type="month" defaultValue={targetMonth} />
+                </div>
+                <Button type="submit">表示</Button>
+            </form>
 
             <section className="grid gap-4 md:grid-cols-3">
                 <Card>

@@ -38,3 +38,51 @@ export const getWorkReportByEmployeeIdAndJobId = async (
     },
   });
 };
+
+export const getWorkReportsByEmployeeIdAndMonth = async (
+  employeeId: string,
+  startDate: Date,
+  endDate: Date,
+) => {
+  return await prisma.workReport.findMany({
+    where: {
+      employeeId,
+      job: {
+        workDate: {
+          gte: startDate,
+          lt: endDate,
+        },
+      },
+    },
+    include: {
+      job: true,
+      employee: true,
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+};
+
+export const getWorkReportsByMonth = async (
+  startDate: Date,
+  endDate: Date,
+) => {
+  return await prisma.workReport.findMany({
+    where: {
+      job: {
+        workDate: {
+          gte: startDate,
+          lt: endDate,
+        },
+      },
+    },
+    include: {
+      job: true,
+      employee: true,
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+};

@@ -18,10 +18,24 @@ import {
     calculateWorkHours,
 } from "@/features/payroll/services";
 import { formatYen } from "@/lib/format";
+import { getWorkReportsByMonth } from "@/features/work-reports/queries";
+import { getCurrentYearMonth, getMonthRange } from "@/lib/month";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
-const AdminMonthlySummaryPage = async () => {
-    const reports = await getWorkReports();
+type AdminMonthlySummaryPageProps = {
+    searchParams: Promise<{
+        month?: string;
+    }>;
+};
 
+const AdminMonthlySummaryPage = async ({
+    searchParams,
+}: AdminMonthlySummaryPageProps) => {
+    const { month } = await searchParams;
+    const targetMonth = month ?? getCurrentYearMonth();
+    const { startDate, endDate } = getMonthRange(targetMonth);
+    const reports = await getWorkReportsByMonth(startDate, endDate);
     const totalWorkHours = reports.reduce((total, report) => {
         return (
             total +
@@ -91,6 +105,16 @@ const AdminMonthlySummaryPage = async () => {
                     全従業員の勤務時間、人件費、従業員別実績を確認します。
                 </p>
             </section>
+
+            <form className="flex items-end gap-3" action="/admin/monthly-summary">
+                <div className="space-y-2">
+                    <label htmlFor="month" className="text-sm font-medium">
+                        対象月
+                    </label>
+                    <Input id="month" name="month" type="month" defaultValue={targetMonth} />
+                </div>
+                <Button type="submit">表示</Button>
+            </form>
 
             <section className="grid gap-4 md:grid-cols-3">
                 <Card>
