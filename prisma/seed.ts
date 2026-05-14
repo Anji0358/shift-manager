@@ -1,6 +1,7 @@
 import "dotenv/config";
 import { PrismaClient } from "@prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
+import bcrypt from "bcryptjs";
 
 const connectionString = process.env.DATABASE_URL;
 
@@ -24,6 +25,8 @@ const main = async () => {
   await prisma.job.deleteMany();
   await prisma.employee.deleteMany();
 
+  const passwordHash = await bcrypt.hash("password", 10);
+
   const admin = await prisma.employee.create({
     data: {
       id: "emp_1",
@@ -33,7 +36,7 @@ const main = async () => {
       hourlyWage: 0,
       startedWorkingAt: new Date("2024-01-01"),
       employmentStatus: "ACTIVE",
-      passwordHash: "not_set_yet",
+      passwordHash,
     },
   });
 
@@ -46,7 +49,7 @@ const main = async () => {
       hourlyWage: 1200,
       startedWorkingAt: new Date("2024-04-01"),
       employmentStatus: "ACTIVE",
-      passwordHash: "not_set_yet",
+      passwordHash,
     },
   });
 
@@ -59,11 +62,12 @@ const main = async () => {
       hourlyWage: 1300,
       startedWorkingAt: new Date("2023-10-01"),
       employmentStatus: "ACTIVE",
-      passwordHash: "not_set_yet",
+      passwordHash,
     },
   });
 
   const today = new Date();
+
   const futureWorkDate = new Date(
     today.getFullYear(),
     today.getMonth(),
@@ -124,12 +128,32 @@ const main = async () => {
     },
   });
 
+  console.log("Seed completed.");
+
   console.log({
-    admin,
-    staff,
-    staff2,
-    job,
-    slot,
+    admin: {
+      id: admin.id,
+      email: admin.email,
+      role: admin.role,
+    },
+    staff: {
+      id: staff.id,
+      email: staff.email,
+      role: staff.role,
+    },
+    staff2: {
+      id: staff2.id,
+      email: staff2.email,
+      role: staff2.role,
+    },
+    job: {
+      id: job.id,
+      title: job.title,
+    },
+    slot: {
+      id: slot.id,
+      name: slot.name,
+    },
   });
 };
 

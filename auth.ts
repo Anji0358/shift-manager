@@ -2,6 +2,7 @@ import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
+import type { EmployeeRole } from "@prisma/client";
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   session: {
@@ -72,23 +73,23 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     }),
   ],
 
-  callbacks: {
-    async jwt({ token, user }) {
-      if (user) {
-        token.id = user.id;
-        token.role = user.role;
-      }
+ callbacks: {
+  async jwt({ token, user }) {
+    if (user) {
+      token.id = user.id;
+      token.role = user.role;
+    }
 
-      return token;
-    },
+    return token;
+  },
+  
+   async session({ session, token }) {
+  if (session.user) {
+    session.user.id = String(token.id);
+    session.user.role = token.role as EmployeeRole;
+  }
 
-    async session({ session, token }) {
-      if (session.user && token.id && token.role) {
-        session.user.id = token.id;
-        session.user.role = token.role;
-      }
-
-      return session;
-    },
+  return session;
+},
   },
 });
