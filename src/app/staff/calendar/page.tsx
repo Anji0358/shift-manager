@@ -1,10 +1,12 @@
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
     Card,
     CardContent,
     CardHeader,
     CardTitle,
 } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import {
     Table,
     TableBody,
@@ -13,19 +15,45 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table";
-import { getAssignmentsByEmployeeId } from "@/features/shift-assignments/queries";
+import { getAssignmentsByEmployeeIdAndMonth } from "@/features/shift-assignments/queries";
 import { formatDate } from "@/lib/format";
+import { getCurrentYearMonth, getMonthRange } from "@/lib/month";
+
+type StaffCalendarPageProps = {
+    searchParams: Promise<{
+        month?: string;
+    }>;
+};
 
 const getDayNumber = (date: Date) => {
     return date.getDate();
 };
 
-const StaffCalendarPage = async () => {
+const getDaysInMonth = (yearMonth: string) => {
+    const [yearText, monthText] = yearMonth.split("-");
+    const year = Number(yearText);
+    const month = Number(monthText);
+
+    return new Date(year, month, 0).getDate();
+};
+
+const StaffCalendarPage = async ({ searchParams }: StaffCalendarPageProps) => {
     const currentEmployeeId = "emp_2";
 
-    const assignments = await getAssignmentsByEmployeeId(currentEmployeeId);
+    const { month } = await searchParams;
+    const targetMonth = month ?? getCurrentYearMonth();
+    const { startDate, endDate } = getMonthRange(targetMonth);
 
-    const days = Array.from({ length: 31 }, (_, index) => index + 1);
+    const assignments = await getAssignmentsByEmployeeIdAndMonth(
+        currentEmployeeId,
+        startDate,
+        endDate,
+    );
+
+    const days = Array.from(
+        { length: getDaysInMonth(targetMonth) },
+        (_, index) => index + 1,
+    );
 
     return (
         <div className="space-y-8">
@@ -36,9 +64,19 @@ const StaffCalendarPage = async () => {
                 </p>
             </section>
 
+            <form className="flex items-end gap-3" action="/staff/calendar">
+                <div className="space-y-2">
+                    <label htmlFor="month" className="text-sm font-medium">
+                        対象月
+                    </label>
+                    <Input id="month" name="month" type="month" defaultValue={targetMonth} />
+                </div>
+                <Button type="submit">表示</Button>
+            </form>
+
             <Card>
                 <CardHeader>
-                    <CardTitle>2026年5月</CardTitle>
+                    <CardTitle>{targetMonth}</CardTitle>
                 </CardHeader>
 
                 <CardContent>
@@ -131,7 +169,7 @@ const StaffCalendarPage = async () => {
 
                     {assignments.length === 0 && (
                         <p className="mt-4 text-sm text-slate-500">
-                            確定しているシフトはありません。
+                            対象月に確定しているシフトはありません。
                         </p>
                     )}
                 </CardContent>

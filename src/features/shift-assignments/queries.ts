@@ -62,3 +62,32 @@ export const getAssignmentById = async (assignmentId: string) => {
     },
   });
 };
+
+export const getAssignmentsByEmployeeIdAndMonth = async (
+  employeeId: string,
+  startDate: Date,
+  endDate: Date,
+) => {
+  return await prisma.shiftAssignment.findMany({
+    where: {
+      employeeId,
+      status: "ASSIGNED",
+      job: {
+        workDate: {
+          gte: startDate,
+          lt: endDate,
+        },
+      },
+    },
+    include: {
+      job: true,
+      slot: true,
+      employee: true,
+    },
+    orderBy: {
+      job: {
+        workDate: "asc",
+      },
+    },
+  });
+};
