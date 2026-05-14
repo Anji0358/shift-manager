@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { LogoutButton } from "@/components/shared/logout-button";
 
 type AdminLayoutProps = {
     children: React.ReactNode;
@@ -13,13 +14,17 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
                         Shift Manager Admin
                     </Link>
 
-                    <nav className="flex gap-4 text-sm text-slate-600">
-                        <Link href="/admin/jobs">案件</Link>
-                        <Link href="/admin/employees">従業員</Link>
-                        <Link href="/admin/work-reports">就労報告</Link>
-                        <Link href="/admin/monthly-summary">月次集計</Link>
-                        <Link href="/">トップ</Link>
-                    </nav>
+                    <div className="flex items-center gap-6">
+                        <nav className="flex gap-4 text-sm text-slate-600">
+                            <Link href="/admin/jobs">案件</Link>
+                            <Link href="/admin/employees">従業員</Link>
+                            <Link href="/admin/work-reports">就労報告</Link>
+                            <Link href="/admin/monthly-summary">月次集計</Link>
+                            <Link href="/">トップ</Link>
+                        </nav>
+
+                        <LogoutButton />
+                    </div>
                 </div>
             </header>
 
