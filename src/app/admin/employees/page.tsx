@@ -18,6 +18,7 @@ import {
 import { getEmployees } from "@/features/employees/queries";
 import { formatMonth, formatYen } from "@/lib/format";
 import type { EmployeeRole, EmploymentStatus } from "@prisma/client";
+import { deactivateEmployee } from "@/features/employees/actions";
 
 const roleLabel: Record<EmployeeRole, string> = {
     ADMIN: "管理者",
@@ -62,6 +63,7 @@ const AdminEmployeesPage = async () => {
                                 <TableHead className="text-right">時給</TableHead>
                                 <TableHead>勤め始めた年月</TableHead>
                                 <TableHead>在籍状況</TableHead>
+                                <TableHead className="text-right">操作</TableHead>
                             </TableRow>
                         </TableHeader>
 
@@ -93,6 +95,18 @@ const AdminEmployeesPage = async () => {
                                         >
                                             {employmentStatusLabel[employee.employmentStatus]}
                                         </Badge>
+                                    </TableCell>
+                                    <TableCell className="text-right">
+                                        {employee.employmentStatus === "ACTIVE" ? (
+                                            <form action={deactivateEmployee}>
+                                                <input type="hidden" name="employeeId" value={employee.id} />
+                                                <Button size="sm" type="submit" variant="outline">
+                                                    退職済みにする
+                                                </Button>
+                                            </form>
+                                        ) : (
+                                            <span className="text-sm text-slate-400">退職済み</span>
+                                        )}
                                     </TableCell>
                                 </TableRow>
                             ))}

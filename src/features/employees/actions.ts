@@ -38,3 +38,34 @@ export const createEmployee = async (formData: FormData) => {
   revalidatePath("/admin/employees");
   redirect("/admin/employees");
 };
+
+export const deactivateEmployee = async (formData: FormData) => {
+  const employeeId = String(formData.get("employeeId"));
+
+  if (!employeeId) {
+    throw new Error("従業員IDが取得できません。");
+  }
+
+  await prisma.employee.update({
+    where: {
+      id: employeeId,
+    },
+    data: {
+      employmentStatus: "INACTIVE",
+    },
+  });
+
+  await prisma.shiftAssignment.updateMany({
+    where: {
+      employeeId,
+      status: "ASSIGNED",
+    },
+    data: {
+      status: "CANCELED",
+    },
+  });
+
+  revalidatePath("/admin/employees");
+  revalidatePath("/admin/jobs");
+  revalidatePath("/staff/shifts");
+};
