@@ -20,6 +20,7 @@ import { getActiveStaffCandidates, getJobById } from "@/features/jobs/queries";
 import { formatDate, formatMonth, formatYen } from "@/lib/format";
 import type { WageType } from "@prisma/client";
 import { deleteJob } from "@/features/jobs/actions";
+import { ConfirmSubmitButton } from "@/components/shared/confirm-submit-button";
 
 type AdminJobDetailPageProps = {
     params: Promise<{
@@ -287,9 +288,12 @@ const AdminJobDetailPage = async ({ params }: AdminJobDetailPageProps) => {
 
                     <form action={deleteJob}>
                         <input type="hidden" name="jobId" value={job.id} />
-                        <Button type="submit" variant="destructive">
+                        <ConfirmSubmitButton
+                            variant="destructive"
+                            message="この案件と関連データを削除します。よろしいですか？"
+                        >
                             案件を削除
-                        </Button>
+                        </ConfirmSubmitButton>
                     </form>
                 </CardContent>
             </Card>

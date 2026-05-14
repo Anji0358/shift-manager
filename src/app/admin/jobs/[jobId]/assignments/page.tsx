@@ -32,6 +32,7 @@ import { getAssignmentsByJobId } from "@/features/shift-assignments/queries";
 import { isUnavailableForSlot } from "@/features/unavailable-times/services";
 import { formatDate, formatMonth, formatYen } from "@/lib/format";
 import { SuccessMessage } from "@/components/shared/success-message";
+import { ConfirmSubmitButton } from "@/components/shared/confirm-submit-button";
 
 type AdminJobAssignmentsPageProps = {
     params: Promise<{
@@ -256,9 +257,13 @@ const AdminJobAssignmentsPage = async ({
                                         <form action={cancelShiftAssignment}>
                                             <input type="hidden" name="assignmentId" value={assignment.id} />
                                             <input type="hidden" name="jobId" value={job.id} />
-                                            <Button size="sm" type="submit" variant="outline">
+                                            <ConfirmSubmitButton
+                                                size="sm"
+                                                variant="outline"
+                                                message="このシフト確定をキャンセルします。よろしいですか？"
+                                            >
                                                 キャンセル
-                                            </Button>
+                                            </ConfirmSubmitButton>
                                         </form>
                                     </TableCell>
                                 </TableRow>

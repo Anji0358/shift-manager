@@ -20,6 +20,7 @@ import { formatDate } from "@/lib/format";
 import { deleteUnavailableTime } from "@/features/unavailable-times/actions";
 import type { DayOfWeek, UnavailableType } from "@prisma/client";
 import { SuccessMessage } from "@/components/shared/success-message";
+import { ConfirmSubmitButton } from "@/components/shared/confirm-submit-button";
 
 const unavailableTypeLabel: Record<UnavailableType, string> = {
     FULL_DAY: "一日NG",
@@ -126,9 +127,13 @@ const StaffUnavailableTimesPage = async ({
                                                 name="unavailableTimeId"
                                                 value={unavailableTime.id}
                                             />
-                                            <Button size="sm" type="submit" variant="outline">
+                                            <ConfirmSubmitButton
+                                                size="sm"
+                                                variant="outline"
+                                                message="この勤務不可情報を削除します。よろしいですか？"
+                                            >
                                                 削除
-                                            </Button>
+                                            </ConfirmSubmitButton>
                                         </form>
                                     </TableCell>
                                 </TableRow>

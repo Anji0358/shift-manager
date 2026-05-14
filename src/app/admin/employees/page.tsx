@@ -20,6 +20,7 @@ import { formatMonth, formatYen } from "@/lib/format";
 import type { EmployeeRole, EmploymentStatus } from "@prisma/client";
 import { deactivateEmployee } from "@/features/employees/actions";
 import { SuccessMessage } from "@/components/shared/success-message";
+import { ConfirmSubmitButton } from "@/components/shared/confirm-submit-button";
 
 const roleLabel: Record<EmployeeRole, string> = {
     ADMIN: "管理者",
@@ -112,9 +113,13 @@ const AdminEmployeesPage = async ({
                                         {employee.employmentStatus === "ACTIVE" ? (
                                             <form action={deactivateEmployee}>
                                                 <input type="hidden" name="employeeId" value={employee.id} />
-                                                <Button size="sm" type="submit" variant="outline">
+                                                <ConfirmSubmitButton
+                                                    size="sm"
+                                                    variant="outline"
+                                                    message="この従業員を退職済みに変更します。現在の確定シフトもキャンセルされます。よろしいですか？"
+                                                >
                                                     退職済みにする
-                                                </Button>
+                                                </ConfirmSubmitButton>
                                             </form>
                                         ) : (
                                             <span className="text-sm text-slate-400">退職済み</span>
