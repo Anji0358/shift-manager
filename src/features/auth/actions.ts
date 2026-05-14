@@ -1,7 +1,8 @@
 "use server";
 
-import { signIn,signOut } from "../../../auth";
-import { AuthError } from 'next-auth';
+import { signIn, signOut } from "@/auth";
+import { AuthError } from "next-auth";
+import { redirect } from "next/navigation";
 
 export const loginAction = async (formData: FormData) => {
   const email = String(formData.get("email") ?? "");
@@ -15,9 +16,7 @@ export const loginAction = async (formData: FormData) => {
     });
   } catch (error) {
     if (error instanceof AuthError) {
-      return {
-        error: "メールアドレスまたはパスワードが正しくありません。",
-      };
+      redirect("/login?error=credentials");
     }
 
     throw error;
