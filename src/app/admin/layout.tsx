@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { LogoutButton } from "@/components/shared/logout-button";
 import { requireAdmin } from "@/lib/auth/guards";
+import { CurrentUserBadge } from "@/components/shared/current-user-badge";
 
 type AdminLayoutProps = {
     children: React.ReactNode;
@@ -26,6 +27,7 @@ const AdminLayout = async ({ children }: AdminLayoutProps) => {
                             <Link href="/">トップ</Link>
                         </nav>
 
+                        <CurrentUserBadge />
                         <LogoutButton />
                     </div>
                 </div>

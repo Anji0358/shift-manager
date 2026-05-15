@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { LogoutButton } from "@/components/shared/logout-button";
 import { requireLogin } from "@/lib/auth/guards";
+import { CurrentUserBadge } from "@/components/shared/current-user-badge";
 
 type StaffLayoutProps = {
     children: React.ReactNode;
@@ -27,6 +28,7 @@ const StaffLayout = async ({ children }: StaffLayoutProps) => {
                             <Link href="/">トップ</Link>
                         </nav>
 
+                        <CurrentUserBadge />
                         <LogoutButton />
                     </div>
                 </div>
