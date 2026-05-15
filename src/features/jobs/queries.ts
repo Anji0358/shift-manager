@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/prisma";
 
 export const getJobs = async (startDate?: Date, endDate?: Date) => {
-  return await prisma.job.findMany({
+  const jobs = await prisma.job.findMany({
     where:
       startDate && endDate
         ? {
@@ -11,9 +11,38 @@ export const getJobs = async (startDate?: Date, endDate?: Date) => {
             },
           }
         : undefined,
+    include: {
+      shiftSlots: true,
+      shiftAssignments: {
+        where: {
+          status: "ASSIGNED",
+        },
+      },
+    },
     orderBy: {
       workDate: "asc",
     },
+  });
+
+  return jobs.map((job) => {
+    const requiredPeople = job.shiftSlots.reduce(
+      (sum, slot) => sum + slot.requiredPeople,
+      0,
+    );
+
+    const assignedPeople = job.shiftAssignments.length;
+
+    const fulfillmentRate =
+      requiredPeople === 0
+        ? 0
+        : Math.round((assignedPeople / requiredPeople) * 100);
+
+    return {
+      ...job,
+      requiredPeople,
+      assignedPeople,
+      fulfillmentRate,
+    };
   });
 };
 
