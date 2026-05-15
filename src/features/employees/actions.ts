@@ -6,8 +6,14 @@ import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { requireAdmin } from "@/lib/auth/guards";
 
-export const createEmployee = async (formData: FormData) => {
+export type EmployeeActionState = {
+  error?: string;
+};
 
+export const createEmployee = async (
+  _prevState: EmployeeActionState,
+  formData: FormData,
+): Promise<EmployeeActionState> => {
   await requireAdmin();
 
   const name = String(formData.get("name") ?? "");
@@ -18,15 +24,21 @@ export const createEmployee = async (formData: FormData) => {
   const password = String(formData.get("password") ?? "");
 
   if (!name || !email || !startedWorkingAt || !password) {
-    throw new Error("従業員登録に必要な情報が不足しています。");
+    return {
+      error: "従業員登録に必要な情報をすべて入力してください。",
+    };
   }
 
   if (password.length < 8) {
-    throw new Error("パスワードは8文字以上で入力してください。");
+    return {
+      error: "パスワードは8文字以上で入力してください。",
+    };
   }
 
   if (role !== "ADMIN" && role !== "STAFF") {
-    throw new Error("権限の値が不正です。");
+    return {
+      error: "権限の値が不正です。",
+    };
   }
 
   const existingEmployee = await prisma.employee.findUnique({
@@ -36,7 +48,9 @@ export const createEmployee = async (formData: FormData) => {
   });
 
   if (existingEmployee) {
-    throw new Error("このメールアドレスはすでに登録されています。");
+    return {
+      error: "このメールアドレスはすでに登録されています。",
+    };
   }
 
   const passwordHash = await bcrypt.hash(password, 10);
