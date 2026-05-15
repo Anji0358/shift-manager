@@ -6,11 +6,14 @@ type SalaryWorkReport = Pick<
   | "actualEndTime"
   | "actualBreakMinutes"
   | "transportationFee"
+  | "hasMeal"
 >;
 
 type SalaryJob = Pick<Job, "wageType" | "fixedHourlyWage">;
 
 type SalaryEmployee = Pick<Employee, "hourlyWage">;
+
+const NO_MEAL_ALLOWANCE = 500;
 
 export const calculateWorkHours = (
   startTime: string,
@@ -24,7 +27,22 @@ export const calculateWorkHours = (
   const endTotalMinutes = endHour * 60 + endMinute;
   const workMinutes = endTotalMinutes - startTotalMinutes - breakMinutes;
 
-  return workMinutes / 60;
+  return Math.max(workMinutes, 0) / 60;
+};
+
+export const calculateWorkMinutes = (
+  startTime: string,
+  endTime: string,
+  breakMinutes: number,
+): number => {
+  const [startHour, startMinute] = startTime.split(":").map(Number);
+  const [endHour, endMinute] = endTime.split(":").map(Number);
+
+  const startTotalMinutes = startHour * 60 + startMinute;
+  const endTotalMinutes = endHour * 60 + endMinute;
+  const workMinutes = endTotalMinutes - startTotalMinutes - breakMinutes;
+
+  return Math.max(workMinutes, 0);
 };
 
 export const getAppliedHourlyWage = (
@@ -36,6 +54,10 @@ export const getAppliedHourlyWage = (
   }
 
   return employee.hourlyWage;
+};
+
+export const calculateMealAllowance = (report: SalaryWorkReport): number => {
+  return report.hasMeal ? 0 : NO_MEAL_ALLOWANCE;
 };
 
 export const calculateEstimatedSalary = (
@@ -50,8 +72,11 @@ export const calculateEstimatedSalary = (
   );
 
   const appliedHourlyWage = getAppliedHourlyWage(job, employee);
+  const mealAllowance = calculateMealAllowance(report);
 
   return Math.round(
-    workHours * appliedHourlyWage + report.transportationFee,
+    workHours * appliedHourlyWage +
+      report.transportationFee +
+      mealAllowance,
   );
 };
