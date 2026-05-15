@@ -16,6 +16,7 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import { createEmployee } from "@/features/employees/actions";
+import { SubmitButton } from "@/components/shared/submit-button";
 
 const AdminNewEmployeePage = () => {
     return (
@@ -116,7 +117,9 @@ const AdminNewEmployeePage = () => {
                             <Button asChild variant="outline">
                                 <Link href="/admin/employees">キャンセル</Link>
                             </Button>
-                            <Button type="submit">登録する</Button>
+                            <SubmitButton pendingText="登録中...">
+                                従業員を登録
+                            </SubmitButton>
                         </div>
                     </form>
                 </CardContent>

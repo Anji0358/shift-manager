@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { SubmitButton } from "@/components/shared/submit-button";
 
 type LoginPageProps = {
     searchParams: Promise<{
@@ -71,9 +72,9 @@ const LoginPage = async ({ searchParams }: LoginPageProps) => {
                             />
                         </div>
 
-                        <Button type="submit" className="w-full">
+                        <SubmitButton className="w-full" pendingText="ログイン中...">
                             ログイン
-                        </Button>
+                        </SubmitButton>
                     </form>
 
                     <div className="rounded-md bg-slate-100 p-3 text-sm text-slate-600">

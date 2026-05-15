@@ -17,6 +17,7 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import { createUnavailableTime } from "@/features/unavailable-times/actions";
+import { SubmitButton } from "@/components/shared/submit-button";
 
 const StaffNewUnavailableTimePage = () => {
     const currentEmployeeId = "emp_2";
@@ -108,7 +109,9 @@ const StaffNewUnavailableTimePage = () => {
                             <Button asChild variant="outline">
                                 <Link href="/staff/unavailable-times">キャンセル</Link>
                             </Button>
-                            <Button type="submit">登録する</Button>
+                            <SubmitButton pendingText="登録中...">
+                                勤務不可情報を登録
+                            </SubmitButton>
                         </div>
                     </form>
                 </CardContent>

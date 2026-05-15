@@ -23,6 +23,7 @@ import { SuccessMessage } from "@/components/shared/success-message";
 import { ConfirmSubmitButton } from "@/components/shared/confirm-submit-button";
 import { resetEmployeePassword } from "@/features/employees/actions";
 import { Input } from '@/components/ui/input';
+import { SubmitButton } from "@/components/shared/submit-button";
 
 const roleLabel: Record<EmployeeRole, string> = {
     ADMIN: "管理者",
@@ -137,9 +138,9 @@ const AdminEmployeesPage = async ({
                                                 minLength={8}
                                                 required
                                             />
-                                            <Button size="sm" type="submit" variant="outline">
+                                            <SubmitButton size="sm" variant="outline" pendingText="更新中...">
                                                 リセット
-                                            </Button>
+                                            </SubmitButton>
                                         </form>
                                     </TableCell>
                                 </TableRow>
