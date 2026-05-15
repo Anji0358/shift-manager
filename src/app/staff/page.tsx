@@ -20,7 +20,7 @@ const StaffPage = async () => {
     return (
         <div className="space-y-8">
             <section>
-                <h1 className="text-3xl font-bold">従業員ダッシュボード</h1>
+                <h1 className="text-3xl font-bold">勤務者ダッシュボード</h1>
                 <p className="mt-2 text-slate-600">
                     自分のシフト、勤務不可情報、就労報告を確認します。
                 </p>
