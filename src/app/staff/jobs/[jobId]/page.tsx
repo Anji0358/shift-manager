@@ -19,6 +19,7 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card";
+import { GoogleMapsLink } from "@/components/shared/google-maps-link";
 
 type StaffJobDetailPageProps = {
     params: Promise<{
@@ -116,6 +117,9 @@ const StaffJobDetailPage = async ({ params }: StaffJobDetailPageProps) => {
                         <div>
                             <p className="text-slate-500">勤務場所</p>
                             <p className="font-medium">{job.location}</p>
+                            <div className="mt-2">
+                                <GoogleMapsLink query={job.location} />
+                            </div>
                         </div>
                     </div>
 
@@ -124,6 +128,11 @@ const StaffJobDetailPage = async ({ params }: StaffJobDetailPageProps) => {
                         <div>
                             <p className="text-slate-500">集合場所</p>
                             <p className="font-medium">{job.meetingPlace || "未設定"}</p>
+                            {job.meetingPlace && (
+                                <div className="mt-2">
+                                    <GoogleMapsLink query={`${job.location} ${job.meetingPlace}`} />
+                                </div>
+                            )}
                         </div>
                     </div>
 

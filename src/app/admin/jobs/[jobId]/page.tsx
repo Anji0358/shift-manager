@@ -21,6 +21,7 @@ import { formatDate, formatMonth, formatYen } from "@/lib/format";
 import type { WageType, WorkReportStatus } from "@prisma/client";
 import { deleteJob } from "@/features/jobs/actions";
 import { ConfirmSubmitButton } from "@/components/shared/confirm-submit-button";
+import { GoogleMapsLink } from "@/components/shared/google-maps-link";
 
 type AdminJobDetailPageProps = {
     params: Promise<{
@@ -157,16 +158,30 @@ const AdminJobDetailPage = async ({ params }: AdminJobDetailPageProps) => {
                             <span className="font-medium">{formatDate(job.workDate)}</span>
                         </div>
 
-                        <div className="flex justify-between gap-4">
-                            <span className="text-slate-500">場所</span>
-                            <span className="font-medium">{job.location}</span>
+                        <div className="space-y-2">
+                            <div className="flex justify-between gap-4">
+                                <span className="text-slate-500">場所</span>
+                                <span className="font-medium">{job.location}</span>
+                            </div>
+
+                            <div className="flex justify-end">
+                                <GoogleMapsLink query={job.location} />
+                            </div>
                         </div>
 
-                        <div className="flex justify-between gap-4">
-                            <span className="text-slate-500">集合場所</span>
-                            <span className="font-medium">
-                                {job.meetingPlace || "未設定"}
-                            </span>
+                        <div className="space-y-2">
+                            <div className="flex justify-between gap-4">
+                                <span className="text-slate-500">集合場所</span>
+                                <span className="font-medium">
+                                    {job.meetingPlace || "未設定"}
+                                </span>
+                            </div>
+
+                            {job.meetingPlace && (
+                                <div className="flex justify-end">
+                                    <GoogleMapsLink query={`${job.location} ${job.meetingPlace}`} />
+                                </div>
+                            )}
                         </div>
 
                         <div className="flex justify-between gap-4">
