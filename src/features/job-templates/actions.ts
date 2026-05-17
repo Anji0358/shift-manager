@@ -86,3 +86,21 @@ export const createJobTemplate = async (formData: FormData) => {
   revalidatePath("/admin/job-templates");
   redirect("/admin/job-templates");
 };
+
+export const deleteJobTemplate = async (formData: FormData) => {
+  await requireAdmin();
+
+  const templateId = String(formData.get("templateId") ?? "");
+
+  if (!templateId) {
+    throw new Error("削除対象のテンプレートが取得できません。");
+  }
+
+  await prisma.jobTemplate.delete({
+    where: {
+      id: templateId,
+    },
+  });
+
+  revalidatePath("/admin/job-templates");
+};

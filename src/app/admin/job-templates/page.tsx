@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { Plus } from "lucide-react";
 import { getJobTemplates } from "@/features/job-templates/queries";
+import { deleteJobTemplate } from "@/features/job-templates/actions";
+import { SubmitButton } from "@/components/shared/submit-button";
 import { Button } from "@/components/ui/button";
 import {
     Card,
@@ -53,6 +55,7 @@ const AdminJobTemplatesPage = async () => {
                                 <TableHead>時間</TableHead>
                                 <TableHead>食事</TableHead>
                                 <TableHead>交通費</TableHead>
+                                <TableHead className="text-right">操作</TableHead>
                             </TableRow>
                         </TableHeader>
 
@@ -67,11 +70,25 @@ const AdminJobTemplatesPage = async () => {
                                     <TableCell>
                                         {template.startTime} - {template.endTime}
                                     </TableCell>
-                                    <TableCell>
-                                        {template.hasMeal ? "あり" : "なし"}
-                                    </TableCell>
+                                    <TableCell>{template.hasMeal ? "あり" : "なし"}</TableCell>
                                     <TableCell>
                                         ¥{template.transportationFee.toLocaleString()}
+                                    </TableCell>
+                                    <TableCell className="text-right">
+                                        <form action={deleteJobTemplate}>
+                                            <input
+                                                type="hidden"
+                                                name="templateId"
+                                                value={template.id}
+                                            />
+                                            <SubmitButton
+                                                size="sm"
+                                                variant="outline"
+                                                pendingText="削除中..."
+                                            >
+                                                削除
+                                            </SubmitButton>
+                                        </form>
                                     </TableCell>
                                 </TableRow>
                             ))}
@@ -79,7 +96,7 @@ const AdminJobTemplatesPage = async () => {
                             {templates.length === 0 && (
                                 <TableRow>
                                     <TableCell
-                                        colSpan={6}
+                                        colSpan={7}
                                         className="py-8 text-center text-slate-500"
                                     >
                                         案件テンプレートがまだありません。
