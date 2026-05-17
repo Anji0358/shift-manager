@@ -80,7 +80,7 @@ const LoginPage = async ({ searchParams }: LoginPageProps) => {
                     <div className="rounded-md bg-slate-100 p-3 text-sm text-slate-600">
                         <p className="font-medium">デモ用アカウント</p>
                         <p className="mt-2">管理者：admin@example.com / password</p>
-                        <p>従業員：staff@example.com / password</p>
+                        <p>スタッフ：staff@example.com / password</p>
                     </div>
 
                     <div className="text-center text-sm">

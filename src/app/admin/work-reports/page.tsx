@@ -52,7 +52,7 @@ const AdminWorkReportsPage = async () => {
             <section>
                 <h1 className="text-3xl font-bold">就労報告管理</h1>
                 <p className="mt-2 text-slate-600">
-                    従業員から提出された就労報告を確認します。
+                    スタッフから提出された就労報告を確認します。
                 </p>
             </section>
 
@@ -68,7 +68,7 @@ const AdminWorkReportsPage = async () => {
                                 <TableRow>
                                     <TableHead>勤務日</TableHead>
                                     <TableHead>案件名</TableHead>
-                                    <TableHead>従業員</TableHead>
+                                    <TableHead>スタッフ</TableHead>
                                     <TableHead>実勤務時間</TableHead>
                                     <TableHead className="text-right">勤務時間</TableHead>
                                     <TableHead className="text-right">

@@ -114,7 +114,7 @@ const NewJobTemplatePage = () => {
                                     defaultValue="EMPLOYEE"
                                     className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
                                 >
-                                    <option value="EMPLOYEE">従業員ごとの時給を使う</option>
+                                    <option value="EMPLOYEE">スタッフごとの時給を使う</option>
                                     <option value="JOB_FIXED">案件固定の時給を使う</option>
                                 </select>
                             </div>

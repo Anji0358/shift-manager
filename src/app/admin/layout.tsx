@@ -48,7 +48,7 @@ const AdminLayout = async ({ children }: AdminLayoutProps) => {
 
                             <NavLink href="/admin/employees">
                                 <Users className="h-4 w-4" />
-                                従業員
+                                スタッフ
                             </NavLink>
 
                             <NavLink href="/admin/work-reports">

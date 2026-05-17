@@ -32,7 +32,7 @@ const navItems = [
     },
     {
         href: "/admin/employees",
-        label: "従業員",
+        label: "スタッフ",
         icon: Users,
         exact: false,
     },

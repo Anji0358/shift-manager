@@ -25,7 +25,7 @@ export const createEmployee = async (
 
   if (!name || !email || !startedWorkingAt || !password) {
     return {
-      error: "従業員登録に必要な情報をすべて入力してください。",
+      error: "スタッフ登録に必要な情報をすべて入力してください。",
     };
   }
 
@@ -78,7 +78,7 @@ export const deactivateEmployee = async (formData: FormData) => {
   const employeeId = String(formData.get("employeeId"));
 
   if (!employeeId) {
-    throw new Error("従業員IDが取得できません。");
+    throw new Error("スタッフIDが取得できません。");
   }
 
   await prisma.employee.update({

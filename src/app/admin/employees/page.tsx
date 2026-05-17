@@ -27,7 +27,7 @@ import { SubmitButton } from "@/components/shared/submit-button";
 
 const roleLabel: Record<EmployeeRole, string> = {
     ADMIN: "管理者",
-    STAFF: "従業員",
+    STAFF: "スタッフ",
 };
 
 const employmentStatusLabel: Record<EmploymentStatus, string> = {
@@ -51,14 +51,14 @@ const AdminEmployeesPage = async ({
         <div className="space-y-6">
             <section className="flex items-start justify-between gap-4">
                 <div>
-                    <h1 className="text-3xl font-bold">従業員管理</h1>
+                    <h1 className="text-3xl font-bold">スタッフ管理</h1>
                     <p className="mt-2 text-slate-600">
-                        従業員の基本情報、権限、時給、在籍状況を管理します。
+                        スタッフの基本情報、権限、時給、在籍状況を管理します。
                     </p>
                 </div>
 
                 <Button asChild>
-                    <Link href="/admin/employees/new">従業員を追加</Link>
+                    <Link href="/admin/employees/new">スタッフを追加</Link>
                 </Button>
             </section>
 
@@ -66,7 +66,7 @@ const AdminEmployeesPage = async ({
 
             <Card>
                 <CardHeader>
-                    <CardTitle>従業員一覧</CardTitle>
+                    <CardTitle>スタッフ一覧</CardTitle>
                 </CardHeader>
 
                 <CardContent>
@@ -119,7 +119,7 @@ const AdminEmployeesPage = async ({
                                                 <ConfirmSubmitButton
                                                     size="sm"
                                                     variant="outline"
-                                                    message="この従業員を退職済みに変更します。現在の確定シフトもキャンセルされます。よろしいですか？"
+                                                    message="このスタッフを退職済みに変更します。現在の確定シフトもキャンセルされます。よろしいですか？"
                                                 >
                                                     退職済みにする
                                                 </ConfirmSubmitButton>

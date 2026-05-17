@@ -102,7 +102,7 @@ const AdminMonthlySummaryPage = async ({
             <section>
                 <h1 className="text-3xl font-bold">月次集計</h1>
                 <p className="mt-2 text-slate-600">
-                    全従業員の勤務時間、人件費、従業員別実績を確認します。
+                    全スタッフの勤務時間、人件費、スタッフ別実績を確認します。
                 </p>
             </section>
 
@@ -155,14 +155,14 @@ const AdminMonthlySummaryPage = async ({
 
             <Card>
                 <CardHeader>
-                    <CardTitle>従業員別集計</CardTitle>
+                    <CardTitle>スタッフ別集計</CardTitle>
                 </CardHeader>
 
                 <CardContent>
                     <Table>
                         <TableHeader>
                             <TableRow>
-                                <TableHead>従業員</TableHead>
+                                <TableHead>スタッフ</TableHead>
                                 <TableHead className="text-right">勤務回数</TableHead>
                                 <TableHead className="text-right">勤務時間</TableHead>
                                 <TableHead className="text-right">給与見込み</TableHead>

@@ -84,7 +84,7 @@ export const EmployeeCreateForm = () => {
                 </div>
             </div>
 
-            <SubmitButton pendingText="登録中...">従業員を登録</SubmitButton>
+            <SubmitButton pendingText="登録中...">スタッフを登録</SubmitButton>
         </form>
     );
 };

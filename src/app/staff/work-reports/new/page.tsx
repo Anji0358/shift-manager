@@ -81,7 +81,7 @@ const StaffNewWorkReportPage = async ({
                 </CardHeader>
 
                 <CardContent className="grid gap-3 text-sm md:grid-cols-2">
-                    <p>従業員：{employee.name}</p>
+                    <p>スタッフ：{employee.name}</p>
                     <p>案件名：{job.title}</p>
                     <p>勤務日：{formatDate(job.workDate)}</p>
                     <p>勤務枠：{slot.name}</p>

@@ -225,7 +225,7 @@ const NewJobPage = async ({ searchParams }: NewJobPageProps) => {
                                         </SelectTrigger>
                                         <SelectContent>
                                             <SelectItem value="EMPLOYEE">
-                                                従業員ごとの時給を使う
+                                                スタッフごとの時給を使う
                                             </SelectItem>
                                             <SelectItem value="JOB_FIXED">
                                                 案件一律の時給を使う
@@ -245,7 +245,7 @@ const NewJobPage = async ({ searchParams }: NewJobPageProps) => {
                                         defaultValue={selectedTemplate?.fixedHourlyWage ?? ""}
                                     />
                                     <p className="text-xs text-slate-500">
-                                        従業員ごとの時給を使う場合は空欄で問題ありません。
+                                        スタッフごとの時給を使う場合は空欄で問題ありません。
                                     </p>
                                 </div>
                             </div>

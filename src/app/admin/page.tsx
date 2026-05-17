@@ -19,7 +19,7 @@ const AdminPage = async () => {
                 <div>
                     <h1 className="text-3xl font-bold">管理者ダッシュボード</h1>
                     <p className="mt-2 text-slate-600">
-                        案件、シフト、就労報告、従業員の状況を確認します。
+                        案件、シフト、就労報告、スタッフの状況を確認します。
                     </p>
                     {currentAdmin && (
                         <p className="mt-1 text-sm text-slate-500">

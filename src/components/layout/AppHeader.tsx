@@ -10,10 +10,10 @@ export const AppHeader = () => {
 
                 <nav className="flex gap-4 text-sm">
                     <Link href="/admin" className="text-slate-700 hover:text-slate-950">
-                        管理者画面
+                        管理メニュー
                     </Link>
                     <Link href="/staff" className="text-slate-700 hover:text-slate-950">
-                        従業員画面
+                        スタッフメニュー
                     </Link>
                 </nav>
             </div>

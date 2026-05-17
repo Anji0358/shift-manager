@@ -26,7 +26,7 @@ const StaffPage = async () => {
                 </p>
                 {currentEmployee && (
                     <p className="mt-1 text-sm text-slate-500">
-                        現在の従業員：{currentEmployee.name}
+                        現在のスタッフ：{currentEmployee.name}
                     </p>
                 )}
             </section>

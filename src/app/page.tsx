@@ -26,7 +26,7 @@ const HomePage = async () => {
       <section className="grid gap-4 md:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle>管理者画面</CardTitle>
+            <CardTitle>管理メニュー</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <p className="text-sm text-slate-600">
@@ -34,7 +34,7 @@ const HomePage = async () => {
             </p>
             <Button asChild className="w-full">
               <Link href={session ? "/admin" : "/login"}>
-                管理者画面へ
+                管理メニューへ
               </Link>
             </Button>
           </CardContent>
@@ -42,7 +42,7 @@ const HomePage = async () => {
 
         <Card>
           <CardHeader>
-            <CardTitle>勤務者画面</CardTitle>
+            <CardTitle>スタッフメニュー</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <p className="text-sm text-slate-600">
@@ -50,7 +50,7 @@ const HomePage = async () => {
             </p>
             <Button asChild variant="outline" className="w-full">
               <Link href={session ? "/staff" : "/login"}>
-                勤務者画面へ
+                スタッフメニューへ
               </Link>
             </Button>
           </CardContent>

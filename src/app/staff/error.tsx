@@ -35,7 +35,7 @@ const StaffErrorPage = ({ error, reset }: StaffErrorPageProps) => {
 
                     <div className="flex justify-end gap-3">
                         <Button asChild variant="outline">
-                            <Link href="/staff">従業員トップへ戻る</Link>
+                            <Link href="/staff">スタッフトップへ戻る</Link>
                         </Button>
                         <Button type="button" onClick={reset}>
                             再試行

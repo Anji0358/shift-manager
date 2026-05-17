@@ -67,7 +67,7 @@ const AdminJobAssignmentsPage = async ({
                 <div>
                     <h1 className="text-3xl font-bold">シフト確定</h1>
                     <p className="mt-2 text-slate-600">
-                        「{job.title}」の勤務枠に従業員を割り当てます。
+                        「{job.title}」の勤務枠にスタッフを割り当てます。
                     </p>
                 </div>
 
@@ -105,7 +105,7 @@ const AdminJobAssignmentsPage = async ({
 
                         <Select name="employeeId" required>
                             <SelectTrigger>
-                                <SelectValue placeholder="従業員を選択" />
+                                <SelectValue placeholder="スタッフを選択" />
                             </SelectTrigger>
                             <SelectContent>
                                 {candidates.map((candidate) => (
@@ -230,7 +230,7 @@ const AdminJobAssignmentsPage = async ({
                     <Table>
                         <TableHeader>
                             <TableRow>
-                                <TableHead>従業員</TableHead>
+                                <TableHead>スタッフ</TableHead>
                                 <TableHead>勤務枠</TableHead>
                                 <TableHead>勤務時間</TableHead>
                                 <TableHead>勤務日</TableHead>

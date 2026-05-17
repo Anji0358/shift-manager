@@ -83,7 +83,7 @@ const AdminJobDetailPage = async ({ params }: AdminJobDetailPageProps) => {
                     </div>
 
                     <p className="mt-2 text-slate-600">
-                        案件情報、勤務枠、候補者、担当者、就労報告、充足状況を確認します。
+                        案件情報、勤務枠、候補者、参加スタッフ、就労報告、充足状況を確認します。
                     </p>
                 </div>
 
@@ -311,7 +311,7 @@ const AdminJobDetailPage = async ({ params }: AdminJobDetailPageProps) => {
 
             <Card>
                 <CardHeader>
-                    <CardTitle>担当者一覧</CardTitle>
+                    <CardTitle>参加スタッフ一覧</CardTitle>
                 </CardHeader>
 
                 <CardContent>
@@ -345,7 +345,7 @@ const AdminJobDetailPage = async ({ params }: AdminJobDetailPageProps) => {
                                         colSpan={4}
                                         className="py-8 text-center text-slate-500"
                                     >
-                                        担当者がまだ確定していません。
+                                        参加スタッフがまだ確定していません。
                                     </TableCell>
                                 </TableRow>
                             )}

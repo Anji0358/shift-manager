@@ -48,7 +48,7 @@ export const createShiftAssignment = async (formData: FormData) => {
   });
 
   if (!employee) {
-    throw new Error("従業員が見つかりません。");
+    throw new Error("スタッフが見つかりません。");
   }
 
   const duplicatedAssignment = await prisma.shiftAssignment.findFirst({
@@ -61,7 +61,7 @@ export const createShiftAssignment = async (formData: FormData) => {
   });
 
   if (duplicatedAssignment) {
-    throw new Error("この従業員はすでに同じ勤務枠に割り当てられています。");
+    throw new Error("このスタッフはすでに同じ勤務枠に割り当てられています。");
   }
 
   const assignedCount = await prisma.shiftAssignment.count({
@@ -83,7 +83,7 @@ export const createShiftAssignment = async (formData: FormData) => {
   );
 
   if (unavailable) {
-    throw new Error("この従業員は指定した勤務枠の時間帯に勤務不可です。");
+    throw new Error("このスタッフは指定した勤務枠の時間帯に勤務不可です。");
   }
 
   await prisma.shiftAssignment.create({
