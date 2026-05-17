@@ -62,6 +62,19 @@ export const getJobById = async (jobId: string) => {
           employee: true,
           slot: true,
         },
+        orderBy: {
+          employee: {
+            name: "asc",
+          },
+        },
+      },
+      workReports: {
+        include: {
+          employee: true,
+        },
+        orderBy: {
+          createdAt: "desc",
+        },
       },
     },
   });
