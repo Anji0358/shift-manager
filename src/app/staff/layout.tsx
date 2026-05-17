@@ -11,6 +11,7 @@ import { LogoutButton } from "@/components/shared/logout-button";
 import { CurrentUserBadge } from "@/components/shared/current-user-badge";
 import { NavLink } from "@/components/shared/nav-link";
 import { requireLogin } from "@/lib/auth/guards";
+import { MobileWorkerNav } from "@/components/shared/mobile-worker-nav";
 
 type StaffLayoutProps = {
     children: React.ReactNode;
@@ -73,6 +74,8 @@ const StaffLayout = async ({ children }: StaffLayoutProps) => {
             <main className="mx-auto max-w-7xl px-4 py-6 md:px-6 md:py-8">
                 {children}
             </main>
+
+            <MobileWorkerNav />
         </div>
     );
 };
