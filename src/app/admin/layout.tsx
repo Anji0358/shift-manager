@@ -11,6 +11,7 @@ import {
 import { LogoutButton } from "@/components/shared/logout-button";
 import { CurrentUserBadge } from "@/components/shared/current-user-badge";
 import { NavLink } from "@/components/shared/nav-link";
+import { MobileAdminNav } from "@/components/shared/mobile-admin-nav";
 import { requireAdmin } from "@/lib/auth/guards";
 
 type AdminLayoutProps = {
@@ -79,6 +80,8 @@ const AdminLayout = async ({ children }: AdminLayoutProps) => {
             <main className="mx-auto max-w-7xl px-4 py-6 md:px-6 md:py-8">
                 {children}
             </main>
+
+            <MobileAdminNav />
         </div>
     );
 };
