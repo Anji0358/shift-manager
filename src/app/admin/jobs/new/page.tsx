@@ -17,9 +17,13 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import { createJob } from "@/features/jobs/actions";
+import { getJobTemplates } from "@/features/job-templates/queries";
 import { SubmitButton } from "@/components/shared/submit-button";
 
-const AdminNewJobPage = () => {
+const AdminNewJobPage = async () => {
+
+    const templates = await getJobTemplates();
+
     return (
         <div className="space-y-6">
             <section>
@@ -36,6 +40,26 @@ const AdminNewJobPage = () => {
 
                 <CardContent>
                     <form action={createJob} className="space-y-8">
+                        <div className="space-y-2">
+                            <Label htmlFor="templateId">テンプレート</Label>
+                            <select
+                                id="templateId"
+                                name="templateId"
+                                defaultValue=""
+                                className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+                            >
+                                <option value="">テンプレートを使わない</option>
+                                {templates.map((template) => (
+                                    <option key={template.id} value={template.id}>
+                                        {template.name}
+                                    </option>
+                                ))}
+                            </select>
+                            <p className="text-xs text-slate-500">
+                                次の Step で、選択したテンプレートの内容をフォームに反映します。
+                            </p>
+                        </div>
+
                         <section className="space-y-4">
                             <h2 className="text-lg font-semibold">基本情報</h2>
 
