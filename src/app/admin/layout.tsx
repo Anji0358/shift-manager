@@ -3,6 +3,7 @@ import {
     BriefcaseBusiness,
     CalendarCheck,
     ClipboardList,
+    FileText,
     Home,
     Users,
     WalletCards,
@@ -37,6 +38,11 @@ const AdminLayout = async ({ children }: AdminLayoutProps) => {
                             <NavLink href="/admin/jobs">
                                 <BriefcaseBusiness className="h-4 w-4" />
                                 案件
+                            </NavLink>
+
+                            <NavLink href="/admin/job-templates">
+                                <FileText className="h-4 w-4" />
+                                テンプレート
                             </NavLink>
 
                             <NavLink href="/admin/employees">

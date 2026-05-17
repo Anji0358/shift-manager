@@ -56,46 +56,46 @@ enum WorkReportStatus {
 }
 
 model Employee {
-  id                String             @id @default(cuid())
-  name              String
-  email             String             @unique
-  passwordHash      String?
-  role              EmployeeRole       @default(STAFF)
-  hourlyWage        Int
-  startedWorkingAt  DateTime
-  employmentStatus  EmploymentStatus   @default(ACTIVE)
+  id               String           @id @default(cuid())
+  name             String
+  email            String           @unique
+  passwordHash     String?
+  role             EmployeeRole     @default(STAFF)
+  hourlyWage       Int
+  startedWorkingAt DateTime
+  employmentStatus EmploymentStatus @default(ACTIVE)
 
-  unavailableTimes  UnavailableTime[]
-  shiftAssignments  ShiftAssignment[]
-  workReports       WorkReport[]
+  unavailableTimes UnavailableTime[]
+  shiftAssignments ShiftAssignment[]
+  workReports      WorkReport[]
 
-  createdAt         DateTime           @default(now())
-  updatedAt         DateTime           @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Job {
-  id                 String              @id @default(cuid())
-  title              String
-  workDate           DateTime
-  location           String
-  meetingPlace       String
-  startTime          String
-  endTime            String
-  breakMinutes       Int
-  hasMeal            Boolean             @default(false)
-  transportationFee  Int
-  dressCode          String
-  belongings         String
-  note               String
-  wageType           WageType            @default(EMPLOYEE)
-  fixedHourlyWage    Int?
+  id                String   @id @default(cuid())
+  title             String
+  workDate          DateTime
+  location          String
+  meetingPlace      String
+  startTime         String
+  endTime           String
+  breakMinutes      Int
+  hasMeal           Boolean  @default(false)
+  transportationFee Int
+  dressCode         String
+  belongings        String
+  note              String
+  wageType          WageType @default(EMPLOYEE)
+  fixedHourlyWage   Int?
 
-  shiftSlots         JobShiftSlot[]
-  shiftAssignments   ShiftAssignment[]
-  workReports        WorkReport[]
+  shiftSlots       JobShiftSlot[]
+  shiftAssignments ShiftAssignment[]
+  workReports      WorkReport[]
 
-  createdAt          DateTime            @default(now())
-  updatedAt          DateTime            @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model JobTemplate {
@@ -119,35 +119,35 @@ model JobTemplate {
 }
 
 model JobShiftSlot {
-  id               String            @id @default(cuid())
-  jobId            String
-  name             String
-  startTime        String
-  endTime          String
-  requiredPeople   Int
+  id             String @id @default(cuid())
+  jobId          String
+  name           String
+  startTime      String
+  endTime        String
+  requiredPeople Int
 
   job              Job               @relation(fields: [jobId], references: [id], onDelete: Cascade)
   shiftAssignments ShiftAssignment[]
 
-  createdAt        DateTime          @default(now())
-  updatedAt        DateTime          @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([jobId])
 }
 
 model ShiftAssignment {
-  id          String                  @id @default(cuid())
-  jobId       String
-  slotId      String
-  employeeId  String
-  status      ShiftAssignmentStatus   @default(ASSIGNED)
+  id         String                @id @default(cuid())
+  jobId      String
+  slotId     String
+  employeeId String
+  status     ShiftAssignmentStatus @default(ASSIGNED)
 
-  job         Job                     @relation(fields: [jobId], references: [id], onDelete: Cascade)
-  slot        JobShiftSlot            @relation(fields: [slotId], references: [id], onDelete: Cascade)
-  employee    Employee                @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  job      Job          @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  slot     JobShiftSlot @relation(fields: [slotId], references: [id], onDelete: Cascade)
+  employee Employee     @relation(fields: [employeeId], references: [id], onDelete: Cascade)
 
-  createdAt   DateTime                @default(now())
-  updatedAt   DateTime                @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([jobId])
   @@index([slotId])
@@ -155,39 +155,39 @@ model ShiftAssignment {
 }
 
 model UnavailableTime {
-  id          String             @id @default(cuid())
-  employeeId  String
-  type        UnavailableType
-  date        DateTime?
-  dayOfWeek   DayOfWeek?
-  startTime   String?
-  endTime     String?
-  reason      String?
+  id         String          @id @default(cuid())
+  employeeId String
+  type       UnavailableType
+  date       DateTime?
+  dayOfWeek  DayOfWeek?
+  startTime  String?
+  endTime    String?
+  reason     String?
 
-  employee    Employee           @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  employee Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
 
-  createdAt   DateTime           @default(now())
-  updatedAt   DateTime           @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([employeeId])
 }
 
 model WorkReport {
-  id                  String            @id @default(cuid())
-  jobId               String
-  employeeId          String
-  actualStartTime     String
-  actualEndTime       String
-  actualBreakMinutes  Int
-  transportationFee   Int
-  hasMeal             Boolean           @default(false)
-  status              WorkReportStatus  @default(NOT_SUBMITTED)
+  id                 String           @id @default(cuid())
+  jobId              String
+  employeeId         String
+  actualStartTime    String
+  actualEndTime      String
+  actualBreakMinutes Int
+  transportationFee  Int
+  hasMeal            Boolean          @default(false)
+  status             WorkReportStatus @default(NOT_SUBMITTED)
 
-  job                 Job               @relation(fields: [jobId], references: [id], onDelete: Cascade)
-  employee            Employee          @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  job      Job      @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  employee Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
 
-  createdAt           DateTime          @default(now())
-  updatedAt           DateTime          @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([jobId])
   @@index([employeeId])
