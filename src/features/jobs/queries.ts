@@ -81,3 +81,63 @@ export const getActiveStaffCandidates = async () => {
     },
   });
 };
+
+export const getJobDetail = async (jobId: string) => {
+  const job = await prisma.job.findUnique({
+    where: {
+      id: jobId,
+    },
+    include: {
+      shiftSlots: {
+        orderBy: {
+          startTime: "asc",
+        },
+      },
+      shiftAssignments: {
+        where: {
+          status: "ASSIGNED",
+        },
+        include: {
+          employee: true,
+          slot: true,
+        },
+        orderBy: {
+          employee: {
+            name: "asc",
+          },
+        },
+      },
+      workReports: {
+        include: {
+          employee: true,
+        },
+        orderBy: {
+          createdAt: "desc",
+        },
+      },
+    },
+  });
+
+  if (!job) {
+    return null;
+  }
+
+  const requiredPeople = job.shiftSlots.reduce(
+    (sum, slot) => sum + slot.requiredPeople,
+    0,
+  );
+
+  const assignedPeople = job.shiftAssignments.length;
+
+  const fulfillmentRate =
+    requiredPeople === 0
+      ? 0
+      : Math.round((assignedPeople / requiredPeople) * 100);
+
+  return {
+    ...job,
+    requiredPeople,
+    assignedPeople,
+    fulfillmentRate,
+  };
+};
