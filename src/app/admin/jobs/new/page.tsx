@@ -1,14 +1,18 @@
 import Link from "next/link";
+import { createJob } from "@/features/jobs/actions";
+import { getJobTemplates } from "@/features/job-templates/queries";
+import { TemplateSelector } from "@/features/job-templates/components/template-selector";
+import { SubmitButton } from "@/components/shared/submit-button";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import {
     Card,
     CardContent,
     CardHeader,
     CardTitle,
 } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import {
     Select,
     SelectContent,
@@ -16,13 +20,21 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
-import { createJob } from "@/features/jobs/actions";
-import { getJobTemplates } from "@/features/job-templates/queries";
-import { SubmitButton } from "@/components/shared/submit-button";
 
-const AdminNewJobPage = async () => {
+type NewJobPageProps = {
+    searchParams: Promise<{
+        templateId?: string;
+    }>;
+};
+
+const NewJobPage = async ({ searchParams }: NewJobPageProps) => {
+    const { templateId } = await searchParams;
 
     const templates = await getJobTemplates();
+
+    const selectedTemplate = templateId
+        ? templates.find((template) => template.id === templateId)
+        : undefined;
 
     return (
         <div className="space-y-6">
@@ -40,25 +52,10 @@ const AdminNewJobPage = async () => {
 
                 <CardContent>
                     <form action={createJob} className="space-y-8">
-                        <div className="space-y-2">
-                            <Label htmlFor="templateId">テンプレート</Label>
-                            <select
-                                id="templateId"
-                                name="templateId"
-                                defaultValue=""
-                                className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
-                            >
-                                <option value="">テンプレートを使わない</option>
-                                {templates.map((template) => (
-                                    <option key={template.id} value={template.id}>
-                                        {template.name}
-                                    </option>
-                                ))}
-                            </select>
-                            <p className="text-xs text-slate-500">
-                                次の Step で、選択したテンプレートの内容をフォームに反映します。
-                            </p>
-                        </div>
+                        <TemplateSelector
+                            templates={templates}
+                            selectedTemplateId={templateId}
+                        />
 
                         <section className="space-y-4">
                             <h2 className="text-lg font-semibold">基本情報</h2>
@@ -70,13 +67,19 @@ const AdminNewJobPage = async () => {
                                         id="title"
                                         name="title"
                                         placeholder="例：横浜ホテル宴会"
+                                        defaultValue={selectedTemplate?.title ?? ""}
                                         required
                                     />
                                 </div>
 
                                 <div className="space-y-2">
                                     <Label htmlFor="workDate">日付</Label>
-                                    <Input id="workDate" name="workDate" type="date" required />
+                                    <Input
+                                        id="workDate"
+                                        name="workDate"
+                                        type="date"
+                                        required
+                                    />
                                 </div>
 
                                 <div className="space-y-2">
@@ -85,6 +88,7 @@ const AdminNewJobPage = async () => {
                                         id="location"
                                         name="location"
                                         placeholder="例：横浜ホテル"
+                                        defaultValue={selectedTemplate?.location ?? ""}
                                         required
                                     />
                                 </div>
@@ -95,6 +99,7 @@ const AdminNewJobPage = async () => {
                                         id="meetingPlace"
                                         name="meetingPlace"
                                         placeholder="例：横浜駅中央改札"
+                                        defaultValue={selectedTemplate?.meetingPlace ?? ""}
                                         required
                                     />
                                 </div>
@@ -107,12 +112,24 @@ const AdminNewJobPage = async () => {
                             <div className="grid gap-4 md:grid-cols-3">
                                 <div className="space-y-2">
                                     <Label htmlFor="startTime">勤務開始時間</Label>
-                                    <Input id="startTime" name="startTime" type="time" required />
+                                    <Input
+                                        id="startTime"
+                                        name="startTime"
+                                        type="time"
+                                        defaultValue={selectedTemplate?.startTime ?? ""}
+                                        required
+                                    />
                                 </div>
 
                                 <div className="space-y-2">
                                     <Label htmlFor="endTime">勤務終了時間</Label>
-                                    <Input id="endTime" name="endTime" type="time" required />
+                                    <Input
+                                        id="endTime"
+                                        name="endTime"
+                                        type="time"
+                                        defaultValue={selectedTemplate?.endTime ?? ""}
+                                        required
+                                    />
                                 </div>
 
                                 <div className="space-y-2">
@@ -121,14 +138,21 @@ const AdminNewJobPage = async () => {
                                         id="breakMinutes"
                                         name="breakMinutes"
                                         type="number"
+                                        min={0}
                                         placeholder="例：30"
+                                        defaultValue={selectedTemplate?.breakMinutes ?? 0}
                                         required
                                     />
                                 </div>
 
                                 <div className="space-y-2">
                                     <Label htmlFor="hasMeal">食事の有無</Label>
-                                    <Select name="hasMeal" defaultValue="false">
+                                    <Select
+                                        name="hasMeal"
+                                        defaultValue={
+                                            selectedTemplate?.hasMeal ? "true" : "false"
+                                        }
+                                    >
                                         <SelectTrigger id="hasMeal">
                                             <SelectValue placeholder="食事の有無を選択" />
                                         </SelectTrigger>
@@ -145,7 +169,9 @@ const AdminNewJobPage = async () => {
                                         id="transportationFee"
                                         name="transportationFee"
                                         type="number"
+                                        min={0}
                                         placeholder="例：800"
+                                        defaultValue={selectedTemplate?.transportationFee ?? 0}
                                         required
                                     />
                                 </div>
@@ -156,6 +182,7 @@ const AdminNewJobPage = async () => {
                                         id="dressCode"
                                         name="dressCode"
                                         placeholder="例：黒スラックス・白シャツ"
+                                        defaultValue={selectedTemplate?.dressCode ?? ""}
                                         required
                                     />
                                 </div>
@@ -167,6 +194,7 @@ const AdminNewJobPage = async () => {
                                     id="belongings"
                                     name="belongings"
                                     placeholder="例：メモ帳、黒靴"
+                                    defaultValue={selectedTemplate?.belongings ?? ""}
                                     required
                                 />
                             </div>
@@ -177,6 +205,7 @@ const AdminNewJobPage = async () => {
                                     id="note"
                                     name="note"
                                     placeholder="注意事項や補足情報を入力してください"
+                                    defaultValue={selectedTemplate?.note ?? ""}
                                 />
                             </div>
                         </section>
@@ -187,7 +216,10 @@ const AdminNewJobPage = async () => {
                             <div className="grid gap-4 md:grid-cols-2">
                                 <div className="space-y-2">
                                     <Label htmlFor="wageType">時給タイプ</Label>
-                                    <Select name="wageType" defaultValue="EMPLOYEE">
+                                    <Select
+                                        name="wageType"
+                                        defaultValue={selectedTemplate?.wageType ?? "EMPLOYEE"}
+                                    >
                                         <SelectTrigger id="wageType">
                                             <SelectValue placeholder="時給タイプを選択" />
                                         </SelectTrigger>
@@ -208,7 +240,9 @@ const AdminNewJobPage = async () => {
                                         id="fixedHourlyWage"
                                         name="fixedHourlyWage"
                                         type="number"
+                                        min={0}
                                         placeholder="例：1400"
+                                        defaultValue={selectedTemplate?.fixedHourlyWage ?? ""}
                                     />
                                     <p className="text-xs text-slate-500">
                                         従業員ごとの時給を使う場合は空欄で問題ありません。
@@ -221,6 +255,7 @@ const AdminNewJobPage = async () => {
                             <Button asChild variant="outline">
                                 <Link href="/admin/jobs">キャンセル</Link>
                             </Button>
+
                             <SubmitButton pendingText="作成中...">
                                 案件を作成
                             </SubmitButton>
@@ -232,4 +267,4 @@ const AdminNewJobPage = async () => {
     );
 };
 
-export default AdminNewJobPage;
+export default NewJobPage;
