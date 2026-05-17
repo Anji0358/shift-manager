@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -16,14 +17,31 @@ import {
     TableRow,
 } from "@/components/ui/table";
 import { getAssignmentsByEmployeeIdAndMonth } from "@/features/shift-assignments/queries";
+import {
+    getCalendarStatusClassName,
+    getCalendarStatusLabel,
+    type CalendarStatus,
+} from "@/features/calendar/calendar-status";
 import { formatDate } from "@/lib/format";
 import { getCurrentYearMonth, getMonthRange } from "@/lib/month";
 import { getCurrentEmployeeId } from "@/lib/auth/current-user";
+import { prisma } from "@/lib/prisma";
 
 type StaffCalendarPageProps = {
     searchParams: Promise<{
         month?: string;
     }>;
+};
+
+type CalendarListItem = {
+    id: string;
+    date: Date;
+    title: string;
+    status: CalendarStatus;
+    timeText?: string;
+    locationText?: string;
+    meetingPlaceText?: string;
+    href?: string;
 };
 
 const getDayNumber = (date: Date) => {
@@ -51,17 +69,57 @@ const StaffCalendarPage = async ({ searchParams }: StaffCalendarPageProps) => {
         endDate,
     );
 
+    const unavailableTimes = await prisma.unavailableTime.findMany({
+        where: {
+            employeeId: currentEmployeeId,
+            date: {
+                gte: startDate,
+                lt: endDate,
+            },
+        },
+        orderBy: {
+            date: "asc",
+        },
+    });
+
     const days = Array.from(
         { length: getDaysInMonth(targetMonth) },
         (_, index) => index + 1,
     );
+
+    const listItems: CalendarListItem[] = [
+        ...assignments.map((assignment) => ({
+            id: assignment.id,
+            date: assignment.job.workDate,
+            title: assignment.job.title,
+            status: "confirmed" as CalendarStatus,
+            timeText: `${assignment.slot.startTime}〜${assignment.slot.endTime}`,
+            locationText: assignment.job.location,
+            meetingPlaceText: assignment.job.meetingPlace || "未設定",
+            href: `/staff/jobs/${assignment.jobId}`,
+        })),
+        ...unavailableTimes
+            .filter((unavailableTime) => unavailableTime.date !== null)
+            .map((unavailableTime) => ({
+                id: unavailableTime.id,
+                date: unavailableTime.date as Date,
+                title: unavailableTime.reason || "勤務不可",
+                status: "unavailable" as CalendarStatus,
+                timeText:
+                    unavailableTime.startTime && unavailableTime.endTime
+                        ? `${unavailableTime.startTime}〜${unavailableTime.endTime}`
+                        : "終日",
+                locationText: "-",
+                meetingPlaceText: "-",
+            })),
+    ].sort((a, b) => a.date.getTime() - b.date.getTime());
 
     return (
         <div className="space-y-8">
             <section>
                 <h1 className="text-3xl font-bold">月間シフトカレンダー</h1>
                 <p className="mt-2 text-slate-600">
-                    月ごとの勤務予定をカレンダー形式と一覧形式で確認します。
+                    月ごとの勤務予定と勤務不可情報を色分けして確認します。
                 </p>
             </section>
 
@@ -72,8 +130,25 @@ const StaffCalendarPage = async ({ searchParams }: StaffCalendarPageProps) => {
                     </label>
                     <Input id="month" name="month" type="month" defaultValue={targetMonth} />
                 </div>
+
                 <Button type="submit">表示</Button>
             </form>
+
+            <section className="flex flex-wrap gap-2">
+                {(["confirmed", "unavailable", "open"] as CalendarStatus[]).map(
+                    (status) => (
+                        <div
+                            key={status}
+                            className={[
+                                "rounded-full border px-3 py-1 text-xs font-medium",
+                                getCalendarStatusClassName(status),
+                            ].join(" ")}
+                        >
+                            {getCalendarStatusLabel(status)}
+                        </div>
+                    ),
+                )}
+            </section>
 
             <Card>
                 <CardHeader>
@@ -96,25 +171,64 @@ const StaffCalendarPage = async ({ searchParams }: StaffCalendarPageProps) => {
                                 return getDayNumber(assignment.job.workDate) === day;
                             });
 
+                            const unavailableTimesOfDay = unavailableTimes.filter(
+                                (unavailableTime) => {
+                                    if (!unavailableTime.date) {
+                                        return false;
+                                    }
+
+                                    return getDayNumber(unavailableTime.date) === day;
+                                },
+                            );
+
                             return (
                                 <div key={day} className="min-h-32 border-r border-b p-2">
                                     <p className="mb-2 text-sm font-medium">{day}</p>
 
                                     <div className="space-y-2">
                                         {assignmentsOfDay.map((assignment) => (
-                                            <div
+                                            <Link
                                                 key={assignment.id}
-                                                className="rounded-md border bg-white p-2 text-xs shadow-sm"
+                                                href={`/staff/jobs/${assignment.jobId}`}
+                                                className={[
+                                                    "block rounded-md border p-2 text-xs shadow-sm transition active:scale-[0.98]",
+                                                    getCalendarStatusClassName("confirmed"),
+                                                ].join(" ")}
                                             >
                                                 <p className="font-medium">{assignment.job.title}</p>
-                                                <p className="text-slate-500">
-                                                    {assignment.slot.startTime}〜{assignment.slot.endTime}
+                                                <p>
+                                                    {assignment.slot.startTime}〜
+                                                    {assignment.slot.endTime}
                                                 </p>
-                                                <p className="text-slate-500">
-                                                    集合：{assignment.job.meetingPlace}
+                                                <p>
+                                                    集合：
+                                                    {assignment.job.meetingPlace || "未設定"}
                                                 </p>
                                                 <Badge variant="secondary" className="mt-2">
-                                                    確定
+                                                    {getCalendarStatusLabel("confirmed")}
+                                                </Badge>
+                                            </Link>
+                                        ))}
+
+                                        {unavailableTimesOfDay.map((unavailableTime) => (
+                                            <div
+                                                key={unavailableTime.id}
+                                                className={[
+                                                    "rounded-md border p-2 text-xs shadow-sm",
+                                                    getCalendarStatusClassName("unavailable"),
+                                                ].join(" ")}
+                                            >
+                                                <p className="font-medium">
+                                                    {unavailableTime.reason || "勤務不可"}
+                                                </p>
+                                                <p>
+                                                    {unavailableTime.startTime &&
+                                                        unavailableTime.endTime
+                                                        ? `${unavailableTime.startTime}〜${unavailableTime.endTime}`
+                                                        : "終日"}
+                                                </p>
+                                                <Badge variant="secondary" className="mt-2">
+                                                    {getCalendarStatusLabel("unavailable")}
                                                 </Badge>
                                             </div>
                                         ))}
@@ -136,41 +250,56 @@ const StaffCalendarPage = async ({ searchParams }: StaffCalendarPageProps) => {
                         <TableHeader>
                             <TableRow>
                                 <TableHead>日付</TableHead>
-                                <TableHead>案件名</TableHead>
-                                <TableHead>勤務枠</TableHead>
-                                <TableHead>勤務時間</TableHead>
+                                <TableHead>状態</TableHead>
+                                <TableHead>内容</TableHead>
+                                <TableHead>時間</TableHead>
                                 <TableHead>場所</TableHead>
                                 <TableHead>集合場所</TableHead>
-                                <TableHead>食事</TableHead>
+                                <TableHead className="text-right">操作</TableHead>
                             </TableRow>
                         </TableHeader>
 
                         <TableBody>
-                            {assignments.map((assignment) => (
-                                <TableRow key={assignment.id}>
-                                    <TableCell>{formatDate(assignment.job.workDate)}</TableCell>
+                            {listItems.map((item) => (
+                                <TableRow key={`${item.status}-${item.id}`}>
+                                    <TableCell>{formatDate(item.date)}</TableCell>
+
+                                    <TableCell>
+                                        <span
+                                            className={[
+                                                "inline-flex rounded-full border px-2 py-1 text-xs font-medium",
+                                                getCalendarStatusClassName(item.status),
+                                            ].join(" ")}
+                                        >
+                                            {getCalendarStatusLabel(item.status)}
+                                        </span>
+                                    </TableCell>
+
                                     <TableCell className="font-medium">
-                                        {assignment.job.title}
+                                        {item.title}
                                     </TableCell>
-                                    <TableCell>{assignment.slot.name}</TableCell>
-                                    <TableCell>
-                                        {assignment.slot.startTime}〜{assignment.slot.endTime}
-                                    </TableCell>
-                                    <TableCell>{assignment.job.location}</TableCell>
-                                    <TableCell>{assignment.job.meetingPlace}</TableCell>
-                                    <TableCell>
-                                        <Badge variant={assignment.job.hasMeal ? "default" : "outline"}>
-                                            {assignment.job.hasMeal ? "あり" : "なし"}
-                                        </Badge>
+
+                                    <TableCell>{item.timeText || "-"}</TableCell>
+                                    <TableCell>{item.locationText || "-"}</TableCell>
+                                    <TableCell>{item.meetingPlaceText || "-"}</TableCell>
+
+                                    <TableCell className="text-right">
+                                        {item.href ? (
+                                            <Button asChild size="sm" variant="outline">
+                                                <Link href={item.href}>詳細</Link>
+                                            </Button>
+                                        ) : (
+                                            <span className="text-sm text-slate-400">-</span>
+                                        )}
                                     </TableCell>
                                 </TableRow>
                             ))}
                         </TableBody>
                     </Table>
 
-                    {assignments.length === 0 && (
+                    {listItems.length === 0 && (
                         <p className="mt-4 text-sm text-slate-500">
-                            対象月に確定しているシフトはありません。
+                            対象月に予定はありません。
                         </p>
                     )}
                 </CardContent>
