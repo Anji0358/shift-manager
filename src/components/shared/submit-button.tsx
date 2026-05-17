@@ -7,7 +7,13 @@ type SubmitButtonProps = {
     children: React.ReactNode;
     pendingText?: string;
     className?: string;
-    variant?: "default" | "destructive" | "outline" | "secondary" | "ghost" | "link";
+    variant?:
+    | "default"
+    | "destructive"
+    | "outline"
+    | "secondary"
+    | "ghost"
+    | "link";
     size?: "default" | "sm" | "lg" | "icon";
 };
 
@@ -24,7 +30,12 @@ export const SubmitButton = ({
         <Button
             type="submit"
             disabled={pending}
-            className={className}
+            className={[
+                "transition active:scale-95 disabled:cursor-not-allowed disabled:opacity-50",
+                className,
+            ]
+                .filter(Boolean)
+                .join(" ")}
             variant={variant}
             size={size}
         >
