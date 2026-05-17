@@ -1,37 +1,17 @@
 import Link from "next/link";
-import { Badge } from "@/components/ui/badge";
-import {
-    Card,
-    CardContent,
-    CardHeader,
-    CardTitle,
-} from "@/components/ui/card";
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from "@/components/ui/table";
-import { getJobs } from "@/features/jobs/queries";
-import { formatDate, formatYen } from "@/lib/format";
-import type { WageType } from "@prisma/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { getCurrentYearMonth, getMonthRange } from "@/lib/month";
 import { SuccessMessage } from "@/components/shared/success-message";
+import { JobTable } from "@/features/jobs/components/job-table";
+import { JobCardList } from "@/features/jobs/components/job-card-list";
+import { getJobs } from "@/features/jobs/queries";
+import { getCurrentYearMonth, getMonthRange } from "@/lib/month";
 
 type AdminJobsPageProps = {
     searchParams: Promise<{
         month?: string;
         message?: string;
     }>;
-};
-
-const wageTypeLabel: Record<WageType, string> = {
-    EMPLOYEE: "従業員ごとの時給",
-    JOB_FIXED: "案件一律時給",
 };
 
 const AdminJobsPage = async ({ searchParams }: AdminJobsPageProps) => {
@@ -76,120 +56,22 @@ const AdminJobsPage = async ({ searchParams }: AdminJobsPageProps) => {
                 </div>
             </section>
 
-            <Card>
-                <CardHeader>
-                    <CardTitle>案件一覧</CardTitle>
-                </CardHeader>
+            <section className="space-y-4">
+                <div>
+                    <h2 className="text-xl font-semibold">案件一覧</h2>
+                    <p className="mt-1 text-sm text-slate-500">
+                        PCではテーブル、スマホではカード形式で表示します。
+                    </p>
+                </div>
 
-                <CardContent>
-                    <Table>
-                        <TableHeader>
-                            <TableRow>
-                                <TableHead>案件名</TableHead>
-                                <TableHead>日付</TableHead>
-                                <TableHead>場所</TableHead>
-                                <TableHead>集合場所</TableHead>
-                                <TableHead>勤務時間</TableHead>
-                                <TableHead>食事</TableHead>
-                                <TableHead>時給設定</TableHead>
-                                <TableHead>充足状況</TableHead>
-                                <TableHead className="text-right">操作</TableHead>
-                            </TableRow>
-                        </TableHeader>
+                <div className="hidden md:block">
+                    <JobTable jobs={jobs} />
+                </div>
 
-                        <TableBody>
-                            {jobs.map((job) => (
-                                <TableRow key={job.id}>
-                                    <TableCell className="font-medium">
-                                        <div className="space-y-1">
-                                            <div>{job.title}</div>
-                                            <Badge
-                                                variant={
-                                                    job.fulfillmentRate >= 100 ? "default" : "secondary"
-                                                }
-                                            >
-                                                {job.fulfillmentRate >= 100 ? "充足" : "未充足"}
-                                            </Badge>
-                                        </div>
-                                    </TableCell>
-
-                                    <TableCell>{formatDate(job.workDate)}</TableCell>
-
-                                    <TableCell>{job.location}</TableCell>
-
-                                    <TableCell>{job.meetingPlace}</TableCell>
-
-                                    <TableCell>
-                                        {job.startTime}〜{job.endTime}
-                                    </TableCell>
-
-                                    <TableCell>
-                                        <Badge variant={job.hasMeal ? "default" : "outline"}>
-                                            {job.hasMeal ? "あり" : "なし"}
-                                        </Badge>
-                                    </TableCell>
-
-                                    <TableCell>
-                                        <div className="space-y-1">
-                                            <Badge variant="secondary">
-                                                {wageTypeLabel[job.wageType]}
-                                            </Badge>
-
-                                            {job.fixedHourlyWage !== null && (
-                                                <p className="text-xs text-slate-500">
-                                                    {formatYen(job.fixedHourlyWage)}
-                                                </p>
-                                            )}
-                                        </div>
-                                    </TableCell>
-
-                                    <TableCell>
-                                        <div className="w-36 rounded-md bg-slate-100 p-3 text-sm">
-                                            <div className="flex justify-between">
-                                                <span className="text-slate-500">必要</span>
-                                                <span className="font-medium">
-                                                    {job.requiredPeople}人
-                                                </span>
-                                            </div>
-
-                                            <div className="mt-1 flex justify-between">
-                                                <span className="text-slate-500">確定</span>
-                                                <span className="font-medium">
-                                                    {job.assignedPeople}人
-                                                </span>
-                                            </div>
-
-                                            <div className="mt-1 flex justify-between">
-                                                <span className="text-slate-500">充足率</span>
-                                                <span className="font-medium">
-                                                    {job.fulfillmentRate}%
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </TableCell>
-
-                                    <TableCell className="text-right">
-                                        <Button asChild size="sm" variant="outline">
-                                            <Link href={`/admin/jobs/${job.id}`}>詳細</Link>
-                                        </Button>
-                                    </TableCell>
-                                </TableRow>
-                            ))}
-
-                            {jobs.length === 0 && (
-                                <TableRow>
-                                    <TableCell
-                                        colSpan={9}
-                                        className="py-8 text-center text-slate-500"
-                                    >
-                                        この月の案件はありません。
-                                    </TableCell>
-                                </TableRow>
-                            )}
-                        </TableBody>
-                    </Table>
-                </CardContent>
-            </Card>
+                <div className="md:hidden">
+                    <JobCardList jobs={jobs} />
+                </div>
+            </section>
         </div>
     );
 };
