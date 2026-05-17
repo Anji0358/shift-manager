@@ -53,7 +53,7 @@ const StaffShiftsPage = async () => {
                                 <TableHead>場所</TableHead>
                                 <TableHead>集合場所</TableHead>
                                 <TableHead>食事</TableHead>
-                                <TableHead className="text-right">報告</TableHead>
+                                <TableHead className="text-right">操作</TableHead>
                             </TableRow>
                         </TableHeader>
 
@@ -63,16 +63,26 @@ const StaffShiftsPage = async () => {
 
                                 return (
                                     <TableRow key={assignment.id}>
-                                        <TableCell>{formatDate(assignment.job.workDate)}</TableCell>
+                                        <TableCell>
+                                            {formatDate(assignment.job.workDate)}
+                                        </TableCell>
+
                                         <TableCell className="font-medium">
                                             {assignment.job.title}
                                         </TableCell>
+
                                         <TableCell>{assignment.slot.name}</TableCell>
+
                                         <TableCell>
                                             {assignment.slot.startTime}〜{assignment.slot.endTime}
                                         </TableCell>
+
                                         <TableCell>{assignment.job.location}</TableCell>
-                                        <TableCell>{assignment.job.meetingPlace}</TableCell>
+
+                                        <TableCell>
+                                            {assignment.job.meetingPlace || "未設定"}
+                                        </TableCell>
+
                                         <TableCell>
                                             <Badge
                                                 variant={assignment.job.hasMeal ? "default" : "outline"}
@@ -80,18 +90,27 @@ const StaffShiftsPage = async () => {
                                                 {assignment.job.hasMeal ? "あり" : "なし"}
                                             </Badge>
                                         </TableCell>
+
                                         <TableCell className="text-right">
-                                            {alreadyReported ? (
-                                                <Badge variant="secondary">提出済み</Badge>
-                                            ) : (
+                                            <div className="flex justify-end gap-2">
                                                 <Button asChild size="sm" variant="outline">
-                                                    <Link
-                                                        href={`/staff/work-reports/new?assignmentId=${assignment.id}`}
-                                                    >
-                                                        報告する
+                                                    <Link href={`/staff/jobs/${assignment.jobId}`}>
+                                                        詳細
                                                     </Link>
                                                 </Button>
-                                            )}
+
+                                                {alreadyReported ? (
+                                                    <Badge variant="secondary">提出済み</Badge>
+                                                ) : (
+                                                    <Button asChild size="sm">
+                                                        <Link
+                                                            href={`/staff/work-reports/new?assignmentId=${assignment.id}`}
+                                                        >
+                                                            報告する
+                                                        </Link>
+                                                    </Button>
+                                                )}
+                                            </div>
                                         </TableCell>
                                     </TableRow>
                                 );
