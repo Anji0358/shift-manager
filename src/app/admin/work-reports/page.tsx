@@ -25,6 +25,7 @@ import {
 } from "@/features/payroll/services";
 import { formatDate, formatYen } from "@/lib/format";
 import type { WorkReportStatus } from "@prisma/client";
+import { WorkReportCardList } from "@/features/work-reports/components/work-report-card-list";
 
 const workReportStatusLabel: Record<WorkReportStatus, string> = {
     NOT_SUBMITTED: "未提出",
@@ -55,105 +56,135 @@ const AdminWorkReportsPage = async () => {
                 </p>
             </section>
 
-            <Card>
-                <CardHeader>
-                    <CardTitle>就労報告一覧</CardTitle>
-                </CardHeader>
+            <div className="hidden md:block">
+                <Card>
+                    <CardHeader>
+                        <CardTitle>就労報告一覧</CardTitle>
+                    </CardHeader>
 
-                <CardContent>
-                    <Table>
-                        <TableHeader>
-                            <TableRow>
-                                <TableHead>勤務日</TableHead>
-                                <TableHead>案件名</TableHead>
-                                <TableHead>従業員</TableHead>
-                                <TableHead>実勤務時間</TableHead>
-                                <TableHead className="text-right">勤務時間</TableHead>
-                                <TableHead className="text-right">給与見込み</TableHead>
-                                <TableHead>状態</TableHead>
-                                <TableHead className="text-right">操作</TableHead>
-                            </TableRow>
-                        </TableHeader>
+                    <CardContent>
+                        <Table>
+                            <TableHeader>
+                                <TableRow>
+                                    <TableHead>勤務日</TableHead>
+                                    <TableHead>案件名</TableHead>
+                                    <TableHead>従業員</TableHead>
+                                    <TableHead>実勤務時間</TableHead>
+                                    <TableHead className="text-right">勤務時間</TableHead>
+                                    <TableHead className="text-right">
+                                        給与見込み
+                                    </TableHead>
+                                    <TableHead>状態</TableHead>
+                                    <TableHead className="text-right">操作</TableHead>
+                                </TableRow>
+                            </TableHeader>
 
-                        <TableBody>
-                            {reports.map((report) => {
-                                const workHours = calculateWorkHours(
-                                    report.actualStartTime,
-                                    report.actualEndTime,
-                                    report.actualBreakMinutes,
-                                );
+                            <TableBody>
+                                {reports.map((report) => {
+                                    const workHours = calculateWorkHours(
+                                        report.actualStartTime,
+                                        report.actualEndTime,
+                                        report.actualBreakMinutes,
+                                    );
 
-                                const estimatedSalary = calculateEstimatedSalary(
-                                    report,
-                                    report.job,
-                                    report.employee,
-                                );
+                                    const estimatedSalary = calculateEstimatedSalary(
+                                        report,
+                                        report.job,
+                                        report.employee,
+                                    );
 
-                                const canReview = report.status === "SUBMITTED";
+                                    const canReview = report.status === "SUBMITTED";
 
-                                return (
-                                    <TableRow key={report.id}>
-                                        <TableCell>{formatDate(report.job.workDate)}</TableCell>
-                                        <TableCell className="font-medium">
-                                            {report.job.title}
-                                        </TableCell>
-                                        <TableCell>{report.employee.name}</TableCell>
-                                        <TableCell>
-                                            {report.actualStartTime}〜{report.actualEndTime}
-                                        </TableCell>
-                                        <TableCell className="text-right">
-                                            {workHours}時間
-                                        </TableCell>
-                                        <TableCell className="text-right">
-                                            {formatYen(estimatedSalary)}
-                                        </TableCell>
-                                        <TableCell>
-                                            <Badge variant={workReportStatusBadgeVariant[report.status]}>
-                                                {workReportStatusLabel[report.status]}
-                                            </Badge>
-                                        </TableCell>
-                                        <TableCell className="text-right">
-                                            {canReview ? (
-                                                <div className="flex justify-end gap-2">
-                                                    <form action={approveWorkReport}>
-                                                        <input
-                                                            type="hidden"
-                                                            name="reportId"
-                                                            value={report.id}
-                                                        />
-                                                        <Button size="sm" type="submit">
-                                                            承認
-                                                        </Button>
-                                                    </form>
+                                    return (
+                                        <TableRow key={report.id}>
+                                            <TableCell>
+                                                {formatDate(report.job.workDate)}
+                                            </TableCell>
 
-                                                    <form action={rejectWorkReport}>
-                                                        <input
-                                                            type="hidden"
-                                                            name="reportId"
-                                                            value={report.id}
-                                                        />
-                                                        <Button size="sm" type="submit" variant="outline">
-                                                            差し戻し
-                                                        </Button>
-                                                    </form>
-                                                </div>
-                                            ) : (
-                                                <span className="text-sm text-slate-400">-</span>
-                                            )}
-                                        </TableCell>
-                                    </TableRow>
-                                );
-                            })}
-                        </TableBody>
-                    </Table>
+                                            <TableCell className="font-medium">
+                                                {report.job.title}
+                                            </TableCell>
 
-                    {reports.length === 0 && (
-                        <p className="mt-4 text-sm text-slate-500">
-                            まだ就労報告がありません。
-                        </p>
-                    )}
-                </CardContent>
-            </Card>
+                                            <TableCell>{report.employee.name}</TableCell>
+
+                                            <TableCell>
+                                                {report.actualStartTime}〜
+                                                {report.actualEndTime}
+                                            </TableCell>
+
+                                            <TableCell className="text-right">
+                                                {workHours}時間
+                                            </TableCell>
+
+                                            <TableCell className="text-right">
+                                                {formatYen(estimatedSalary)}
+                                            </TableCell>
+
+                                            <TableCell>
+                                                <Badge
+                                                    variant={
+                                                        workReportStatusBadgeVariant[
+                                                        report.status
+                                                        ]
+                                                    }
+                                                >
+                                                    {workReportStatusLabel[report.status]}
+                                                </Badge>
+                                            </TableCell>
+
+                                            <TableCell className="text-right">
+                                                {canReview ? (
+                                                    <div className="flex justify-end gap-2">
+                                                        <form action={approveWorkReport}>
+                                                            <input
+                                                                type="hidden"
+                                                                name="reportId"
+                                                                value={report.id}
+                                                            />
+                                                            <Button size="sm" type="submit">
+                                                                承認
+                                                            </Button>
+                                                        </form>
+
+                                                        <form action={rejectWorkReport}>
+                                                            <input
+                                                                type="hidden"
+                                                                name="reportId"
+                                                                value={report.id}
+                                                            />
+                                                            <Button
+                                                                size="sm"
+                                                                type="submit"
+                                                                variant="outline"
+                                                            >
+                                                                差し戻し
+                                                            </Button>
+                                                        </form>
+                                                    </div>
+                                                ) : (
+                                                    <span className="text-sm text-slate-400">
+                                                        -
+                                                    </span>
+                                                )}
+                                            </TableCell>
+                                        </TableRow>
+                                    );
+                                })}
+                            </TableBody>
+                        </Table>
+
+                        {reports.length === 0 && (
+                            <p className="mt-4 text-sm text-slate-500">
+                                まだ就労報告がありません。
+                            </p>
+                        )}
+                    </CardContent>
+                </Card>
+            </div>
+
+            <div className="md:hidden">
+                <WorkReportCardList reports={reports} />
+            </div>
         </div>
     );
 };
