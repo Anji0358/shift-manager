@@ -18,6 +18,7 @@ import { getCurrentEmployeeId } from "@/lib/auth/current-user";
 import { getCurrentYearMonth } from "@/lib/month";
 import { formatDate, formatYen } from "@/lib/format";
 import { getStaffMonthlyPayrollSummary } from "@/features/payroll/queries";
+import { PayrollCardList } from "@/features/payroll/components/payroll-card-list";
 
 type StaffMonthlySummaryPageProps = {
     searchParams: Promise<{
@@ -140,57 +141,67 @@ const StaffMonthlySummaryPage = async ({
                 </CardHeader>
 
                 <CardContent>
-                    <Table>
-                        <TableHeader>
-                            <TableRow>
-                                <TableHead>勤務日</TableHead>
-                                <TableHead>案件</TableHead>
-                                <TableHead>勤務時間</TableHead>
-                                <TableHead>休憩</TableHead>
-                                <TableHead>時給</TableHead>
-                                <TableHead>給与</TableHead>
-                                <TableHead>交通費</TableHead>
-                                <TableHead>食事</TableHead>
-                                <TableHead>食事手当</TableHead>
-                                <TableHead className="text-right">合計</TableHead>
-                            </TableRow>
-                        </TableHeader>
-
-                        <TableBody>
-                            {summary.rows.map((row) => (
-                                <TableRow key={row.id}>
-                                    <TableCell>{formatDate(row.workDate)}</TableCell>
-                                    <TableCell>{row.jobTitle}</TableCell>
-                                    <TableCell>
-                                        {row.actualStartTime}〜{row.actualEndTime}
-                                        <div className="text-xs text-slate-500">
-                                            実働 {formatMinutesAsHour(row.workingMinutes)}
-                                        </div>
-                                    </TableCell>
-                                    <TableCell>{row.actualBreakMinutes}分</TableCell>
-                                    <TableCell>{formatYen(row.hourlyWage)}</TableCell>
-                                    <TableCell>{formatYen(row.wageAmount)}</TableCell>
-                                    <TableCell>{formatYen(row.transportationFee)}</TableCell>
-                                    <TableCell>{row.hasMeal ? "あり" : "なし"}</TableCell>
-                                    <TableCell>{formatYen(row.mealAllowance)}</TableCell>
-                                    <TableCell className="text-right font-medium">
-                                        {formatYen(row.totalAmount)}
-                                    </TableCell>
-                                </TableRow>
-                            ))}
-
-                            {summary.rows.length === 0 && (
+                    <div className="hidden md:block">
+                        <Table>
+                            <TableHeader>
                                 <TableRow>
-                                    <TableCell
-                                        colSpan={10}
-                                        className="py-8 text-center text-slate-500"
-                                    >
-                                        この月の承認済み就労報告はありません。
-                                    </TableCell>
+                                    <TableHead>勤務日</TableHead>
+                                    <TableHead>案件</TableHead>
+                                    <TableHead>勤務時間</TableHead>
+                                    <TableHead>休憩</TableHead>
+                                    <TableHead>時給</TableHead>
+                                    <TableHead>給与</TableHead>
+                                    <TableHead>交通費</TableHead>
+                                    <TableHead>食事</TableHead>
+                                    <TableHead>食事手当</TableHead>
+                                    <TableHead className="text-right">合計</TableHead>
                                 </TableRow>
-                            )}
-                        </TableBody>
-                    </Table>
+                            </TableHeader>
+
+                            <TableBody>
+                                {summary.rows.map((row) => (
+                                    <TableRow key={row.id}>
+                                        <TableCell>{formatDate(row.workDate)}</TableCell>
+                                        <TableCell>{row.jobTitle}</TableCell>
+                                        <TableCell>
+                                            {row.actualStartTime}〜{row.actualEndTime}
+                                            <div className="text-xs text-slate-500">
+                                                実働 {formatMinutesAsHour(row.workingMinutes)}
+                                            </div>
+                                        </TableCell>
+                                        <TableCell>{row.actualBreakMinutes}分</TableCell>
+                                        <TableCell>{formatYen(row.hourlyWage)}</TableCell>
+                                        <TableCell>{formatYen(row.wageAmount)}</TableCell>
+                                        <TableCell>
+                                            {formatYen(row.transportationFee)}
+                                        </TableCell>
+                                        <TableCell>
+                                            {row.hasMeal ? "あり" : "なし"}
+                                        </TableCell>
+                                        <TableCell>{formatYen(row.mealAllowance)}</TableCell>
+                                        <TableCell className="text-right font-medium">
+                                            {formatYen(row.totalAmount)}
+                                        </TableCell>
+                                    </TableRow>
+                                ))}
+
+                                {summary.rows.length === 0 && (
+                                    <TableRow>
+                                        <TableCell
+                                            colSpan={10}
+                                            className="py-8 text-center text-slate-500"
+                                        >
+                                            この月の承認済み就労報告はありません。
+                                        </TableCell>
+                                    </TableRow>
+                                )}
+                            </TableBody>
+                        </Table>
+                    </div>
+
+                    <div className="md:hidden">
+                        <PayrollCardList rows={summary.rows} />
+                    </div>
                 </CardContent>
             </Card>
         </div>
