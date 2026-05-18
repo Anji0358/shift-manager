@@ -30,7 +30,7 @@ type AdminJobDetailPageProps = {
 };
 
 const wageTypeLabel: Record<WageType, string> = {
-    EMPLOYEE: "従業員ごとの時給",
+    EMPLOYEE: "スタッフごとの時給",
     JOB_FIXED: "案件一律時給",
 };
 
