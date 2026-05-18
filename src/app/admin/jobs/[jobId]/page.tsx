@@ -22,6 +22,7 @@ import type { WageType, WorkReportStatus } from "@prisma/client";
 import { deleteJob } from "@/features/jobs/actions";
 import { ConfirmSubmitButton } from "@/components/shared/confirm-submit-button";
 import { GoogleMapsLink } from "@/components/shared/google-maps-link";
+import { AdminJobDangerZone } from "@/features/jobs/components/admin-job-danger-zone";
 
 type AdminJobDetailPageProps = {
     params: Promise<{
@@ -460,27 +461,7 @@ const AdminJobDetailPage = async ({ params }: AdminJobDetailPageProps) => {
                 </CardContent>
             </Card>
 
-            <Card>
-                <CardHeader>
-                    <CardTitle>危険な操作</CardTitle>
-                </CardHeader>
-
-                <CardContent className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-                    <p className="text-sm text-slate-600">
-                        この案件と、関連する勤務枠・シフト割当・就労報告を削除します。
-                    </p>
-
-                    <form action={deleteJob}>
-                        <input type="hidden" name="jobId" value={job.id} />
-                        <ConfirmSubmitButton
-                            variant="destructive"
-                            message="この案件と関連データを削除します。よろしいですか？"
-                        >
-                            案件を削除
-                        </ConfirmSubmitButton>
-                    </form>
-                </CardContent>
-            </Card>
+            <AdminJobDangerZone jobId={job.id} />
         </div>
     );
 };
