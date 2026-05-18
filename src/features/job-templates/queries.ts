@@ -7,3 +7,11 @@ export const getJobTemplates = async () => {
     },
   });
 };
+
+export const getJobTemplateById = async (templateId: string) => {
+  return await prisma.jobTemplate.findUnique({
+    where: {
+      id: templateId,
+    },
+  });
+};

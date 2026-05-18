@@ -65,30 +65,49 @@ const AdminJobTemplatesPage = async () => {
                                     <TableCell className="font-medium">
                                         {template.name}
                                     </TableCell>
+
                                     <TableCell>{template.title}</TableCell>
+
                                     <TableCell>{template.location}</TableCell>
+
                                     <TableCell>
                                         {template.startTime} - {template.endTime}
                                     </TableCell>
-                                    <TableCell>{template.hasMeal ? "あり" : "なし"}</TableCell>
+
+                                    <TableCell>
+                                        {template.hasMeal ? "あり" : "なし"}
+                                    </TableCell>
+
                                     <TableCell>
                                         ¥{template.transportationFee.toLocaleString()}
                                     </TableCell>
+
                                     <TableCell className="text-right">
-                                        <form action={deleteJobTemplate}>
-                                            <input
-                                                type="hidden"
-                                                name="templateId"
-                                                value={template.id}
-                                            />
-                                            <SubmitButton
-                                                size="sm"
-                                                variant="outline"
-                                                pendingText="削除中..."
-                                            >
-                                                削除
-                                            </SubmitButton>
-                                        </form>
+                                        <div className="flex justify-end gap-2">
+                                            <Button asChild size="sm" variant="outline">
+                                                <Link
+                                                    href={`/admin/job-templates/${template.id}/edit`}
+                                                >
+                                                    編集
+                                                </Link>
+                                            </Button>
+
+                                            <form action={deleteJobTemplate}>
+                                                <input
+                                                    type="hidden"
+                                                    name="templateId"
+                                                    value={template.id}
+                                                />
+
+                                                <SubmitButton
+                                                    size="sm"
+                                                    variant="outline"
+                                                    pendingText="削除中..."
+                                                >
+                                                    削除
+                                                </SubmitButton>
+                                            </form>
+                                        </div>
                                     </TableCell>
                                 </TableRow>
                             ))}
