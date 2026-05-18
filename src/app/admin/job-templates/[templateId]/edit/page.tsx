@@ -11,6 +11,7 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card";
+import { updateJobTemplate } from "@/features/job-templates/actions";
 
 type EditJobTemplatePageProps = {
     params: Promise<{
@@ -47,7 +48,7 @@ const EditJobTemplatePage = async ({ params }: EditJobTemplatePageProps) => {
                 </CardHeader>
 
                 <CardContent>
-                    <form action={async () => { }} className="space-y-6">
+                    <form action={updateJobTemplate} className="space-y-6">
                         <input type="hidden" name="templateId" value={template.id} />
 
                         <div className="grid gap-4 md:grid-cols-2">
