@@ -63,7 +63,7 @@ const AdminLayout = async ({ children }: AdminLayoutProps) => {
 
                             <NavLink href="/staff">
                                 <CalendarCheck className="h-4 w-4" />
-                                勤務者画面
+                                スタッフ画面
                             </NavLink>
                         </nav>
 
