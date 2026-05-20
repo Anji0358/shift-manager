@@ -1,22 +1,17 @@
 "use client";
 
+import type { ReactNode } from "react";
 import { useFormStatus } from "react-dom";
 import { Loader2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { type VariantProps } from "class-variance-authority";
+
+import { Button, buttonVariants } from "@/components/ui/button";
 
 type SubmitButtonProps = {
-    children: React.ReactNode;
+    children: ReactNode;
     pendingText?: string;
     className?: string;
-    variant?:
-    | "default"
-    | "destructive"
-    | "outline"
-    | "secondary"
-    | "ghost"
-    | "link";
-    size?: "default" | "sm" | "lg" | "icon";
-};
+} & VariantProps<typeof buttonVariants>;
 
 export const SubmitButton = ({
     children,
@@ -31,15 +26,15 @@ export const SubmitButton = ({
         <Button
             type="submit"
             disabled={pending}
+            variant={variant}
+            size={size}
+            aria-disabled={pending}
             className={[
                 "transition active:scale-95 disabled:cursor-not-allowed disabled:opacity-60",
                 className,
             ]
                 .filter(Boolean)
                 .join(" ")}
-            variant={variant}
-            size={size}
-            aria-disabled={pending}
         >
             {pending ? (
                 <span className="inline-flex items-center justify-center gap-2">
