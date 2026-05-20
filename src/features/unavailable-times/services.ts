@@ -18,13 +18,17 @@ const isSameDate = (dateA: Date, dateB: Date) => {
   );
 };
 
+const getDayOfWeek = (date: Date) => {
+  return dayOfWeekMap[date.getDay()];
+};
+
 const isTimeOverlapped = (
-  startA: string,
-  endA: string,
-  startB: string,
-  endB: string,
+  slotStartTime: string,
+  slotEndTime: string,
+  unavailableStartTime: string,
+  unavailableEndTime: string,
 ) => {
-  return startA < endB && startB < endA;
+  return slotStartTime < unavailableEndTime && unavailableStartTime < slotEndTime;
 };
 
 export const isUnavailableForSlot = (
@@ -33,71 +37,74 @@ export const isUnavailableForSlot = (
   slotStartTime: string,
   slotEndTime: string,
 ) => {
-  const workDayOfWeek = dayOfWeekMap[workDate.getDay()];
+  const workDayOfWeek = getDayOfWeek(workDate);
 
   return unavailableTimes.some((unavailableTime) => {
     if (unavailableTime.type === "FULL_DAY") {
-      return unavailableTime.date
-        ? isSameDate(unavailableTime.date, workDate)
-        : false;
-    }
-
-    if (unavailableTime.type === "TEMPORARY") {
       if (!unavailableTime.date) {
         return false;
       }
 
-      if (!isSameDate(unavailableTime.date, workDate)) {
-        return false;
-      }
-
-      if (!unavailableTime.startTime || !unavailableTime.endTime) {
-        return true;
-      }
-
-      return isTimeOverlapped(
-        unavailableTime.startTime,
-        unavailableTime.endTime,
-        slotStartTime,
-        slotEndTime,
-      );
+      return isSameDate(unavailableTime.date, workDate);
     }
 
     if (unavailableTime.type === "TIME_RANGE") {
-      if (!unavailableTime.date) {
+      if (
+        !unavailableTime.date ||
+        !unavailableTime.startTime ||
+        !unavailableTime.endTime
+      ) {
         return false;
       }
 
-      if (!isSameDate(unavailableTime.date, workDate)) {
-        return false;
-      }
-
-      if (!unavailableTime.startTime || !unavailableTime.endTime) {
-        return false;
-      }
-
-      return isTimeOverlapped(
-        unavailableTime.startTime,
-        unavailableTime.endTime,
-        slotStartTime,
-        slotEndTime,
+      return (
+        isSameDate(unavailableTime.date, workDate) &&
+        isTimeOverlapped(
+          slotStartTime,
+          slotEndTime,
+          unavailableTime.startTime,
+          unavailableTime.endTime,
+        )
       );
     }
 
     if (unavailableTime.type === "WEEKLY_FIXED") {
-      if (unavailableTime.dayOfWeek !== workDayOfWeek) {
+      if (
+        !unavailableTime.dayOfWeek ||
+        !unavailableTime.startTime ||
+        !unavailableTime.endTime
+      ) {
         return false;
       }
 
-      if (!unavailableTime.startTime || !unavailableTime.endTime) {
-        return true;
+      return (
+        unavailableTime.dayOfWeek === workDayOfWeek &&
+        isTimeOverlapped(
+          slotStartTime,
+          slotEndTime,
+          unavailableTime.startTime,
+          unavailableTime.endTime,
+        )
+      );
+    }
+
+    if (unavailableTime.type === "TEMPORARY") {
+      if (
+        !unavailableTime.date ||
+        !unavailableTime.startTime ||
+        !unavailableTime.endTime
+      ) {
+        return false;
       }
 
-      return isTimeOverlapped(
-        unavailableTime.startTime,
-        unavailableTime.endTime,
-        slotStartTime,
-        slotEndTime,
+      return (
+        isSameDate(unavailableTime.date, workDate) &&
+        isTimeOverlapped(
+          slotStartTime,
+          slotEndTime,
+          unavailableTime.startTime,
+          unavailableTime.endTime,
+        )
       );
     }
 

@@ -24,13 +24,7 @@ import { createUnavailableTime } from "@/features/unavailable-times/actions";
 
 type UnavailableFormType = "FULL_DAY" | "TIME_RANGE" | "WEEKLY_FIXED";
 
-type UnavailableTimeFormProps = {
-    employeeId: string;
-};
-
-export const UnavailableTimeForm = ({
-    employeeId,
-}: UnavailableTimeFormProps) => {
+export const UnavailableTimeForm = () => {
     const [type, setType] = useState<UnavailableFormType>("FULL_DAY");
 
     const showDate = type === "FULL_DAY" || type === "TIME_RANGE";
@@ -40,25 +34,21 @@ export const UnavailableTimeForm = ({
     return (
         <Card>
             <CardHeader>
-                <CardTitle>勤務不可の内容</CardTitle>
+                <CardTitle>勤務できない日時の内容</CardTitle>
             </CardHeader>
 
             <CardContent>
                 <form action={createUnavailableTime} className="space-y-6">
-                    <input type="hidden" name="employeeId" value={employeeId} />
-
                     <div className="space-y-2">
-                        <Label htmlFor="type">どのような勤務不可ですか？</Label>
+                        <Label htmlFor="type">どのような予定ですか？</Label>
 
                         <Select
                             name="type"
                             value={type}
-                            onValueChange={(value) =>
-                                setType(value as UnavailableFormType)
-                            }
+                            onValueChange={(value) => setType(value as UnavailableFormType)}
                         >
                             <SelectTrigger id="type">
-                                <SelectValue placeholder="勤務不可の種類を選択" />
+                                <SelectValue placeholder="勤務できない日時の種類を選択" />
                             </SelectTrigger>
 
                             <SelectContent>
@@ -77,7 +67,7 @@ export const UnavailableTimeForm = ({
                         </Select>
 
                         <p className="text-xs text-slate-500">
-                            予定の種類に合わせて、必要な入力欄だけ表示されます。
+                            選択した内容に合わせて、必要な入力欄だけ表示されます。
                         </p>
                     </div>
 

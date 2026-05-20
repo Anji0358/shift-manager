@@ -15,17 +15,18 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table";
-import { getUnavailableTimesByEmployeeId } from "@/features/unavailable-times/queries";
-import { formatDate } from "@/lib/format";
-import { deleteUnavailableTime } from "@/features/unavailable-times/actions";
-import { SuccessMessage } from "@/components/shared/success-message";
 import { ConfirmSubmitButton } from "@/components/shared/confirm-submit-button";
-import { getCurrentEmployeeId } from "@/lib/auth/current-user";
+import { SuccessMessage } from "@/components/shared/success-message";
 import { UnavailableTimeCardList } from "@/features/unavailable-times/components/unavailable-time-card-list";
+import { deleteUnavailableTime } from "@/features/unavailable-times/actions";
+import { getUnavailableTimesByEmployeeId } from "@/features/unavailable-times/queries";
 import {
     dayOfWeekLabel,
     unavailableTypeLabel,
 } from "@/features/unavailable-times/labels";
+import { getCurrentEmployeeId } from "@/lib/auth/current-user";
+import { formatDate } from "@/lib/format";
+import type { UnavailableTime } from "@prisma/client";
 
 type StaffUnavailableTimesPageProps = {
     searchParams: Promise<{
@@ -33,11 +34,40 @@ type StaffUnavailableTimesPageProps = {
     }>;
 };
 
+const getUnavailableDateText = (unavailableTime: UnavailableTime) => {
+    if (unavailableTime.date) {
+        return formatDate(unavailableTime.date);
+    }
+
+    return "-";
+};
+
+const getUnavailableDayOfWeekText = (unavailableTime: UnavailableTime) => {
+    if (unavailableTime.dayOfWeek) {
+        return dayOfWeekLabel[unavailableTime.dayOfWeek];
+    }
+
+    return "-";
+};
+
+const getUnavailableTimeText = (unavailableTime: UnavailableTime) => {
+    if (unavailableTime.type === "FULL_DAY") {
+        return "終日";
+    }
+
+    if (unavailableTime.startTime && unavailableTime.endTime) {
+        return `${unavailableTime.startTime}〜${unavailableTime.endTime}`;
+    }
+
+    return "-";
+};
+
 const StaffUnavailableTimesPage = async ({
     searchParams,
 }: StaffUnavailableTimesPageProps) => {
     const { message } = await searchParams;
     const currentEmployeeId = await getCurrentEmployeeId();
+
     const myUnavailableTimes =
         await getUnavailableTimesByEmployeeId(currentEmployeeId);
 
@@ -46,6 +76,7 @@ const StaffUnavailableTimesPage = async ({
             <section className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
                 <div>
                     <h1 className="text-3xl font-bold">勤務できない日時</h1>
+
                     <p className="mt-2 text-slate-600">
                         登録した内容は、管理者がスタッフを割り振るときの候補者判定に使われます。
                         授業・予定・試験などで勤務できない日時を管理できます。
@@ -79,7 +110,7 @@ const StaffUnavailableTimesPage = async ({
                                     <TableHead>日付</TableHead>
                                     <TableHead>曜日</TableHead>
                                     <TableHead>時間</TableHead>
-                                    <TableHead>理由</TableHead>
+                                    <TableHead>理由・メモ</TableHead>
                                     <TableHead className="text-right">操作</TableHead>
                                 </TableRow>
                             </TableHeader>
@@ -94,26 +125,18 @@ const StaffUnavailableTimesPage = async ({
                                         </TableCell>
 
                                         <TableCell>
-                                            {unavailableTime.date
-                                                ? formatDate(unavailableTime.date)
-                                                : "-"}
+                                            {getUnavailableDateText(unavailableTime)}
                                         </TableCell>
 
                                         <TableCell>
-                                            {unavailableTime.dayOfWeek
-                                                ? dayOfWeekLabel[unavailableTime.dayOfWeek]
-                                                : "-"}
+                                            {getUnavailableDayOfWeekText(unavailableTime)}
                                         </TableCell>
 
                                         <TableCell>
-                                            {unavailableTime.startTime && unavailableTime.endTime
-                                                ? `${unavailableTime.startTime}〜${unavailableTime.endTime}`
-                                                : "終日"}
+                                            {getUnavailableTimeText(unavailableTime)}
                                         </TableCell>
 
-                                        <TableCell>
-                                            {unavailableTime.reason || "-"}
-                                        </TableCell>
+                                        <TableCell>{unavailableTime.reason || "-"}</TableCell>
 
                                         <TableCell className="text-right">
                                             <form action={deleteUnavailableTime}>
@@ -122,6 +145,7 @@ const StaffUnavailableTimesPage = async ({
                                                     name="unavailableTimeId"
                                                     value={unavailableTime.id}
                                                 />
+
                                                 <ConfirmSubmitButton
                                                     size="sm"
                                                     variant="outline"
@@ -149,9 +173,7 @@ const StaffUnavailableTimesPage = async ({
                     </div>
 
                     <div className="md:hidden">
-                        <UnavailableTimeCardList
-                            unavailableTimes={myUnavailableTimes}
-                        />
+                        <UnavailableTimeCardList unavailableTimes={myUnavailableTimes} />
                     </div>
                 </CardContent>
             </Card>
