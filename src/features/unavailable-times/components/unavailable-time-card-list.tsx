@@ -13,6 +13,22 @@ type UnavailableTimeCardListProps = {
     unavailableTimes: UnavailableTime[];
 };
 
+const getUnavailableDescription = (unavailableTime: UnavailableTime) => {
+    if (unavailableTime.type === "FULL_DAY") {
+        return "この日は終日勤務できません。";
+    }
+
+    if (unavailableTime.type === "TIME_RANGE") {
+        return "この日の一部時間だけ勤務できません。";
+    }
+
+    if (unavailableTime.type === "WEEKLY_FIXED") {
+        return "毎週決まった時間に勤務できません。";
+    }
+
+    return "勤務できない予定です。";
+};
+
 const getUnavailableDateLabel = (unavailableTime: UnavailableTime) => {
     if (unavailableTime.date) {
         return formatDate(unavailableTime.date);
@@ -26,11 +42,15 @@ const getUnavailableDateLabel = (unavailableTime: UnavailableTime) => {
 };
 
 const getUnavailableTimeLabel = (unavailableTime: UnavailableTime) => {
+    if (unavailableTime.type === "FULL_DAY") {
+        return "終日";
+    }
+
     if (unavailableTime.startTime && unavailableTime.endTime) {
         return `${unavailableTime.startTime}〜${unavailableTime.endTime}`;
     }
 
-    return "終日";
+    return "-";
 };
 
 export const UnavailableTimeCardList = ({
@@ -39,7 +59,7 @@ export const UnavailableTimeCardList = ({
     if (unavailableTimes.length === 0) {
         return (
             <div className="rounded-xl border bg-white p-6 text-center text-sm text-slate-500">
-                勤務不可情報はまだ登録されていません。
+                勤務できない日時はまだ登録されていません。
             </div>
         );
     }
@@ -57,9 +77,9 @@ export const UnavailableTimeCardList = ({
                                 {unavailableTypeLabel[unavailableTime.type]}
                             </Badge>
 
-                            <h2 className="mt-3 font-semibold">
-                                {unavailableTime.reason || "理由未設定"}
-                            </h2>
+                            <p className="mt-2 text-sm text-slate-500">
+                                {getUnavailableDescription(unavailableTime)}
+                            </p>
                         </div>
 
                         <form action={deleteUnavailableTime}>
@@ -68,10 +88,11 @@ export const UnavailableTimeCardList = ({
                                 name="unavailableTimeId"
                                 value={unavailableTime.id}
                             />
+
                             <ConfirmSubmitButton
                                 size="sm"
                                 variant="outline"
-                                message="この勤務不可情報を削除します。よろしいですか？"
+                                message="この勤務できない日時を削除します。よろしいですか？"
                             >
                                 <Trash2 className="mr-1 h-4 w-4" />
                                 削除
@@ -79,21 +100,25 @@ export const UnavailableTimeCardList = ({
                         </form>
                     </div>
 
-                    <div className="mt-4 space-y-2 text-sm text-slate-600">
+                    <div className="mt-4 space-y-2 text-sm text-slate-700">
                         <div className="flex items-center gap-2">
-                            <CalendarDays className="h-4 w-4" />
+                            {unavailableTime.type === "WEEKLY_FIXED" ? (
+                                <Repeat className="h-4 w-4 text-slate-400" />
+                            ) : (
+                                <CalendarDays className="h-4 w-4 text-slate-400" />
+                            )}
+
                             <span>{getUnavailableDateLabel(unavailableTime)}</span>
                         </div>
 
                         <div className="flex items-center gap-2">
-                            <Clock className="h-4 w-4" />
+                            <Clock className="h-4 w-4 text-slate-400" />
                             <span>{getUnavailableTimeLabel(unavailableTime)}</span>
                         </div>
 
-                        {unavailableTime.dayOfWeek && (
-                            <div className="flex items-center gap-2">
-                                <Repeat className="h-4 w-4" />
-                                <span>{dayOfWeekLabel[unavailableTime.dayOfWeek]}</span>
+                        {unavailableTime.reason && (
+                            <div className="rounded-lg bg-slate-50 p-3 text-sm text-slate-600">
+                                {unavailableTime.reason}
                             </div>
                         )}
                     </div>
