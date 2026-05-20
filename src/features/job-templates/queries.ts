@@ -20,5 +20,12 @@ export const getJobTemplateById = async (templateId: string) => {
     where: {
       id: templateId,
     },
+    include: {
+      shiftSlots: {
+        orderBy: {
+          startTime: "asc",
+        },
+      },
+    },
   });
 };

@@ -1,10 +1,57 @@
 "use server";
 
-import { WageType } from "@prisma/client";
+import type { WageType } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { requireAdmin } from "@/lib/auth/guards";
+
+const validateTimeOrder = (startTime: string, endTime: string) => {
+  if (startTime >= endTime) {
+    throw new Error("終了時刻は開始時刻より後にしてください。");
+  }
+};
+
+const parseNonNegativeNumber = (value: FormDataEntryValue | null) => {
+  const numberValue = Number(value ?? 0);
+
+  if (!Number.isInteger(numberValue) || numberValue < 0) {
+    return null;
+  }
+
+  return numberValue;
+};
+
+const parsePositiveNumber = (value: FormDataEntryValue | null) => {
+  const numberValue = Number(value ?? 0);
+
+  if (!Number.isInteger(numberValue) || numberValue <= 0) {
+    return null;
+  }
+
+  return numberValue;
+};
+
+const parseFixedHourlyWage = (
+  wageType: WageType,
+  fixedHourlyWageValue: string,
+) => {
+  if (wageType === "EMPLOYEE") {
+    return null;
+  }
+
+  if (!fixedHourlyWageValue) {
+    throw new Error("案件固定時給を入力してください。");
+  }
+
+  const fixedHourlyWage = Number(fixedHourlyWageValue);
+
+  if (!Number.isInteger(fixedHourlyWage) || fixedHourlyWage <= 0) {
+    throw new Error("案件固定時給は1以上の整数で入力してください。");
+  }
+
+  return fixedHourlyWage;
+};
 
 export const createJobTemplate = async (formData: FormData) => {
   await requireAdmin();
@@ -13,11 +60,16 @@ export const createJobTemplate = async (formData: FormData) => {
   const title = String(formData.get("title") ?? "").trim();
   const location = String(formData.get("location") ?? "").trim();
   const meetingPlace = String(formData.get("meetingPlace") ?? "").trim();
+
+  const slotName = String(formData.get("slotName") ?? "").trim();
   const startTime = String(formData.get("startTime") ?? "").trim();
   const endTime = String(formData.get("endTime") ?? "").trim();
+  const requiredPeople = parsePositiveNumber(formData.get("requiredPeople"));
 
-  const breakMinutes = Number(formData.get("breakMinutes") ?? 0);
-  const transportationFee = Number(formData.get("transportationFee") ?? 0);
+  const breakMinutes = parseNonNegativeNumber(formData.get("breakMinutes"));
+  const transportationFee = parseNonNegativeNumber(
+    formData.get("transportationFee"),
+  );
 
   const hasMeal = formData.get("hasMeal") !== null;
 
@@ -30,18 +82,26 @@ export const createJobTemplate = async (formData: FormData) => {
     formData.get("fixedHourlyWage") ?? "",
   ).trim();
 
-  if (!name || !title || !location || !startTime || !endTime) {
-    throw new Error(
-      "テンプレート名、案件名、勤務場所、開始時刻、終了時刻は必須です。",
-    );
+  if (!name || !title || !location) {
+    throw new Error("テンプレート名、案件名、勤務場所は必須です。");
   }
 
-  if (Number.isNaN(breakMinutes) || breakMinutes < 0) {
-    throw new Error("休憩時間の値が不正です。");
+  if (!slotName || !startTime || !endTime) {
+    throw new Error("勤務枠名、開始時刻、終了時刻は必須です。");
   }
 
-  if (Number.isNaN(transportationFee) || transportationFee < 0) {
-    throw new Error("交通費の値が不正です。");
+  validateTimeOrder(startTime, endTime);
+
+  if (requiredPeople === null) {
+    throw new Error("必要人数は1以上の整数で入力してください。");
+  }
+
+  if (breakMinutes === null) {
+    throw new Error("休憩時間は0以上の整数で入力してください。");
+  }
+
+  if (transportationFee === null) {
+    throw new Error("交通費は0以上の整数で入力してください。");
   }
 
   if (wageTypeValue !== "EMPLOYEE" && wageTypeValue !== "JOB_FIXED") {
@@ -49,41 +109,43 @@ export const createJobTemplate = async (formData: FormData) => {
   }
 
   const wageType = wageTypeValue as WageType;
+  const fixedHourlyWage = parseFixedHourlyWage(
+    wageType,
+    fixedHourlyWageValue,
+  );
 
-  const fixedHourlyWage =
-    wageType === "JOB_FIXED" && fixedHourlyWageValue
-      ? Number(fixedHourlyWageValue)
-      : null;
+  await prisma.$transaction(async (tx) => {
+    const template = await tx.jobTemplate.create({
+      data: {
+        name,
+        title,
+        location,
+        meetingPlace: meetingPlace || null,
+        breakMinutes,
+        hasMeal,
+        transportationFee,
+        dressCode: dressCode || null,
+        belongings: belongings || null,
+        note: note || null,
+        wageType,
+        fixedHourlyWage,
+      },
+    });
 
-  if (
-    wageType === "JOB_FIXED" &&
-    (fixedHourlyWage === null ||
-      Number.isNaN(fixedHourlyWage) ||
-      fixedHourlyWage < 0)
-  ) {
-    throw new Error("案件固定時給を正しく入力してください。");
-  }
-
-  await prisma.jobTemplate.create({
-    data: {
-      name,
-      title,
-      location,
-      meetingPlace: meetingPlace || null,
-      startTime,
-      endTime,
-      breakMinutes,
-      hasMeal,
-      transportationFee,
-      dressCode: dressCode || null,
-      belongings: belongings || null,
-      note: note || null,
-      wageType,
-      fixedHourlyWage,
-    },
+    await tx.jobTemplateShiftSlot.create({
+      data: {
+        jobTemplateId: template.id,
+        name: slotName,
+        startTime,
+        endTime,
+        requiredPeople,
+      },
+    });
   });
 
   revalidatePath("/admin/job-templates");
+  revalidatePath("/admin/jobs/new");
+
   redirect("/admin/job-templates");
 };
 
@@ -103,6 +165,9 @@ export const deleteJobTemplate = async (formData: FormData) => {
   });
 
   revalidatePath("/admin/job-templates");
+  revalidatePath("/admin/jobs/new");
+
+  redirect("/admin/job-templates");
 };
 
 export const updateJobTemplate = async (formData: FormData) => {
@@ -114,11 +179,16 @@ export const updateJobTemplate = async (formData: FormData) => {
   const title = String(formData.get("title") ?? "").trim();
   const location = String(formData.get("location") ?? "").trim();
   const meetingPlace = String(formData.get("meetingPlace") ?? "").trim();
+
+  const slotName = String(formData.get("slotName") ?? "").trim();
   const startTime = String(formData.get("startTime") ?? "").trim();
   const endTime = String(formData.get("endTime") ?? "").trim();
+  const requiredPeople = parsePositiveNumber(formData.get("requiredPeople"));
 
-  const breakMinutes = Number(formData.get("breakMinutes") ?? 0);
-  const transportationFee = Number(formData.get("transportationFee") ?? 0);
+  const breakMinutes = parseNonNegativeNumber(formData.get("breakMinutes"));
+  const transportationFee = parseNonNegativeNumber(
+    formData.get("transportationFee"),
+  );
 
   const hasMeal = formData.get("hasMeal") !== null;
 
@@ -135,18 +205,26 @@ export const updateJobTemplate = async (formData: FormData) => {
     throw new Error("更新対象のテンプレートが取得できません。");
   }
 
-  if (!name || !title || !location || !startTime || !endTime) {
-    throw new Error(
-      "テンプレート名、案件名、勤務場所、開始時刻、終了時刻は必須です。",
-    );
+  if (!name || !title || !location) {
+    throw new Error("テンプレート名、案件名、勤務場所は必須です。");
   }
 
-  if (Number.isNaN(breakMinutes) || breakMinutes < 0) {
-    throw new Error("休憩時間の値が不正です。");
+  if (!slotName || !startTime || !endTime) {
+    throw new Error("勤務枠名、開始時刻、終了時刻は必須です。");
   }
 
-  if (Number.isNaN(transportationFee) || transportationFee < 0) {
-    throw new Error("交通費の値が不正です。");
+  validateTimeOrder(startTime, endTime);
+
+  if (requiredPeople === null) {
+    throw new Error("必要人数は1以上の整数で入力してください。");
+  }
+
+  if (breakMinutes === null) {
+    throw new Error("休憩時間は0以上の整数で入力してください。");
+  }
+
+  if (transportationFee === null) {
+    throw new Error("交通費は0以上の整数で入力してください。");
   }
 
   if (wageTypeValue !== "EMPLOYEE" && wageTypeValue !== "JOB_FIXED") {
@@ -154,45 +232,52 @@ export const updateJobTemplate = async (formData: FormData) => {
   }
 
   const wageType = wageTypeValue as WageType;
+  const fixedHourlyWage = parseFixedHourlyWage(
+    wageType,
+    fixedHourlyWageValue,
+  );
 
-  const fixedHourlyWage =
-    wageType === "JOB_FIXED" && fixedHourlyWageValue
-      ? Number(fixedHourlyWageValue)
-      : null;
+  await prisma.$transaction(async (tx) => {
+    await tx.jobTemplate.update({
+      where: {
+        id: templateId,
+      },
+      data: {
+        name,
+        title,
+        location,
+        meetingPlace: meetingPlace || null,
+        breakMinutes,
+        hasMeal,
+        transportationFee,
+        dressCode: dressCode || null,
+        belongings: belongings || null,
+        note: note || null,
+        wageType,
+        fixedHourlyWage,
+      },
+    });
 
-  if (
-    wageType === "JOB_FIXED" &&
-    (fixedHourlyWage === null ||
-      Number.isNaN(fixedHourlyWage) ||
-      fixedHourlyWage < 0)
-  ) {
-    throw new Error("案件固定時給を正しく入力してください。");
-  }
+    await tx.jobTemplateShiftSlot.deleteMany({
+      where: {
+        jobTemplateId: templateId,
+      },
+    });
 
-  await prisma.jobTemplate.update({
-    where: {
-      id: templateId,
-    },
-    data: {
-      name,
-      title,
-      location,
-      meetingPlace: meetingPlace || null,
-      startTime,
-      endTime,
-      breakMinutes,
-      hasMeal,
-      transportationFee,
-      dressCode: dressCode || null,
-      belongings: belongings || null,
-      note: note || null,
-      wageType,
-      fixedHourlyWage,
-    },
+    await tx.jobTemplateShiftSlot.create({
+      data: {
+        jobTemplateId: templateId,
+        name: slotName,
+        startTime,
+        endTime,
+        requiredPeople,
+      },
+    });
   });
 
   revalidatePath("/admin/job-templates");
   revalidatePath(`/admin/job-templates/${templateId}/edit`);
+  revalidatePath("/admin/jobs/new");
 
   redirect("/admin/job-templates");
 };
