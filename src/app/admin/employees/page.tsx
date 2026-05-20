@@ -15,15 +15,11 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table";
+import { SuccessMessage } from "@/components/shared/success-message";
 import { getEmployees } from "@/features/employees/queries";
+import { deactivateEmployee } from "@/features/employees/actions";
 import { formatMonth, formatYen } from "@/lib/format";
 import type { EmployeeRole, EmploymentStatus } from "@prisma/client";
-import { deactivateEmployee } from "@/features/employees/actions";
-import { SuccessMessage } from "@/components/shared/success-message";
-import { ConfirmSubmitButton } from "@/components/shared/confirm-submit-button";
-import { resetEmployeePassword } from "@/features/employees/actions";
-import { Input } from '@/components/ui/input';
-import { SubmitButton } from "@/components/shared/submit-button";
 
 const roleLabel: Record<EmployeeRole, string> = {
     ADMIN: "管理者",
@@ -49,7 +45,7 @@ const AdminEmployeesPage = async ({
 
     return (
         <div className="space-y-6">
-            <section className="flex items-start justify-between gap-4">
+            <section className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
                 <div>
                     <h1 className="text-3xl font-bold">スタッフ管理</h1>
                     <p className="mt-2 text-slate-600">
@@ -86,21 +82,32 @@ const AdminEmployeesPage = async ({
                         <TableBody>
                             {employees.map((employee) => (
                                 <TableRow key={employee.id}>
-                                    <TableCell className="font-medium">{employee.name}</TableCell>
+                                    <TableCell className="font-medium">
+                                        {employee.name}
+                                    </TableCell>
+
                                     <TableCell>{employee.email}</TableCell>
+
                                     <TableCell>
                                         <Badge
                                             variant={
-                                                employee.role === "ADMIN" ? "default" : "secondary"
+                                                employee.role === "ADMIN"
+                                                    ? "default"
+                                                    : "secondary"
                                             }
                                         >
                                             {roleLabel[employee.role]}
                                         </Badge>
                                     </TableCell>
+
                                     <TableCell className="text-right">
                                         {formatYen(employee.hourlyWage)}
                                     </TableCell>
-                                    <TableCell>{formatMonth(employee.startedWorkingAt)}</TableCell>
+
+                                    <TableCell>
+                                        {formatMonth(employee.startedWorkingAt)}
+                                    </TableCell>
+
                                     <TableCell>
                                         <Badge
                                             variant={
@@ -109,42 +116,61 @@ const AdminEmployeesPage = async ({
                                                     : "outline"
                                             }
                                         >
-                                            {employmentStatusLabel[employee.employmentStatus]}
+                                            {
+                                                employmentStatusLabel[
+                                                employee.employmentStatus
+                                                ]
+                                            }
                                         </Badge>
                                     </TableCell>
-                                    <TableCell className="text-right">
-                                        {employee.employmentStatus === "ACTIVE" ? (
-                                            <form action={deactivateEmployee}>
-                                                <input type="hidden" name="employeeId" value={employee.id} />
-                                                <ConfirmSubmitButton
-                                                    size="sm"
-                                                    variant="outline"
-                                                    message="このスタッフを退職済みに変更します。現在の確定シフトもキャンセルされます。よろしいですか？"
-                                                >
-                                                    退職済みにする
-                                                </ConfirmSubmitButton>
-                                            </form>
-                                        ) : (
-                                            <span className="text-sm text-slate-400">退職済み</span>
-                                        )}
 
-                                        <form action={resetEmployeePassword} className="mt-2 flex justify-end gap-2">
-                                            <input type="hidden" name="employeeId" value={employee.id} />
-                                            <Input
-                                                name="password"
-                                                type="password"
-                                                placeholder="新パスワード"
-                                                className="h-8 w-36"
-                                                minLength={8}
-                                                required
-                                            />
-                                            <SubmitButton size="sm" variant="outline" pendingText="更新中...">
-                                                リセット
-                                            </SubmitButton>
-                                        </form>
+                                    <TableCell className="text-right">
+                                        <div className="flex justify-end gap-2">
+                                            <Button
+                                                asChild
+                                                size="sm"
+                                                variant="outline"
+                                            >
+                                                <Link
+                                                    href={`/admin/employees/${employee.id}/edit`}
+                                                >
+                                                    編集
+                                                </Link>
+                                            </Button>
+
+                                            {employee.employmentStatus ===
+                                                "ACTIVE" && (
+                                                    <form action={deactivateEmployee}>
+                                                        <input
+                                                            type="hidden"
+                                                            name="employeeId"
+                                                            value={employee.id}
+                                                        />
+
+                                                        <Button
+                                                            type="submit"
+                                                            size="sm"
+                                                            variant="outline"
+                                                        >
+                                                            退職済みにする
+                                                        </Button>
+                                                    </form>
+                                                )}
+                                        </div>
                                     </TableCell>
                                 </TableRow>
                             ))}
+
+                            {employees.length === 0 && (
+                                <TableRow>
+                                    <TableCell
+                                        colSpan={7}
+                                        className="py-8 text-center text-sm text-slate-500"
+                                    >
+                                        登録されているスタッフはいません。
+                                    </TableCell>
+                                </TableRow>
+                            )}
                         </TableBody>
                     </Table>
                 </CardContent>
