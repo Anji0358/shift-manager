@@ -1,3 +1,4 @@
+import Link from "next/link";
 import {
     Card,
     CardContent,
@@ -14,7 +15,6 @@ import {
 } from "@/components/ui/table";
 import { getWorkReportsByMonth } from "@/features/work-reports/queries";
 import { buildMonthlyReportSummaries } from "@/features/monthly-reports/services";
-import { MonthlyReportDetailTable } from "@/features/monthly-reports/components/monthly-report-detail-table";
 import { formatYen } from "@/lib/format";
 import { getCurrentYearMonth, getMonthRange } from "@/lib/month";
 import { Input } from "@/components/ui/input";
@@ -57,7 +57,7 @@ const AdminMonthlySummaryPage = async ({
             <section>
                 <h1 className="text-3xl font-bold">月次集計</h1>
                 <p className="mt-2 text-slate-600">
-                    就労報告をもとに、スタッフ別の勤務明細・就労時間・諸経費・給与見込みを確認します。
+                    就労報告をもとに、スタッフ別の勤務回数・就労時間・諸経費・支給見込みを確認します。
                 </p>
             </section>
 
@@ -135,59 +135,67 @@ const AdminMonthlySummaryPage = async ({
                 </CardHeader>
 
                 <CardContent>
-                    <Table>
-                        <TableHeader>
-                            <TableRow>
-                                <TableHead>スタッフ</TableHead>
-                                <TableHead className="text-right">勤務回数</TableHead>
-                                <TableHead className="text-right">休憩時間</TableHead>
-                                <TableHead className="text-right">就労時間</TableHead>
-                                <TableHead className="text-right">諸経費</TableHead>
-                                <TableHead className="text-right">支給見込み</TableHead>
-                            </TableRow>
-                        </TableHeader>
-
-                        <TableBody>
-                            {monthlySummaries.map((summary) => (
-                                <TableRow key={summary.employeeId}>
-                                    <TableCell className="font-medium">
-                                        {summary.employeeName}
-                                    </TableCell>
-                                    <TableCell className="text-right">
-                                        {summary.totals.reportCount}回
-                                    </TableCell>
-                                    <TableCell className="text-right">
-                                        {summary.totals.breakHours.toFixed(1)}h
-                                    </TableCell>
-                                    <TableCell className="text-right">
-                                        {summary.totals.workingHours.toFixed(1)}h
-                                    </TableCell>
-                                    <TableCell className="text-right">
-                                        {formatYen(summary.totals.expensesTotal)}
-                                    </TableCell>
-                                    <TableCell className="text-right">
-                                        {formatYen(summary.totals.totalPay)}
-                                    </TableCell>
+                    <div className="overflow-x-auto">
+                        <Table>
+                            <TableHeader>
+                                <TableRow>
+                                    <TableHead>スタッフ</TableHead>
+                                    <TableHead className="text-right">勤務回数</TableHead>
+                                    <TableHead className="text-right">休憩時間</TableHead>
+                                    <TableHead className="text-right">就労時間</TableHead>
+                                    <TableHead className="text-right">諸経費</TableHead>
+                                    <TableHead className="text-right">支給見込み</TableHead>
+                                    <TableHead className="text-right">操作</TableHead>
                                 </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
+                            </TableHeader>
+
+                            <TableBody>
+                                {monthlySummaries.map((summary) => (
+                                    <TableRow key={summary.employeeId}>
+                                        <TableCell className="font-medium">
+                                            {summary.employeeName}
+                                        </TableCell>
+
+                                        <TableCell className="text-right">
+                                            {summary.totals.reportCount}回
+                                        </TableCell>
+
+                                        <TableCell className="text-right">
+                                            {summary.totals.breakHours.toFixed(1)}h
+                                        </TableCell>
+
+                                        <TableCell className="text-right">
+                                            {summary.totals.workingHours.toFixed(1)}h
+                                        </TableCell>
+
+                                        <TableCell className="text-right">
+                                            {formatYen(summary.totals.expensesTotal)}
+                                        </TableCell>
+
+                                        <TableCell className="text-right">
+                                            {formatYen(summary.totals.totalPay)}
+                                        </TableCell>
+
+                                        <TableCell className="text-right">
+                                            <Button asChild size="sm" variant="outline">
+                                                <Link
+                                                    href={`/admin/monthly-summary/${summary.employeeId}?month=${targetMonth}`}
+                                                >
+                                                    給与明細の表示
+                                                </Link>
+                                            </Button>
+                                        </TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </div>
 
                     {monthlySummaries.length === 0 && (
                         <p className="mt-4 text-sm text-slate-500">
                             まだ集計対象の就労報告がありません。
                         </p>
                     )}
-                </CardContent>
-            </Card>
-
-            <Card>
-                <CardHeader>
-                    <CardTitle>月次明細</CardTitle>
-                </CardHeader>
-
-                <CardContent>
-                    <MonthlyReportDetailTable summaries={monthlySummaries} />
                 </CardContent>
             </Card>
         </div>
