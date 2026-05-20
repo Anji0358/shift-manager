@@ -1,10 +1,10 @@
 import type { DayOfWeek, UnavailableType } from "@prisma/client";
 
 export const unavailableTypeLabel: Record<UnavailableType, string> = {
-    FULL_DAY: "一日NG",
-    TIME_RANGE: "時間指定NG",
-    WEEKLY_FIXED: "毎週固定NG",
-    TEMPORARY: "一時的な予定NG",
+    FULL_DAY: "終日勤務不可",
+    TIME_RANGE: "時間帯勤務不可",
+    WEEKLY_FIXED: "毎週固定の勤務不可",
+    TEMPORARY: "単発の予定",
 };
 
 export const dayOfWeekLabel: Record<DayOfWeek, string> = {
