@@ -75,11 +75,11 @@ const StaffUnavailableTimesPage = async ({
         <div className="space-y-6">
             <section className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
                 <div>
-                    <h1 className="text-3xl font-bold">勤務できない日時</h1>
+                    <h1 className="text-3xl font-bold">NGの日時</h1>
 
                     <p className="mt-2 text-slate-600">
                         登録した内容は、管理者がスタッフを割り振るときの候補者判定に使われます。
-                        授業・予定・試験などで勤務できない日時を管理できます。
+                        授業・予定・試験などでNGの日時を管理できます。
                     </p>
                 </div>
 
@@ -89,7 +89,7 @@ const StaffUnavailableTimesPage = async ({
                     <div className="flex flex-col gap-3 sm:flex-row md:justify-end">
                         <Button asChild>
                             <Link href="/staff/unavailable-times/new">
-                                勤務できない日時を追加
+                                NGの日時を追加
                             </Link>
                         </Button>
                     </div>
@@ -98,7 +98,7 @@ const StaffUnavailableTimesPage = async ({
 
             <Card>
                 <CardHeader>
-                    <CardTitle>登録済みの勤務できない日時</CardTitle>
+                    <CardTitle>登録済みのNGの日時</CardTitle>
                 </CardHeader>
 
                 <CardContent>
@@ -149,7 +149,7 @@ const StaffUnavailableTimesPage = async ({
                                                 <ConfirmSubmitButton
                                                     size="sm"
                                                     variant="outline"
-                                                    message="この勤務できない日時を削除します。よろしいですか？"
+                                                    message="このNGの日時を削除します。よろしいですか？"
                                                 >
                                                     削除
                                                 </ConfirmSubmitButton>
@@ -164,7 +164,7 @@ const StaffUnavailableTimesPage = async ({
                                             colSpan={6}
                                             className="py-8 text-center text-slate-500"
                                         >
-                                            勤務できない日時はまだ登録されていません。
+                                            NGの日時はまだ登録されていません。
                                         </TableCell>
                                     </TableRow>
                                 )}

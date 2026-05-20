@@ -34,7 +34,7 @@ export const UnavailableTimeForm = () => {
     return (
         <Card>
             <CardHeader>
-                <CardTitle>勤務できない日時の内容</CardTitle>
+                <CardTitle>NG日時の内容</CardTitle>
             </CardHeader>
 
             <CardContent>
@@ -48,20 +48,20 @@ export const UnavailableTimeForm = () => {
                             onValueChange={(value) => setType(value as UnavailableFormType)}
                         >
                             <SelectTrigger id="type">
-                                <SelectValue placeholder="勤務できない日時の種類を選択" />
+                                <SelectValue placeholder="NG日時の種類を選択" />
                             </SelectTrigger>
 
                             <SelectContent>
                                 <SelectItem value="FULL_DAY">
-                                    この日は終日勤務できない
+                                    この日は終日NG
                                 </SelectItem>
 
                                 <SelectItem value="TIME_RANGE">
-                                    この日の一部時間だけ勤務できない
+                                    この日の一部時間だけNG
                                 </SelectItem>
 
                                 <SelectItem value="WEEKLY_FIXED">
-                                    毎週決まった時間に勤務できない
+                                    毎週決まった時間にNG
                                 </SelectItem>
                             </SelectContent>
                         </Select>
@@ -73,13 +73,13 @@ export const UnavailableTimeForm = () => {
 
                     {type === "FULL_DAY" && (
                         <div className="rounded-lg border bg-slate-50 p-4 text-sm text-slate-600">
-                            例：試験、帰省、私用などで、その日まるごと勤務できない場合に使います。
+                            例：試験、帰省、私用などで、その日まるごとNGの場合に使います。
                         </div>
                     )}
 
                     {type === "TIME_RANGE" && (
                         <div className="rounded-lg border bg-slate-50 p-4 text-sm text-slate-600">
-                            例：13:00〜17:00は授業があるなど、その日の一部時間だけ勤務できない場合に使います。
+                            例：13:00〜17:00は授業があるなど、その日の一部時間だけNGの場合に使います。
                         </div>
                     )}
 
@@ -149,7 +149,7 @@ export const UnavailableTimeForm = () => {
                         </Button>
 
                         <SubmitButton pendingText="登録中...">
-                            勤務できない日時を登録
+                            NG日時を登録
                         </SubmitButton>
                     </div>
                 </form>

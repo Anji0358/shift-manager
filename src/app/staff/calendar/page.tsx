@@ -201,7 +201,7 @@ const StaffCalendarPage = async ({ searchParams }: StaffCalendarPageProps) => {
             <section>
                 <h1 className="text-3xl font-bold">月間シフトカレンダー</h1>
                 <p className="mt-2 text-slate-600">
-                    月ごとの勤務予定と勤務できない日時を色分けして確認します。
+                    月ごとの勤務予定とNGの日時を色分けして確認します。
                 </p>
             </section>
 

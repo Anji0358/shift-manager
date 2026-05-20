@@ -5,7 +5,7 @@ export const getCalendarStatusLabel = (status: CalendarStatus) => {
     case "confirmed":
       return "確定シフト";
     case "unavailable":
-      return "勤務できない日時";
+      return "NGの日時";
     case "open":
       return "未確定";
     default:

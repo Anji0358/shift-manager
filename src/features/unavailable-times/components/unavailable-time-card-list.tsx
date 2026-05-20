@@ -26,7 +26,7 @@ const getUnavailableDescription = (unavailableTime: UnavailableTime) => {
         return "毎週決まった時間に勤務できません。";
     }
 
-    return "勤務できない予定です。";
+    return "NGの予定です。";
 };
 
 const getUnavailableDateLabel = (unavailableTime: UnavailableTime) => {
@@ -59,7 +59,7 @@ export const UnavailableTimeCardList = ({
     if (unavailableTimes.length === 0) {
         return (
             <div className="rounded-xl border bg-white p-6 text-center text-sm text-slate-500">
-                勤務できない日時はまだ登録されていません。
+                NGの日時はまだ登録されていません。
             </div>
         );
     }
@@ -92,7 +92,7 @@ export const UnavailableTimeCardList = ({
                             <ConfirmSubmitButton
                                 size="sm"
                                 variant="outline"
-                                message="この勤務できない日時を削除します。よろしいですか？"
+                                message="このNGの日時を削除します。よろしいですか？"
                             >
                                 <Trash2 className="mr-1 h-4 w-4" />
                                 削除

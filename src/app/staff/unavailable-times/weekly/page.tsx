@@ -43,7 +43,7 @@ const StaffWeeklyUnavailableTimePage = () => {
                 <div>
                     <h1 className="text-3xl font-bold">毎週固定NG登録</h1>
                     <p className="mt-2 text-slate-600">
-                        大学の時間割のように、毎週決まって勤務できない時間帯を登録します。
+                        大学の時間割のように、毎週決まってNGの時間帯を登録します。
                     </p>
                 </div>
 

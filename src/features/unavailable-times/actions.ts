@@ -73,11 +73,11 @@ export const createUnavailableTime = async (formData: FormData) => {
   const typeValue = getRequiredString(
     formData,
     "type",
-    "勤務できない日時の種類",
+    "NGの日時の種類",
   );
 
   if (!isSelectableUnavailableType(typeValue)) {
-    throw new Error("勤務できない日時の種類が不正です。");
+    throw new Error("NGの日時の種類が不正です。");
   }
 
   const reason = getOptionalString(formData, "reason");
@@ -154,7 +154,7 @@ export const createUnavailableTime = async (formData: FormData) => {
     redirect("/staff/unavailable-times?message=created");
   }
 
-  throw new Error("勤務できない日時の登録に失敗しました。");
+  throw new Error("NGの日時の登録に失敗しました。");
 };
 
 export const deleteUnavailableTime = async (formData: FormData) => {
@@ -164,7 +164,7 @@ export const deleteUnavailableTime = async (formData: FormData) => {
   ).trim();
 
   if (!unavailableTimeId) {
-    throw new Error("削除対象の勤務できない日時が取得できません。");
+    throw new Error("削除対象のNGの日時が取得できません。");
   }
 
   const unavailableTime = await prisma.unavailableTime.findUnique({
@@ -174,11 +174,11 @@ export const deleteUnavailableTime = async (formData: FormData) => {
   });
 
   if (!unavailableTime) {
-    throw new Error("勤務できない日時が見つかりません。");
+    throw new Error("NGの日時が見つかりません。");
   }
 
   if (unavailableTime.employeeId !== employeeId) {
-    throw new Error("他のユーザーの勤務できない日時は削除できません。");
+    throw new Error("他のユーザーのNGの日時は削除できません。");
   }
 
   await prisma.unavailableTime.delete({
