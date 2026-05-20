@@ -278,21 +278,17 @@ const StaffCalendarPage = async ({ searchParams }: StaffCalendarPageProps) => {
                                                 key={assignment.id}
                                                 href={`/staff/jobs/${assignment.jobId}`}
                                                 className={[
-                                                    "block rounded-md border p-2 text-xs shadow-sm transition active:scale-[0.98]",
+                                                    "block rounded-md border px-2 py-1.5 text-xs shadow-sm transition hover:opacity-80 active:scale-[0.98]",
                                                     getCalendarStatusClassName("confirmed"),
                                                 ].join(" ")}
                                             >
-                                                <p className="font-medium">{assignment.job.title}</p>
-                                                <p>
+                                                <p className="line-clamp-2 font-medium leading-snug">
+                                                    {assignment.job.title}
+                                                </p>
+
+                                                <p className="mt-1">
                                                     {assignment.slot.startTime}〜{assignment.slot.endTime}
                                                 </p>
-                                                <p>
-                                                    集合：
-                                                    {assignment.job.meetingPlace || "未設定"}
-                                                </p>
-                                                <Badge variant="secondary" className="mt-2">
-                                                    {getCalendarStatusLabel("confirmed")}
-                                                </Badge>
                                             </Link>
                                         ))}
 
@@ -300,23 +296,17 @@ const StaffCalendarPage = async ({ searchParams }: StaffCalendarPageProps) => {
                                             <div
                                                 key={`${unavailableTime.id}-${day}`}
                                                 className={[
-                                                    "rounded-md border p-2 text-xs shadow-sm",
+                                                    "rounded-md border px-2 py-1.5 text-xs shadow-sm",
                                                     getCalendarStatusClassName("unavailable"),
                                                 ].join(" ")}
                                             >
                                                 <p className="font-medium">
+                                                    {getUnavailableTimeText(unavailableTime)}
+                                                </p>
+
+                                                <p className="mt-1 line-clamp-2 leading-snug">
                                                     {getUnavailableTitle(unavailableTime)}
                                                 </p>
-
-                                                <p>{getUnavailableTimeText(unavailableTime)}</p>
-
-                                                <p className="text-[11px]">
-                                                    {getUnavailableSubText(unavailableTime)}
-                                                </p>
-
-                                                <Badge variant="secondary" className="mt-2">
-                                                    {getCalendarStatusLabel("unavailable")}
-                                                </Badge>
                                             </div>
                                         ))}
                                     </div>
