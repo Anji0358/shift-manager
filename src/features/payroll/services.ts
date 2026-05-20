@@ -15,6 +15,10 @@ type SalaryEmployee = Pick<Employee, "hourlyWage">;
 
 const NO_MEAL_ALLOWANCE = 500;
 
+export const calculateBreakHours = (breakMinutes: number): number => {
+  return breakMinutes / 60;
+};
+
 export const calculateWorkHours = (
   startTime: string,
   endTime: string,
@@ -60,7 +64,13 @@ export const calculateMealAllowance = (report: SalaryWorkReport): number => {
   return report.hasMeal ? 0 : NO_MEAL_ALLOWANCE;
 };
 
-export const calculateEstimatedSalary = (
+export const calculateExpensesTotal = (
+  report: SalaryWorkReport,
+): number => {
+  return report.transportationFee + calculateMealAllowance(report);
+};
+
+export const calculateBaseSalary = (
   report: SalaryWorkReport,
   job: SalaryJob,
   employee: SalaryEmployee,
@@ -72,11 +82,17 @@ export const calculateEstimatedSalary = (
   );
 
   const appliedHourlyWage = getAppliedHourlyWage(job, employee);
-  const mealAllowance = calculateMealAllowance(report);
 
-  return Math.round(
-    workHours * appliedHourlyWage +
-      report.transportationFee +
-      mealAllowance,
+  return Math.round(workHours * appliedHourlyWage);
+};
+
+export const calculateEstimatedSalary = (
+  report: SalaryWorkReport,
+  job: SalaryJob,
+  employee: SalaryEmployee,
+): number => {
+  return (
+    calculateBaseSalary(report, job, employee) +
+    calculateExpensesTotal(report)
   );
 };

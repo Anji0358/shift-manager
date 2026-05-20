@@ -12,13 +12,10 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table";
-import { getWorkReports } from "@/features/work-reports/queries";
-import {
-    calculateEstimatedSalary,
-    calculateWorkHours,
-} from "@/features/payroll/services";
-import { formatYen } from "@/lib/format";
 import { getWorkReportsByMonth } from "@/features/work-reports/queries";
+import { buildMonthlyReportSummaries } from "@/features/monthly-reports/services";
+import { MonthlyReportDetailTable } from "@/features/monthly-reports/components/monthly-report-detail-table";
+import { formatYen } from "@/lib/format";
 import { getCurrentYearMonth, getMonthRange } from "@/lib/month";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -35,74 +32,32 @@ const AdminMonthlySummaryPage = async ({
     const { month } = await searchParams;
     const targetMonth = month ?? getCurrentYearMonth();
     const { startDate, endDate } = getMonthRange(targetMonth);
+
     const reports = await getWorkReportsByMonth(startDate, endDate);
-    const totalWorkHours = reports.reduce((total, report) => {
-        return (
-            total +
-            calculateWorkHours(
-                report.actualStartTime,
-                report.actualEndTime,
-                report.actualBreakMinutes,
-            )
-        );
+    const monthlySummaries = buildMonthlyReportSummaries(reports, targetMonth);
+
+    const totalReportCount = monthlySummaries.reduce((total, summary) => {
+        return total + summary.totals.reportCount;
     }, 0);
 
-    const totalLaborCost = reports.reduce((total, report) => {
-        return (
-            total +
-            calculateEstimatedSalary(report, report.job, report.employee)
-        );
+    const totalWorkHours = monthlySummaries.reduce((total, summary) => {
+        return total + summary.totals.workingHours;
     }, 0);
 
-    const employeeSummaries = reports.reduce<
-        Record<
-            string,
-            {
-                employeeName: string;
-                reportCount: number;
-                workHours: number;
-                salary: number;
-            }
-        >
-    >((summaries, report) => {
-        const employeeId = report.employeeId;
+    const totalExpenses = monthlySummaries.reduce((total, summary) => {
+        return total + summary.totals.expensesTotal;
+    }, 0);
 
-        const workHours = calculateWorkHours(
-            report.actualStartTime,
-            report.actualEndTime,
-            report.actualBreakMinutes,
-        );
-
-        const salary = calculateEstimatedSalary(
-            report,
-            report.job,
-            report.employee,
-        );
-
-        if (!summaries[employeeId]) {
-            summaries[employeeId] = {
-                employeeName: report.employee.name,
-                reportCount: 0,
-                workHours: 0,
-                salary: 0,
-            };
-        }
-
-        summaries[employeeId].reportCount += 1;
-        summaries[employeeId].workHours += workHours;
-        summaries[employeeId].salary += salary;
-
-        return summaries;
-    }, {});
-
-    const employeeSummaryRows = Object.values(employeeSummaries);
+    const totalLaborCost = monthlySummaries.reduce((total, summary) => {
+        return total + summary.totals.totalPay;
+    }, 0);
 
     return (
         <div className="space-y-6">
             <section>
                 <h1 className="text-3xl font-bold">月次集計</h1>
                 <p className="mt-2 text-slate-600">
-                    全スタッフの勤務時間、人件費、スタッフ別実績を確認します。
+                    就労報告をもとに、スタッフ別の勤務明細・就労時間・諸経費・給与見込みを確認します。
                 </p>
             </section>
 
@@ -111,12 +66,18 @@ const AdminMonthlySummaryPage = async ({
                     <label htmlFor="month" className="text-sm font-medium">
                         対象月
                     </label>
-                    <Input id="month" name="month" type="month" defaultValue={targetMonth} />
+                    <Input
+                        id="month"
+                        name="month"
+                        type="month"
+                        defaultValue={targetMonth}
+                    />
                 </div>
+
                 <Button type="submit">表示</Button>
             </form>
 
-            <section className="grid gap-4 md:grid-cols-3">
+            <section className="grid gap-4 md:grid-cols-4">
                 <Card>
                     <CardHeader>
                         <CardTitle className="text-sm text-slate-500">
@@ -124,25 +85,40 @@ const AdminMonthlySummaryPage = async ({
                         </CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <p className="text-3xl font-bold">{reports.length}件</p>
+                        <p className="text-3xl font-bold">{totalReportCount}件</p>
                     </CardContent>
                 </Card>
 
                 <Card>
                     <CardHeader>
                         <CardTitle className="text-sm text-slate-500">
-                            総勤務時間
+                            総就労時間
                         </CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <p className="text-3xl font-bold">{totalWorkHours}時間</p>
+                        <p className="text-3xl font-bold">
+                            {totalWorkHours.toFixed(1)}h
+                        </p>
                     </CardContent>
                 </Card>
 
                 <Card>
                     <CardHeader>
                         <CardTitle className="text-sm text-slate-500">
-                            総人件費見込み
+                            総諸経費
+                        </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <p className="text-3xl font-bold">
+                            {formatYen(totalExpenses)}
+                        </p>
+                    </CardContent>
+                </Card>
+
+                <Card>
+                    <CardHeader>
+                        <CardTitle className="text-sm text-slate-500">
+                            総支給見込み
                         </CardTitle>
                     </CardHeader>
                     <CardContent>
@@ -164,36 +140,54 @@ const AdminMonthlySummaryPage = async ({
                             <TableRow>
                                 <TableHead>スタッフ</TableHead>
                                 <TableHead className="text-right">勤務回数</TableHead>
-                                <TableHead className="text-right">勤務時間</TableHead>
-                                <TableHead className="text-right">給与見込み</TableHead>
+                                <TableHead className="text-right">休憩時間</TableHead>
+                                <TableHead className="text-right">就労時間</TableHead>
+                                <TableHead className="text-right">諸経費</TableHead>
+                                <TableHead className="text-right">支給見込み</TableHead>
                             </TableRow>
                         </TableHeader>
 
                         <TableBody>
-                            {employeeSummaryRows.map((summary) => (
-                                <TableRow key={summary.employeeName}>
+                            {monthlySummaries.map((summary) => (
+                                <TableRow key={summary.employeeId}>
                                     <TableCell className="font-medium">
                                         {summary.employeeName}
                                     </TableCell>
                                     <TableCell className="text-right">
-                                        {summary.reportCount}回
+                                        {summary.totals.reportCount}回
                                     </TableCell>
                                     <TableCell className="text-right">
-                                        {summary.workHours}時間
+                                        {summary.totals.breakHours.toFixed(1)}h
                                     </TableCell>
                                     <TableCell className="text-right">
-                                        {formatYen(summary.salary)}
+                                        {summary.totals.workingHours.toFixed(1)}h
+                                    </TableCell>
+                                    <TableCell className="text-right">
+                                        {formatYen(summary.totals.expensesTotal)}
+                                    </TableCell>
+                                    <TableCell className="text-right">
+                                        {formatYen(summary.totals.totalPay)}
                                     </TableCell>
                                 </TableRow>
                             ))}
                         </TableBody>
                     </Table>
 
-                    {employeeSummaryRows.length === 0 && (
+                    {monthlySummaries.length === 0 && (
                         <p className="mt-4 text-sm text-slate-500">
                             まだ集計対象の就労報告がありません。
                         </p>
                     )}
+                </CardContent>
+            </Card>
+
+            <Card>
+                <CardHeader>
+                    <CardTitle>月次明細</CardTitle>
+                </CardHeader>
+
+                <CardContent>
+                    <MonthlyReportDetailTable summaries={monthlySummaries} />
                 </CardContent>
             </Card>
         </div>
