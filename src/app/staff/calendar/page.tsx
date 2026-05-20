@@ -59,10 +59,6 @@ const dayOfWeekMap: Record<number, DayOfWeek> = {
     6: "SATURDAY",
 };
 
-const getDayNumber = (date: Date) => {
-    return date.getDate();
-};
-
 const getDaysInMonth = (yearMonth: string) => {
     const [yearText, monthText] = yearMonth.split("-");
     const year = Number(yearText);
@@ -77,6 +73,14 @@ const getDateByYearMonthAndDay = (yearMonth: string, day: number) => {
     const monthIndex = Number(monthText) - 1;
 
     return new Date(year, monthIndex, day);
+};
+
+const getFirstDayOfWeek = (yearMonth: string) => {
+    const [yearText, monthText] = yearMonth.split("-");
+    const year = Number(yearText);
+    const monthIndex = Number(monthText) - 1;
+
+    return new Date(year, monthIndex, 1).getDay();
 };
 
 const isSameDate = (dateA: Date, dateB: Date) => {
@@ -153,6 +157,13 @@ const StaffCalendarPage = async ({ searchParams }: StaffCalendarPageProps) => {
     const days = Array.from(
         { length: getDaysInMonth(targetMonth) },
         (_, index) => index + 1,
+    );
+
+    const firstDayOfWeek = getFirstDayOfWeek(targetMonth);
+
+    const blankDays = Array.from(
+        { length: firstDayOfWeek },
+        (_, index) => index,
     );
 
     const unavailableListItems: CalendarListItem[] = days.flatMap((day) => {
@@ -235,6 +246,13 @@ const StaffCalendarPage = async ({ searchParams }: StaffCalendarPageProps) => {
                             >
                                 {day}
                             </div>
+                        ))}
+
+                        {blankDays.map((blankDay) => (
+                            <div
+                                key={`blank-${blankDay}`}
+                                className="min-h-32 border-r border-b bg-slate-50 p-2"
+                            />
                         ))}
 
                         {days.map((day) => {
