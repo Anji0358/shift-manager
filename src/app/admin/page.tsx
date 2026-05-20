@@ -98,7 +98,7 @@ const AdminPage = async () => {
                     </CardHeader>
                     <CardContent className="space-y-3">
                         <p className="text-sm text-slate-600">
-                            案件作成、勤務枠作成、シフト確定を行います。
+                            案件作成、勤務枠作成、スタッフ割り振りを行います。
                         </p>
                         <Button asChild variant="outline">
                             <Link href="/admin/jobs">案件一覧へ</Link>

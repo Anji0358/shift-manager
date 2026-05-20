@@ -65,7 +65,7 @@ const AdminJobAssignmentsPage = async ({
         <div className="space-y-8">
             <section className="flex items-start justify-between gap-4">
                 <div>
-                    <h1 className="text-3xl font-bold">シフト確定</h1>
+                    <h1 className="text-3xl font-bold">スタッフ割り振り</h1>
                     <p className="mt-2 text-slate-600">
                         「{job.title}」の勤務枠にスタッフを割り当てます。
                     </p>
@@ -78,48 +78,70 @@ const AdminJobAssignmentsPage = async ({
 
             <SuccessMessage message={message} />
 
-            <Card>
-                <CardHeader>
-                    <CardTitle>シフト確定フォーム</CardTitle>
-                </CardHeader>
+            {job.shiftSlots.length === 0 && (
+                <Card>
+                    <CardHeader>
+                        <CardTitle>勤務枠がありません</CardTitle>
+                    </CardHeader>
 
-                <CardContent>
-                    <form
-                        action={createShiftAssignment}
-                        className="grid gap-4 md:grid-cols-[1fr_1fr_auto]"
-                    >
-                        <input type="hidden" name="jobId" value={job.id} />
+                    <CardContent className="space-y-4">
+                        <p className="text-sm text-slate-600">
+                            スタッフを割り振るには、先に勤務枠を登録してください。
+                        </p>
 
-                        <Select name="slotId" required>
-                            <SelectTrigger>
-                                <SelectValue placeholder="勤務枠を選択" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                {job.shiftSlots.map((slot) => (
-                                    <SelectItem key={slot.id} value={slot.id}>
-                                        {slot.name}：{slot.startTime}〜{slot.endTime}
-                                    </SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
+                        <Button asChild>
+                            <Link href={`/admin/jobs/${job.id}/slots/new`}>
+                                勤務枠を追加する
+                            </Link>
+                        </Button>
+                    </CardContent>
+                </Card>
+            )}
 
-                        <Select name="employeeId" required>
-                            <SelectTrigger>
-                                <SelectValue placeholder="スタッフを選択" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                {candidates.map((candidate) => (
-                                    <SelectItem key={candidate.id} value={candidate.id}>
-                                        {candidate.name}
-                                    </SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
+            {job.shiftSlots.length > 0 && (
+                <Card>
+                    <CardHeader>
+                        <CardTitle>スタッフ割り振りフォーム</CardTitle>
+                    </CardHeader>
 
-                        <Button type="submit">確定する</Button>
-                    </form>
-                </CardContent>
-            </Card>
+                    <CardContent>
+                        <form
+                            action={createShiftAssignment}
+                            className="grid gap-4 md:grid-cols-[1fr_1fr_auto]"
+                        >
+                            <input type="hidden" name="jobId" value={job.id} />
+
+                            <Select name="slotId" required>
+                                <SelectTrigger>
+                                    <SelectValue placeholder="勤務枠を選択" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {job.shiftSlots.map((slot) => (
+                                        <SelectItem key={slot.id} value={slot.id}>
+                                            {slot.name}：{slot.startTime}〜{slot.endTime}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+
+                            <Select name="employeeId" required>
+                                <SelectTrigger>
+                                    <SelectValue placeholder="スタッフを選択" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {candidates.map((candidate) => (
+                                        <SelectItem key={candidate.id} value={candidate.id}>
+                                            {candidate.name}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+
+                            <Button type="submit">確定する</Button>
+                        </form>
+                    </CardContent>
+                </Card>
+            )}
 
             <Card>
                 <CardHeader>
@@ -260,7 +282,7 @@ const AdminJobAssignmentsPage = async ({
                                             <ConfirmSubmitButton
                                                 size="sm"
                                                 variant="outline"
-                                                message="このシフト確定をキャンセルします。よろしいですか？"
+                                                message="このスタッフ割り振りをキャンセルします。よろしいですか？"
                                             >
                                                 キャンセル
                                             </ConfirmSubmitButton>

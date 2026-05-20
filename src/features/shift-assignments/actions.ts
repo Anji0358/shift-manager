@@ -15,7 +15,7 @@ export const createShiftAssignment = async (formData: FormData) => {
   const employeeId = String(formData.get("employeeId"));
 
   if (!jobId || !slotId || !employeeId) {
-    throw new Error("シフト確定に必要な情報が不足しています。");
+    throw new Error("スタッフ割り振りに必要な情報が不足しています。");
   }
 
   const job = await prisma.job.findUnique({
@@ -60,9 +60,11 @@ export const createShiftAssignment = async (formData: FormData) => {
     },
   });
 
-  if (duplicatedAssignment) {
-    throw new Error("このスタッフはすでに同じ勤務枠に割り当てられています。");
-  }
+ if (duplicatedAssignment) {
+  redirect(
+    `/admin/jobs/${jobId}/assignments?message=このスタッフはすでに同じ勤務枠に割り当てられています`
+  );
+}
 
   const assignedCount = await prisma.shiftAssignment.count({
     where: {
@@ -100,7 +102,7 @@ export const createShiftAssignment = async (formData: FormData) => {
   revalidatePath("/staff/shifts");
   revalidatePath("/staff/calendar");
 
-  redirect(`/admin/jobs/${jobId}/assignments?message=assigned`);
+  redirect(`/admin/jobs/${jobId}/assignments?message=シフトを確定しました`);
 };
 
 export const cancelShiftAssignment = async (formData: FormData) => {

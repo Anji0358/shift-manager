@@ -32,5 +32,5 @@ export const createJobShiftSlot = async (formData: FormData) => {
   });
 
   revalidatePath(`/admin/jobs/${jobId}`);
-  redirect(`/admin/jobs/${jobId}`);
+  redirect(`/admin/jobs/${jobId}/assignments?message=勤務枠を追加しました`);
 };

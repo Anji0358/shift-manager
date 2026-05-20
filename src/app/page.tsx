@@ -19,7 +19,7 @@ const HomePage = async () => {
         </p>
         <h1 className="text-4xl font-bold tracking-tight">Shift Manager</h1>
         <p className="mx-auto max-w-2xl text-slate-600">
-          ケータリング現場向けに、案件管理・シフト確定・勤務不可情報・就労報告・月次集計を一元管理するアプリです。
+          ケータリング現場向けに、案件管理・スタッフ割り振り・勤務不可情報・就労報告・月次集計を一元管理するアプリです。
         </p>
       </section>
 
@@ -30,7 +30,7 @@ const HomePage = async () => {
           </CardHeader>
           <CardContent className="space-y-4">
             <p className="text-sm text-slate-600">
-              案件作成、勤務枠作成、シフト確定、就労報告の承認を行います。
+              案件作成、勤務枠作成、スタッフ割り振り、就労報告の承認を行います。
             </p>
             <Button asChild className="w-full">
               <Link href={session ? "/admin" : "/login"}>

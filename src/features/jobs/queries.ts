@@ -83,15 +83,19 @@ export const getJobById = async (jobId: string) => {
 export const getActiveStaffCandidates = async () => {
   return await prisma.employee.findMany({
     where: {
-      role: "STAFF",
       employmentStatus: "ACTIVE",
     },
     include: {
       unavailableTimes: true,
     },
-    orderBy: {
-      startedWorkingAt: "asc",
-    },
+    orderBy: [
+      {
+        role: "asc",
+      },
+      {
+        startedWorkingAt: "asc",
+      },
+    ],
   });
 };
 

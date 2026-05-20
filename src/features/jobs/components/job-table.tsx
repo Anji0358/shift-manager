@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Job } from "@prisma/client";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
     Table,
     TableBody,
@@ -9,7 +10,6 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
 import { formatDate } from "@/lib/format";
 
 type JobWithFulfillment = Job & {
@@ -41,36 +41,59 @@ export const JobTable = ({ jobs }: JobTableProps) => {
                     {jobs.map((job) => (
                         <TableRow key={job.id}>
                             <TableCell>{formatDate(job.workDate)}</TableCell>
-                            <TableCell className="font-medium">{job.title}</TableCell>
+
+                            <TableCell className="font-medium">
+                                {job.title}
+                            </TableCell>
+
                             <TableCell>
                                 {job.startTime} - {job.endTime}
                             </TableCell>
+
                             <TableCell>{job.location}</TableCell>
+
                             <TableCell>
                                 <div className="flex items-center gap-2">
                                     <Badge
                                         variant={
-                                            job.fulfillmentRate >= 100 ? "default" : "secondary"
+                                            job.fulfillmentRate >= 100
+                                                ? "default"
+                                                : "secondary"
                                         }
                                     >
                                         {job.fulfillmentRate >= 100 ? "充足" : "未充足"}
                                     </Badge>
+
                                     <span className="text-sm text-slate-600">
                                         {job.assignedPeople}/{job.requiredPeople}人
                                     </span>
                                 </div>
                             </TableCell>
+
                             <TableCell className="text-right">
-                                <Button asChild size="sm" variant="outline">
-                                    <Link href={`/admin/jobs/${job.id}`}>詳細</Link>
-                                </Button>
+                                <div className="flex justify-end gap-2">
+                                    <Button asChild size="sm" variant="outline">
+                                        <Link href={`/admin/jobs/${job.id}`}>
+                                            詳細
+                                        </Link>
+                                    </Button>
+
+                                    <Button asChild size="sm">
+                                        <Link href={`/admin/jobs/${job.id}/assignments`}>
+                                            スタッフ割り振り
+                                        </Link>
+                                    </Button>
+                                </div>
                             </TableCell>
                         </TableRow>
                     ))}
 
                     {jobs.length === 0 && (
                         <TableRow>
-                            <TableCell colSpan={6} className="py-8 text-center text-slate-500">
+                            <TableCell
+                                colSpan={6}
+                                className="py-8 text-center text-slate-500"
+                            >
                                 案件がありません。
                             </TableCell>
                         </TableRow>

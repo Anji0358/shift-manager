@@ -14,24 +14,33 @@ export const JobDetailHeader = ({
     isFulfilled,
 }: JobDetailHeaderProps) => {
     return (
-        <section className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
-            <div>
+        <section className="flex flex-col gap-4 rounded-2xl border bg-white p-6 shadow-sm md:flex-row md:items-start md:justify-between">
+            <div className="space-y-2">
                 <div className="flex flex-wrap items-center gap-3">
-                    <h1 className="text-3xl font-bold">{title}</h1>
+                    <h1 className="text-3xl font-bold tracking-tight text-slate-900">
+                        {title}
+                    </h1>
 
                     <Badge variant={isFulfilled ? "default" : "secondary"}>
-                        {isFulfilled ? "充足" : "未充足"}
+                        {isFulfilled ? "充足済み" : "未充足"}
                     </Badge>
                 </div>
 
-                <p className="mt-2 text-slate-600">
-                    案件情報、勤務枠、候補者、参加スタッフ、就労報告、充足状況を確認します。
+                <p className="max-w-2xl text-sm leading-6 text-slate-600">
+                    案件情報、勤務枠、候補者、参加スタッフ、就労報告、充足状況を確認できます。
+                    スタッフの割り振りは「シフトを確定する」から行います。
                 </p>
             </div>
 
-            <div className="flex flex-wrap gap-3">
+            <div className="flex flex-wrap gap-3 md:justify-end">
                 <Button asChild variant="outline">
                     <Link href="/admin/jobs">案件一覧へ戻る</Link>
+                </Button>
+
+                <Button asChild variant="outline">
+                    <Link href={`/admin/jobs/${jobId}/slots/new`}>
+                        勤務枠を追加
+                    </Link>
                 </Button>
 
                 <Button asChild>

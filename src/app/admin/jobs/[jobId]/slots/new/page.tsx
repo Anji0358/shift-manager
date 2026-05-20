@@ -29,11 +29,27 @@ const AdminNewJobSlotPage = async ({ params }: AdminNewJobSlotPageProps) => {
 
     return (
         <div className="space-y-6">
-            <section>
-                <h1 className="text-3xl font-bold">勤務枠追加</h1>
-                <p className="mt-2 text-slate-600">
-                    「{job.title}」に勤務枠を追加します。
-                </p>
+            <section className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+                <div>
+                    <h1 className="text-3xl font-bold">勤務枠追加</h1>
+                    <p className="mt-2 text-slate-600">
+                        「{job.title}」に勤務枠を追加します。
+                    </p>
+                </div>
+
+                <div className="flex flex-wrap gap-3">
+                    <Button asChild variant="outline">
+                        <Link href={`/admin/jobs/${job.id}/assignments`}>
+                            スタッフ割り振りへ戻る
+                        </Link>
+                    </Button>
+
+                    <Button asChild variant="outline">
+                        <Link href={`/admin/jobs/${job.id}`}>
+                            案件詳細へ戻る
+                        </Link>
+                    </Button>
+                </div>
             </section>
 
             <Card>
@@ -75,7 +91,9 @@ const AdminNewJobSlotPage = async ({ params }: AdminNewJobSlotPageProps) => {
 
                         <div className="flex justify-end gap-3">
                             <Button asChild variant="outline">
-                                <Link href={`/admin/jobs/${job.id}`}>キャンセル</Link>
+                                <Link href={`/admin/jobs/${job.id}/assignments`}>
+                                    キャンセル
+                                </Link>
                             </Button>
                             <Button type="submit">追加する</Button>
                         </div>

@@ -1,4 +1,6 @@
+import Link from "next/link";
 import type { Job } from "@prisma/client";
+import { Button } from "@/components/ui/button";
 import { JobCard } from "@/features/jobs/components/job-card";
 
 type JobWithFulfillment = Job & {
@@ -23,7 +25,23 @@ export const JobCardList = ({ jobs }: JobCardListProps) => {
     return (
         <div className="space-y-4">
             {jobs.map((job) => (
-                <JobCard key={job.id} job={job} />
+                <div key={job.id} className="space-y-3">
+                    <JobCard job={job} />
+
+                    <div className="grid gap-2 rounded-xl border bg-white p-4">
+                        <Button asChild variant="outline" className="w-full">
+                            <Link href={`/admin/jobs/${job.id}`}>
+                                詳細を見る
+                            </Link>
+                        </Button>
+
+                        <Button asChild className="w-full">
+                            <Link href={`/admin/jobs/${job.id}/assignments`}>
+                                スタッフ割り振り
+                            </Link>
+                        </Button>
+                    </div>
+                </div>
             ))}
         </div>
     );
