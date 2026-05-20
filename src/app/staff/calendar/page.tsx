@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { DayOfWeek, UnavailableTime } from "@prisma/client";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -17,15 +18,19 @@ import {
     TableRow,
 } from "@/components/ui/table";
 import { getAssignmentsByEmployeeIdAndMonth } from "@/features/shift-assignments/queries";
+import { getUnavailableTimesByEmployeeIdAndMonth } from "@/features/unavailable-times/queries";
 import {
     getCalendarStatusClassName,
     getCalendarStatusLabel,
     type CalendarStatus,
 } from "@/features/calendar/calendar-status";
+import {
+    dayOfWeekLabel,
+    unavailableTypeLabel,
+} from "@/features/unavailable-times/labels";
 import { formatDate } from "@/lib/format";
 import { getCurrentYearMonth, getMonthRange } from "@/lib/month";
 import { getCurrentEmployeeId } from "@/lib/auth/current-user";
-import { prisma } from "@/lib/prisma";
 
 type StaffCalendarPageProps = {
     searchParams: Promise<{
@@ -44,6 +49,16 @@ type CalendarListItem = {
     href?: string;
 };
 
+const dayOfWeekMap: Record<number, DayOfWeek> = {
+    0: "SUNDAY",
+    1: "MONDAY",
+    2: "TUESDAY",
+    3: "WEDNESDAY",
+    4: "THURSDAY",
+    5: "FRIDAY",
+    6: "SATURDAY",
+};
+
 const getDayNumber = (date: Date) => {
     return date.getDate();
 };
@@ -56,6 +71,69 @@ const getDaysInMonth = (yearMonth: string) => {
     return new Date(year, month, 0).getDate();
 };
 
+const getDateByYearMonthAndDay = (yearMonth: string, day: number) => {
+    const [yearText, monthText] = yearMonth.split("-");
+    const year = Number(yearText);
+    const monthIndex = Number(monthText) - 1;
+
+    return new Date(year, monthIndex, day);
+};
+
+const isSameDate = (dateA: Date, dateB: Date) => {
+    return (
+        dateA.getFullYear() === dateB.getFullYear() &&
+        dateA.getMonth() === dateB.getMonth() &&
+        dateA.getDate() === dateB.getDate()
+    );
+};
+
+const getDayOfWeek = (date: Date) => {
+    return dayOfWeekMap[date.getDay()];
+};
+
+const isUnavailableOnDate = (
+    unavailableTime: UnavailableTime,
+    targetDate: Date,
+) => {
+    if (unavailableTime.type === "WEEKLY_FIXED") {
+        return unavailableTime.dayOfWeek === getDayOfWeek(targetDate);
+    }
+
+    if (!unavailableTime.date) {
+        return false;
+    }
+
+    return isSameDate(unavailableTime.date, targetDate);
+};
+
+const getUnavailableTimeText = (unavailableTime: UnavailableTime) => {
+    if (unavailableTime.type === "FULL_DAY") {
+        return "終日";
+    }
+
+    if (unavailableTime.startTime && unavailableTime.endTime) {
+        return `${unavailableTime.startTime}〜${unavailableTime.endTime}`;
+    }
+
+    return "-";
+};
+
+const getUnavailableTitle = (unavailableTime: UnavailableTime) => {
+    if (unavailableTime.reason) {
+        return unavailableTime.reason;
+    }
+
+    return unavailableTypeLabel[unavailableTime.type];
+};
+
+const getUnavailableSubText = (unavailableTime: UnavailableTime) => {
+    if (unavailableTime.type === "WEEKLY_FIXED" && unavailableTime.dayOfWeek) {
+        return `${dayOfWeekLabel[unavailableTime.dayOfWeek]}・毎週固定`;
+    }
+
+    return unavailableTypeLabel[unavailableTime.type];
+};
+
 const StaffCalendarPage = async ({ searchParams }: StaffCalendarPageProps) => {
     const currentEmployeeId = await getCurrentEmployeeId();
 
@@ -63,29 +141,35 @@ const StaffCalendarPage = async ({ searchParams }: StaffCalendarPageProps) => {
     const targetMonth = month ?? getCurrentYearMonth();
     const { startDate, endDate } = getMonthRange(targetMonth);
 
-    const assignments = await getAssignmentsByEmployeeIdAndMonth(
-        currentEmployeeId,
-        startDate,
-        endDate,
-    );
-
-    const unavailableTimes = await prisma.unavailableTime.findMany({
-        where: {
-            employeeId: currentEmployeeId,
-            date: {
-                gte: startDate,
-                lt: endDate,
-            },
-        },
-        orderBy: {
-            date: "asc",
-        },
-    });
+    const [assignments, unavailableTimes] = await Promise.all([
+        getAssignmentsByEmployeeIdAndMonth(currentEmployeeId, startDate, endDate),
+        getUnavailableTimesByEmployeeIdAndMonth(
+            currentEmployeeId,
+            startDate,
+            endDate,
+        ),
+    ]);
 
     const days = Array.from(
         { length: getDaysInMonth(targetMonth) },
         (_, index) => index + 1,
     );
+
+    const unavailableListItems: CalendarListItem[] = days.flatMap((day) => {
+        const targetDate = getDateByYearMonthAndDay(targetMonth, day);
+
+        return unavailableTimes
+            .filter((unavailableTime) => isUnavailableOnDate(unavailableTime, targetDate))
+            .map((unavailableTime) => ({
+                id: `${unavailableTime.id}-${day}`,
+                date: targetDate,
+                title: getUnavailableTitle(unavailableTime),
+                status: "unavailable" as CalendarStatus,
+                timeText: getUnavailableTimeText(unavailableTime),
+                locationText: getUnavailableSubText(unavailableTime),
+                meetingPlaceText: "-",
+            }));
+    });
 
     const listItems: CalendarListItem[] = [
         ...assignments.map((assignment) => ({
@@ -98,20 +182,7 @@ const StaffCalendarPage = async ({ searchParams }: StaffCalendarPageProps) => {
             meetingPlaceText: assignment.job.meetingPlace || "未設定",
             href: `/staff/jobs/${assignment.jobId}`,
         })),
-        ...unavailableTimes
-            .filter((unavailableTime) => unavailableTime.date !== null)
-            .map((unavailableTime) => ({
-                id: unavailableTime.id,
-                date: unavailableTime.date as Date,
-                title: unavailableTime.reason || "勤務不可",
-                status: "unavailable" as CalendarStatus,
-                timeText:
-                    unavailableTime.startTime && unavailableTime.endTime
-                        ? `${unavailableTime.startTime}〜${unavailableTime.endTime}`
-                        : "終日",
-                locationText: "-",
-                meetingPlaceText: "-",
-            })),
+        ...unavailableListItems,
     ].sort((a, b) => a.date.getTime() - b.date.getTime());
 
     return (
@@ -119,7 +190,7 @@ const StaffCalendarPage = async ({ searchParams }: StaffCalendarPageProps) => {
             <section>
                 <h1 className="text-3xl font-bold">月間シフトカレンダー</h1>
                 <p className="mt-2 text-slate-600">
-                    月ごとの勤務予定と勤務不可情報を色分けして確認します。
+                    月ごとの勤務予定と勤務できない日時を色分けして確認します。
                 </p>
             </section>
 
@@ -167,17 +238,15 @@ const StaffCalendarPage = async ({ searchParams }: StaffCalendarPageProps) => {
                         ))}
 
                         {days.map((day) => {
+                            const targetDate = getDateByYearMonthAndDay(targetMonth, day);
+
                             const assignmentsOfDay = assignments.filter((assignment) => {
-                                return getDayNumber(assignment.job.workDate) === day;
+                                return isSameDate(assignment.job.workDate, targetDate);
                             });
 
                             const unavailableTimesOfDay = unavailableTimes.filter(
                                 (unavailableTime) => {
-                                    if (!unavailableTime.date) {
-                                        return false;
-                                    }
-
-                                    return getDayNumber(unavailableTime.date) === day;
+                                    return isUnavailableOnDate(unavailableTime, targetDate);
                                 },
                             );
 
@@ -197,8 +266,7 @@ const StaffCalendarPage = async ({ searchParams }: StaffCalendarPageProps) => {
                                             >
                                                 <p className="font-medium">{assignment.job.title}</p>
                                                 <p>
-                                                    {assignment.slot.startTime}〜
-                                                    {assignment.slot.endTime}
+                                                    {assignment.slot.startTime}〜{assignment.slot.endTime}
                                                 </p>
                                                 <p>
                                                     集合：
@@ -212,21 +280,22 @@ const StaffCalendarPage = async ({ searchParams }: StaffCalendarPageProps) => {
 
                                         {unavailableTimesOfDay.map((unavailableTime) => (
                                             <div
-                                                key={unavailableTime.id}
+                                                key={`${unavailableTime.id}-${day}`}
                                                 className={[
                                                     "rounded-md border p-2 text-xs shadow-sm",
                                                     getCalendarStatusClassName("unavailable"),
                                                 ].join(" ")}
                                             >
                                                 <p className="font-medium">
-                                                    {unavailableTime.reason || "勤務不可"}
+                                                    {getUnavailableTitle(unavailableTime)}
                                                 </p>
-                                                <p>
-                                                    {unavailableTime.startTime &&
-                                                        unavailableTime.endTime
-                                                        ? `${unavailableTime.startTime}〜${unavailableTime.endTime}`
-                                                        : "終日"}
+
+                                                <p>{getUnavailableTimeText(unavailableTime)}</p>
+
+                                                <p className="text-[11px]">
+                                                    {getUnavailableSubText(unavailableTime)}
                                                 </p>
+
                                                 <Badge variant="secondary" className="mt-2">
                                                     {getCalendarStatusLabel("unavailable")}
                                                 </Badge>
@@ -253,7 +322,7 @@ const StaffCalendarPage = async ({ searchParams }: StaffCalendarPageProps) => {
                                 <TableHead>状態</TableHead>
                                 <TableHead>内容</TableHead>
                                 <TableHead>時間</TableHead>
-                                <TableHead>場所</TableHead>
+                                <TableHead>場所・種別</TableHead>
                                 <TableHead>集合場所</TableHead>
                                 <TableHead className="text-right">操作</TableHead>
                             </TableRow>
@@ -275,9 +344,7 @@ const StaffCalendarPage = async ({ searchParams }: StaffCalendarPageProps) => {
                                         </span>
                                     </TableCell>
 
-                                    <TableCell className="font-medium">
-                                        {item.title}
-                                    </TableCell>
+                                    <TableCell className="font-medium">{item.title}</TableCell>
 
                                     <TableCell>{item.timeText || "-"}</TableCell>
                                     <TableCell>{item.locationText || "-"}</TableCell>

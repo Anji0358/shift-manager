@@ -3,9 +3,9 @@ export type CalendarStatus = "confirmed" | "unavailable" | "open";
 export const getCalendarStatusLabel = (status: CalendarStatus) => {
   switch (status) {
     case "confirmed":
-      return "確定";
+      return "確定シフト";
     case "unavailable":
-      return "勤務不可";
+      return "勤務できない日時";
     case "open":
       return "未確定";
     default:
