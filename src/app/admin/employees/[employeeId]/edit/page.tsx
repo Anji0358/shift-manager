@@ -1,6 +1,4 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Button } from "@/components/ui/button";
 import {
     Card,
     CardContent,
@@ -16,6 +14,8 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
+import { LinkButton } from "@/components/shared/link-button";
+import { SubmitButton } from "@/components/shared/submit-button";
 import { SuccessMessage } from "@/components/shared/success-message";
 import { updateEmployee } from "@/features/employees/actions";
 import { getEmployeeById } from "@/features/employees/queries";
@@ -56,9 +56,13 @@ const AdminEmployeeEditPage = async ({
                     </p>
                 </div>
 
-                <Button asChild variant="outline">
-                    <Link href="/admin/employees">スタッフ一覧へ戻る</Link>
-                </Button>
+                <LinkButton
+                    href="/admin/employees"
+                    variant="outline"
+                    pendingText="スタッフ一覧へ移動中..."
+                >
+                    スタッフ一覧へ戻る
+                </LinkButton>
             </section>
 
             <SuccessMessage message={message} />
@@ -163,11 +167,15 @@ const AdminEmployeeEditPage = async ({
                         </div>
 
                         <div className="flex justify-end gap-3">
-                            <Button asChild variant="outline">
-                                <Link href="/admin/employees">キャンセル</Link>
-                            </Button>
+                            <LinkButton
+                                href="/admin/employees"
+                                variant="outline"
+                                pendingText="スタッフ一覧へ移動中..."
+                            >
+                                キャンセル
+                            </LinkButton>
 
-                            <Button type="submit">保存する</Button>
+                            <SubmitButton pendingText="保存中...">保存する</SubmitButton>
                         </div>
                     </form>
                 </CardContent>

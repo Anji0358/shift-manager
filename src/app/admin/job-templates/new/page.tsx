@@ -1,7 +1,6 @@
-import Link from "next/link";
 import { createJobTemplate } from "@/features/job-templates/actions";
 import { SubmitButton } from "@/components/shared/submit-button";
-import { Button } from "@/components/ui/button";
+import { LinkButton } from "@/components/shared/link-button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -22,9 +21,9 @@ const NewJobTemplatePage = () => {
                     </p>
                 </div>
 
-                <Button asChild variant="outline">
-                    <Link href="/admin/job-templates">一覧へ戻る</Link>
-                </Button>
+                <LinkButton href="/admin/job-templates" variant="outline">
+                    一覧へ戻る
+                </LinkButton>
             </section>
 
             <Card>
@@ -203,8 +202,12 @@ const NewJobTemplatePage = () => {
                                         defaultValue="EMPLOYEE"
                                         className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
                                     >
-                                        <option value="EMPLOYEE">スタッフごとの時給を使う</option>
-                                        <option value="JOB_FIXED">案件固定の時給を使う</option>
+                                        <option value="EMPLOYEE">
+                                            スタッフごとの時給を使う
+                                        </option>
+                                        <option value="JOB_FIXED">
+                                            案件固定の時給を使う
+                                        </option>
                                     </select>
                                 </div>
 
@@ -225,9 +228,9 @@ const NewJobTemplatePage = () => {
                         </section>
 
                         <div className="flex justify-end gap-3">
-                            <Button asChild variant="outline">
-                                <Link href="/admin/job-templates">キャンセル</Link>
-                            </Button>
+                            <LinkButton href="/admin/job-templates" variant="outline">
+                                キャンセル
+                            </LinkButton>
 
                             <SubmitButton pendingText="作成中...">
                                 テンプレートを作成

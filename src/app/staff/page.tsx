@@ -1,16 +1,17 @@
-import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import {
     Card,
     CardContent,
     CardHeader,
     CardTitle,
 } from "@/components/ui/card";
+import { LinkButton } from "@/components/shared/link-button";
 import { getStaffDashboardStats } from "@/features/dashboard/staff-queries";
-import { getCurrentEmployeeId } from "@/lib/auth/current-user";
+import {
+    getCurrentEmployee,
+    getCurrentEmployeeId,
+} from "@/lib/auth/current-user";
 import { formatDate } from "@/lib/format";
-import { getCurrentEmployee } from "@/lib/auth/current-user";
 
 const StaffPage = async () => {
     const currentEmployeeId = await getCurrentEmployeeId();
@@ -24,6 +25,7 @@ const StaffPage = async () => {
                 <p className="mt-2 text-slate-600">
                     自分のシフト、勤務不可情報、就労報告を確認します。
                 </p>
+
                 {currentEmployee && (
                     <p className="mt-1 text-sm text-slate-500">
                         現在のスタッフ：{currentEmployee.name}
@@ -39,7 +41,9 @@ const StaffPage = async () => {
                         </CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <p className="text-3xl font-bold">{stats.upcomingShiftCount}</p>
+                        <p className="text-3xl font-bold">
+                            {stats.upcomingShiftCount}
+                        </p>
                         <p className="mt-1 text-sm text-slate-500">本日以降</p>
                     </CardContent>
                 </Card>
@@ -51,7 +55,9 @@ const StaffPage = async () => {
                         </CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <p className="text-3xl font-bold">{stats.submittedReportCount}</p>
+                        <p className="text-3xl font-bold">
+                            {stats.submittedReportCount}
+                        </p>
                         <p className="mt-1 text-sm text-slate-500">累計件数</p>
                     </CardContent>
                 </Card>
@@ -87,31 +93,40 @@ const StaffPage = async () => {
                             </p>
 
                             <div className="grid gap-2 text-sm text-slate-600 md:grid-cols-2">
-                                <p>勤務日：{formatDate(stats.nextAssignment.job.workDate)}</p>
+                                <p>
+                                    勤務日：
+                                    {formatDate(stats.nextAssignment.job.workDate)}
+                                </p>
                                 <p>勤務枠：{stats.nextAssignment.slot.name}</p>
                                 <p>
-                                    勤務時間：{stats.nextAssignment.slot.startTime}〜
+                                    勤務時間：
+                                    {stats.nextAssignment.slot.startTime}〜
                                     {stats.nextAssignment.slot.endTime}
                                 </p>
                                 <p>場所：{stats.nextAssignment.job.location}</p>
-                                <p>集合場所：{stats.nextAssignment.job.meetingPlace}</p>
                                 <p>
-                                    食事：{stats.nextAssignment.job.hasMeal ? "あり" : "なし"}
+                                    集合場所：
+                                    {stats.nextAssignment.job.meetingPlace || "未設定"}
+                                </p>
+                                <p>
+                                    食事：
+                                    {stats.nextAssignment.job.hasMeal ? "あり" : "なし"}
                                 </p>
                             </div>
 
-                            <Button asChild variant="outline">
-                                <Link href="/staff/shifts">確定シフト一覧へ</Link>
-                            </Button>
+                            <LinkButton href="/staff/shifts" variant="outline">
+                                確定シフト一覧へ
+                            </LinkButton>
                         </div>
                     ) : (
                         <div className="space-y-3">
                             <p className="text-sm text-slate-500">
                                 現在、今後の確定シフトはありません。
                             </p>
-                            <Button asChild variant="outline">
-                                <Link href="/staff/calendar">カレンダーを見る</Link>
-                            </Button>
+
+                            <LinkButton href="/staff/calendar" variant="outline">
+                                カレンダーを見る
+                            </LinkButton>
                         </div>
                     )}
                 </CardContent>

@@ -1,5 +1,3 @@
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
     Card,
@@ -15,6 +13,8 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table";
+import { LinkButton } from "@/components/shared/link-button";
+import { SubmitButton } from "@/components/shared/submit-button";
 import { SuccessMessage } from "@/components/shared/success-message";
 import { getEmployees } from "@/features/employees/queries";
 import { deactivateEmployee } from "@/features/employees/actions";
@@ -53,9 +53,12 @@ const AdminEmployeesPage = async ({
                     </p>
                 </div>
 
-                <Button asChild>
-                    <Link href="/admin/employees/new">スタッフを追加</Link>
-                </Button>
+                <LinkButton
+                    href="/admin/employees/new"
+                    pendingText="追加画面へ移動中..."
+                >
+                    スタッフを追加
+                </LinkButton>
             </section>
 
             <SuccessMessage message={message} />
@@ -91,9 +94,7 @@ const AdminEmployeesPage = async ({
                                     <TableCell>
                                         <Badge
                                             variant={
-                                                employee.role === "ADMIN"
-                                                    ? "default"
-                                                    : "secondary"
+                                                employee.role === "ADMIN" ? "default" : "secondary"
                                             }
                                         >
                                             {roleLabel[employee.role]}
@@ -116,46 +117,38 @@ const AdminEmployeesPage = async ({
                                                     : "outline"
                                             }
                                         >
-                                            {
-                                                employmentStatusLabel[
-                                                employee.employmentStatus
-                                                ]
-                                            }
+                                            {employmentStatusLabel[employee.employmentStatus]}
                                         </Badge>
                                     </TableCell>
 
                                     <TableCell className="text-right">
                                         <div className="flex justify-end gap-2">
-                                            <Button
-                                                asChild
+                                            <LinkButton
+                                                href={`/admin/employees/${employee.id}/edit`}
                                                 size="sm"
                                                 variant="outline"
+                                                pendingText="編集画面へ移動中..."
                                             >
-                                                <Link
-                                                    href={`/admin/employees/${employee.id}/edit`}
-                                                >
-                                                    編集
-                                                </Link>
-                                            </Button>
+                                                編集
+                                            </LinkButton>
 
-                                            {employee.employmentStatus ===
-                                                "ACTIVE" && (
-                                                    <form action={deactivateEmployee}>
-                                                        <input
-                                                            type="hidden"
-                                                            name="employeeId"
-                                                            value={employee.id}
-                                                        />
+                                            {employee.employmentStatus === "ACTIVE" && (
+                                                <form action={deactivateEmployee}>
+                                                    <input
+                                                        type="hidden"
+                                                        name="employeeId"
+                                                        value={employee.id}
+                                                    />
 
-                                                        <Button
-                                                            type="submit"
-                                                            size="sm"
-                                                            variant="outline"
-                                                        >
-                                                            退職済みにする
-                                                        </Button>
-                                                    </form>
-                                                )}
+                                                    <SubmitButton
+                                                        size="sm"
+                                                        variant="outline"
+                                                        pendingText="処理中..."
+                                                    >
+                                                        退職済みにする
+                                                    </SubmitButton>
+                                                </form>
+                                            )}
                                         </div>
                                     </TableCell>
                                 </TableRow>

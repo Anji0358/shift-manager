@@ -1,6 +1,4 @@
-import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
-import { Button } from "@/components/ui/button";
 import {
     Card,
     CardContent,
@@ -16,6 +14,8 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
+import { LinkButton } from "@/components/shared/link-button";
+import { SubmitButton } from "@/components/shared/submit-button";
 import { getAssignmentById } from "@/features/shift-assignments/queries";
 import { createWorkReport } from "@/features/work-reports/actions";
 import { getWorkReportByEmployeeIdAndJobId } from "@/features/work-reports/queries";
@@ -70,9 +70,9 @@ const StaffNewWorkReportPage = async ({
                     </p>
                 </div>
 
-                <Button asChild variant="outline">
-                    <Link href="/staff/shifts">確定シフトへ戻る</Link>
-                </Button>
+                <LinkButton href="/staff/shifts" variant="outline">
+                    確定シフトへ戻る
+                </LinkButton>
             </section>
 
             <Card>
@@ -89,7 +89,7 @@ const StaffNewWorkReportPage = async ({
                         勤務時間：{slot.startTime}〜{slot.endTime}
                     </p>
                     <p>場所：{job.location}</p>
-                    <p>集合場所：{job.meetingPlace}</p>
+                    <p>集合場所：{job.meetingPlace || "未設定"}</p>
                 </CardContent>
             </Card>
 
@@ -167,10 +167,13 @@ const StaffNewWorkReportPage = async ({
                         </div>
 
                         <div className="flex justify-end gap-3">
-                            <Button asChild variant="outline">
-                                <Link href="/staff/shifts">キャンセル</Link>
-                            </Button>
-                            <Button type="submit">提出する</Button>
+                            <LinkButton href="/staff/shifts" variant="outline">
+                                キャンセル
+                            </LinkButton>
+
+                            <SubmitButton pendingText="提出中...">
+                                提出する
+                            </SubmitButton>
                         </div>
                     </form>
                 </CardContent>

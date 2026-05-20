@@ -1,6 +1,4 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Button } from "@/components/ui/button";
 import {
     Card,
     CardContent,
@@ -9,6 +7,8 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { SubmitButton } from "@/components/shared/submit-button";
+import { LinkButton } from "@/components/shared/link-button";
 import { getJobById } from "@/features/jobs/queries";
 import { createJobShiftSlot } from "@/features/job-shift-slots/actions";
 
@@ -38,17 +38,16 @@ const AdminNewJobSlotPage = async ({ params }: AdminNewJobSlotPageProps) => {
                 </div>
 
                 <div className="flex flex-wrap gap-3">
-                    <Button asChild variant="outline">
-                        <Link href={`/admin/jobs/${job.id}/assignments`}>
-                            スタッフ割り振りへ戻る
-                        </Link>
-                    </Button>
+                    <LinkButton
+                        href={`/admin/jobs/${job.id}/assignments`}
+                        variant="outline"
+                    >
+                        スタッフ割り振りへ戻る
+                    </LinkButton>
 
-                    <Button asChild variant="outline">
-                        <Link href={`/admin/jobs/${job.id}`}>
-                            案件詳細へ戻る
-                        </Link>
-                    </Button>
+                    <LinkButton href={`/admin/jobs/${job.id}`} variant="outline">
+                        案件詳細へ戻る
+                    </LinkButton>
                 </div>
             </section>
 
@@ -64,7 +63,12 @@ const AdminNewJobSlotPage = async ({ params }: AdminNewJobSlotPageProps) => {
                         <div className="grid gap-4 md:grid-cols-2">
                             <div className="space-y-2">
                                 <Label htmlFor="name">勤務枠名</Label>
-                                <Input id="name" name="name" placeholder="例：本番" required />
+                                <Input
+                                    id="name"
+                                    name="name"
+                                    placeholder="例：本番"
+                                    required
+                                />
                             </div>
 
                             <div className="space-y-2">
@@ -73,6 +77,8 @@ const AdminNewJobSlotPage = async ({ params }: AdminNewJobSlotPageProps) => {
                                     id="requiredPeople"
                                     name="requiredPeople"
                                     type="number"
+                                    min={1}
+                                    step={1}
                                     placeholder="例：8"
                                     required
                                 />
@@ -80,22 +86,36 @@ const AdminNewJobSlotPage = async ({ params }: AdminNewJobSlotPageProps) => {
 
                             <div className="space-y-2">
                                 <Label htmlFor="startTime">開始時間</Label>
-                                <Input id="startTime" name="startTime" type="time" required />
+                                <Input
+                                    id="startTime"
+                                    name="startTime"
+                                    type="time"
+                                    required
+                                />
                             </div>
 
                             <div className="space-y-2">
                                 <Label htmlFor="endTime">終了時間</Label>
-                                <Input id="endTime" name="endTime" type="time" required />
+                                <Input
+                                    id="endTime"
+                                    name="endTime"
+                                    type="time"
+                                    required
+                                />
                             </div>
                         </div>
 
                         <div className="flex justify-end gap-3">
-                            <Button asChild variant="outline">
-                                <Link href={`/admin/jobs/${job.id}/assignments`}>
-                                    キャンセル
-                                </Link>
-                            </Button>
-                            <Button type="submit">追加する</Button>
+                            <LinkButton
+                                href={`/admin/jobs/${job.id}/assignments`}
+                                variant="outline"
+                            >
+                                キャンセル
+                            </LinkButton>
+
+                            <SubmitButton pendingText="追加中...">
+                                追加する
+                            </SubmitButton>
                         </div>
                     </form>
                 </CardContent>

@@ -1,5 +1,4 @@
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
+import { LinkButton } from "@/components/shared/link-button";
 
 const EmployeeMonthlySummaryNotFound = () => {
     return (
@@ -11,11 +10,9 @@ const EmployeeMonthlySummaryNotFound = () => {
                 </p>
             </section>
 
-            <Button asChild variant="outline">
-                <Link href="/admin/monthly-summary">
-                    月次集計へ戻る
-                </Link>
-            </Button>
+            <LinkButton href="/admin/monthly-summary" variant="outline">
+                月次集計へ戻る
+            </LinkButton>
         </div>
     );
 };

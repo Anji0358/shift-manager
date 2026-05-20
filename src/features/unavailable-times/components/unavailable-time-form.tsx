@@ -1,8 +1,7 @@
 "use client";
 
-import Link from "next/link";
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
+import { LinkButton } from "@/components/shared/link-button";
 import {
     Card,
     CardContent,
@@ -45,7 +44,9 @@ export const UnavailableTimeForm = () => {
                         <Select
                             name="type"
                             value={type}
-                            onValueChange={(value) => setType(value as UnavailableFormType)}
+                            onValueChange={(value) =>
+                                setType(value as UnavailableFormType)
+                            }
                         >
                             <SelectTrigger id="type">
                                 <SelectValue placeholder="NG日時の種類を選択" />
@@ -93,7 +94,12 @@ export const UnavailableTimeForm = () => {
                         {showDate && (
                             <div className="space-y-2">
                                 <Label htmlFor="date">日付</Label>
-                                <Input id="date" name="date" type="date" required />
+                                <Input
+                                    id="date"
+                                    name="date"
+                                    type="date"
+                                    required
+                                />
                             </div>
                         )}
 
@@ -123,12 +129,22 @@ export const UnavailableTimeForm = () => {
                             <>
                                 <div className="space-y-2">
                                     <Label htmlFor="startTime">開始時間</Label>
-                                    <Input id="startTime" name="startTime" type="time" required />
+                                    <Input
+                                        id="startTime"
+                                        name="startTime"
+                                        type="time"
+                                        required
+                                    />
                                 </div>
 
                                 <div className="space-y-2">
                                     <Label htmlFor="endTime">終了時間</Label>
-                                    <Input id="endTime" name="endTime" type="time" required />
+                                    <Input
+                                        id="endTime"
+                                        name="endTime"
+                                        type="time"
+                                        required
+                                    />
                                 </div>
                             </>
                         )}
@@ -144,9 +160,9 @@ export const UnavailableTimeForm = () => {
                     </div>
 
                     <div className="flex justify-end gap-3">
-                        <Button asChild variant="outline">
-                            <Link href="/staff/unavailable-times">キャンセル</Link>
-                        </Button>
+                        <LinkButton href="/staff/unavailable-times" variant="outline">
+                            キャンセル
+                        </LinkButton>
 
                         <SubmitButton pendingText="登録中...">
                             NG日時を登録

@@ -1,6 +1,4 @@
-import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import {
     Card,
     CardContent,
@@ -16,6 +14,7 @@ import {
     TableRow,
 } from "@/components/ui/table";
 import { ConfirmSubmitButton } from "@/components/shared/confirm-submit-button";
+import { LinkButton } from "@/components/shared/link-button";
 import { SuccessMessage } from "@/components/shared/success-message";
 import { UnavailableTimeCardList } from "@/features/unavailable-times/components/unavailable-time-card-list";
 import { deleteUnavailableTime } from "@/features/unavailable-times/actions";
@@ -87,11 +86,9 @@ const StaffUnavailableTimesPage = async ({
                     <SuccessMessage message={message} />
 
                     <div className="flex flex-col gap-3 sm:flex-row md:justify-end">
-                        <Button asChild>
-                            <Link href="/staff/unavailable-times/new">
-                                NGの日時を追加
-                            </Link>
-                        </Button>
+                        <LinkButton href="/staff/unavailable-times/new">
+                            NGの日時を追加
+                        </LinkButton>
                     </div>
                 </div>
             </section>
@@ -136,7 +133,9 @@ const StaffUnavailableTimesPage = async ({
                                             {getUnavailableTimeText(unavailableTime)}
                                         </TableCell>
 
-                                        <TableCell>{unavailableTime.reason || "-"}</TableCell>
+                                        <TableCell>
+                                            {unavailableTime.reason || "-"}
+                                        </TableCell>
 
                                         <TableCell className="text-right">
                                             <form action={deleteUnavailableTime}>

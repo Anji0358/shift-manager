@@ -1,6 +1,5 @@
-import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { LinkButton } from "@/components/shared/link-button";
 
 type JobDetailHeaderProps = {
     jobId: string;
@@ -33,21 +32,17 @@ export const JobDetailHeader = ({
             </div>
 
             <div className="flex flex-wrap gap-3 md:justify-end">
-                <Button asChild variant="outline">
-                    <Link href="/admin/jobs">案件一覧へ戻る</Link>
-                </Button>
+                <LinkButton href="/admin/jobs" variant="outline">
+                    案件一覧へ戻る
+                </LinkButton>
 
-                <Button asChild variant="outline">
-                    <Link href={`/admin/jobs/${jobId}/slots/new`}>
-                        勤務枠を追加
-                    </Link>
-                </Button>
+                <LinkButton href={`/admin/jobs/${jobId}/slots/new`} variant="outline">
+                    勤務枠を追加
+                </LinkButton>
 
-                <Button asChild>
-                    <Link href={`/admin/jobs/${jobId}/assignments`}>
-                        シフトを確定する
-                    </Link>
-                </Button>
+                <LinkButton href={`/admin/jobs/${jobId}/assignments`}>
+                    シフトを確定する
+                </LinkButton>
             </div>
         </section>
     );

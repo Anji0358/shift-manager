@@ -1,9 +1,8 @@
-import Link from "next/link";
 import { createJob } from "@/features/jobs/actions";
 import { getJobTemplates } from "@/features/job-templates/queries";
 import { TemplateSelector } from "@/features/job-templates/components/template-selector";
 import { SubmitButton } from "@/components/shared/submit-button";
-import { Button } from "@/components/ui/button";
+import { LinkButton } from "@/components/shared/link-button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -181,7 +180,9 @@ const NewJobPage = async ({ searchParams }: NewJobPageProps) => {
                                     <Label htmlFor="hasMeal">食事の有無</Label>
                                     <Select
                                         name="hasMeal"
-                                        defaultValue={selectedTemplate?.hasMeal ? "true" : "false"}
+                                        defaultValue={
+                                            selectedTemplate?.hasMeal ? "true" : "false"
+                                        }
                                     >
                                         <SelectTrigger id="hasMeal">
                                             <SelectValue placeholder="食事の有無を選択" />
@@ -280,11 +281,13 @@ const NewJobPage = async ({ searchParams }: NewJobPageProps) => {
                         </section>
 
                         <div className="flex justify-end gap-3">
-                            <Button asChild variant="outline">
-                                <Link href="/admin/jobs">キャンセル</Link>
-                            </Button>
+                            <LinkButton href="/admin/jobs" variant="outline">
+                                キャンセル
+                            </LinkButton>
 
-                            <SubmitButton pendingText="作成中...">案件を作成</SubmitButton>
+                            <SubmitButton pendingText="作成中...">
+                                案件を作成
+                            </SubmitButton>
                         </div>
                     </form>
                 </CardContent>

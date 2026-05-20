@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import {
     Card,
@@ -6,7 +5,7 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { LinkButton } from "@/components/shared/link-button";
 import { getWorkReportsByMonth } from "@/features/work-reports/queries";
 import { buildMonthlyReportSummaries } from "@/features/monthly-reports/services";
 import { MonthlyReportDetailTable } from "@/features/monthly-reports/components/monthly-report-detail-table";
@@ -54,19 +53,18 @@ const AdminEmployeeMonthlySummaryPage = async ({
                 </div>
 
                 <div className="flex flex-wrap gap-3">
-                    <Button asChild variant="outline">
-                        <Link href={`/admin/monthly-summary?month=${targetMonth}`}>
-                            月次集計へ戻る
-                        </Link>
-                    </Button>
+                    <LinkButton
+                        href={`/admin/monthly-summary?month=${targetMonth}`}
+                        variant="outline"
+                    >
+                        月次集計へ戻る
+                    </LinkButton>
 
-                    <Button asChild>
-                        <Link
-                            href={`/admin/monthly-summary/${employeeId}/export?month=${targetMonth}`}
-                        >
-                            給与明細をExcel出力
-                        </Link>
-                    </Button>
+                    <LinkButton
+                        href={`/admin/monthly-summary/${employeeId}/export?month=${targetMonth}`}
+                    >
+                        給与明細をExcel出力
+                    </LinkButton>
                 </div>
             </section>
 

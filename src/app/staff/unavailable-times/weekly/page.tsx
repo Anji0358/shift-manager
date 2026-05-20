@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { LinkButton } from "@/components/shared/link-button";
 import { Button } from "@/components/ui/button";
 import {
     Card,
@@ -47,9 +47,9 @@ const StaffWeeklyUnavailableTimePage = () => {
                     </p>
                 </div>
 
-                <Button asChild variant="outline">
-                    <Link href="/staff/unavailable-times">一覧へ戻る</Link>
-                </Button>
+                <LinkButton href="/staff/unavailable-times" variant="outline">
+                    一覧へ戻る
+                </LinkButton>
             </section>
 
             <Card>
@@ -62,6 +62,7 @@ const StaffWeeklyUnavailableTimePage = () => {
                         <div className="min-w-[760px] rounded-lg border">
                             <div className="grid grid-cols-8 border-b bg-slate-100 text-sm font-medium">
                                 <div className="p-3">時限</div>
+
                                 {days.map((day) => (
                                     <div key={day} className="border-l p-3 text-center">
                                         {day}
@@ -70,18 +71,26 @@ const StaffWeeklyUnavailableTimePage = () => {
                             </div>
 
                             {periods.map((period) => (
-                                <div key={period.label} className="grid grid-cols-8 border-b last:border-b-0">
+                                <div
+                                    key={period.label}
+                                    className="grid grid-cols-8 border-b last:border-b-0"
+                                >
                                     <div className="bg-slate-50 p-3 text-sm">
                                         <p className="font-medium">{period.label}</p>
-                                        <p className="text-xs text-slate-500">{period.time}</p>
+                                        <p className="text-xs text-slate-500">
+                                            {period.time}
+                                        </p>
                                     </div>
 
                                     {days.map((day) => (
-                                        <div key={`${day}-${period.label}`} className="border-l p-2">
+                                        <div
+                                            key={`${day}-${period.label}`}
+                                            className="border-l p-2"
+                                        >
                                             <Button
                                                 type="button"
                                                 variant="outline"
-                                                className="h-16 w-full"
+                                                className="h-16 w-full transition active:scale-95"
                                             >
                                                 NGにする
                                             </Button>

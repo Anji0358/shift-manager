@@ -1,11 +1,10 @@
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
 import {
     Card,
     CardContent,
     CardHeader,
     CardTitle,
 } from "@/components/ui/card";
+import { LinkButton } from "@/components/shared/link-button";
 import { EmployeeCreateForm } from "@/features/employees/components/employee-create-form";
 
 const AdminNewEmployeePage = () => {
@@ -27,9 +26,13 @@ const AdminNewEmployeePage = () => {
                     <EmployeeCreateForm />
 
                     <div className="flex justify-end">
-                        <Button asChild variant="outline">
-                            <Link href="/admin/employees">一覧に戻る</Link>
-                        </Button>
+                        <LinkButton
+                            href="/admin/employees"
+                            variant="outline"
+                            pendingText="スタッフ一覧へ移動中..."
+                        >
+                            一覧に戻る
+                        </LinkButton>
                     </div>
                 </CardContent>
             </Card>

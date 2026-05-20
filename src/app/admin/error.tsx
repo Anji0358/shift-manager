@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import {
     Card,
@@ -8,6 +7,7 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card";
+import { LinkButton } from "@/components/shared/link-button";
 
 type AdminErrorPageProps = {
     error: Error & {
@@ -34,9 +34,10 @@ const AdminErrorPage = ({ error, reset }: AdminErrorPageProps) => {
                     </div>
 
                     <div className="flex justify-end gap-3">
-                        <Button asChild variant="outline">
-                            <Link href="/admin">管理者トップへ戻る</Link>
-                        </Button>
+                        <LinkButton href="/admin" variant="outline">
+                            管理者トップへ戻る
+                        </LinkButton>
+
                         <Button type="button" onClick={reset}>
                             再試行
                         </Button>

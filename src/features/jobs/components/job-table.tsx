@@ -1,7 +1,6 @@
-import Link from "next/link";
 import type { Job, JobShiftSlot } from "@prisma/client";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { LinkButton } from "@/components/shared/link-button";
 import {
     Table,
     TableBody,
@@ -67,15 +66,20 @@ export const JobTable = ({ jobs }: JobTableProps) => {
 
                                 <TableCell className="text-right">
                                     <div className="flex justify-end gap-2">
-                                        <Button asChild size="sm" variant="outline">
-                                            <Link href={`/admin/jobs/${job.id}`}>詳細</Link>
-                                        </Button>
+                                        <LinkButton
+                                            href={`/admin/jobs/${job.id}`}
+                                            size="sm"
+                                            variant="outline"
+                                        >
+                                            詳細
+                                        </LinkButton>
 
-                                        <Button asChild size="sm">
-                                            <Link href={`/admin/jobs/${job.id}/assignments`}>
-                                                スタッフ割り振り
-                                            </Link>
-                                        </Button>
+                                        <LinkButton
+                                            href={`/admin/jobs/${job.id}/assignments`}
+                                            size="sm"
+                                        >
+                                            スタッフ割り振り
+                                        </LinkButton>
                                     </div>
                                 </TableCell>
                             </TableRow>

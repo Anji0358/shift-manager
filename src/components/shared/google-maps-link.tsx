@@ -16,7 +16,12 @@ export const GoogleMapsLink = ({
     }
 
     return (
-        <Button asChild size="sm" variant="outline">
+        <Button
+            asChild
+            size="sm"
+            variant="outline"
+            className="transition hover:bg-slate-100 active:scale-95"
+        >
             <a
                 href={buildGoogleMapsSearchUrl(query)}
                 target="_blank"

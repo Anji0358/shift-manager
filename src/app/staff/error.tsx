@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import { LinkButton } from "@/components/shared/link-button";
 import { Button } from "@/components/ui/button";
 import {
     Card,
@@ -34,10 +34,15 @@ const StaffErrorPage = ({ error, reset }: StaffErrorPageProps) => {
                     </div>
 
                     <div className="flex justify-end gap-3">
-                        <Button asChild variant="outline">
-                            <Link href="/staff">スタッフトップへ戻る</Link>
-                        </Button>
-                        <Button type="button" onClick={reset}>
+                        <LinkButton href="/staff" variant="outline">
+                            スタッフトップへ戻る
+                        </LinkButton>
+
+                        <Button
+                            type="button"
+                            onClick={reset}
+                            className="transition active:scale-95"
+                        >
                             再試行
                         </Button>
                     </div>

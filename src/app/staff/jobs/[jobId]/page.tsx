@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import {
     CalendarDays,
@@ -12,7 +11,6 @@ import { getJobDetail } from "@/features/jobs/queries";
 import { getCurrentEmployeeId } from "@/lib/auth/current-user";
 import { prisma } from "@/lib/prisma";
 import { formatDate, formatYen } from "@/lib/format";
-import { Button } from "@/components/ui/button";
 import {
     Card,
     CardContent,
@@ -20,6 +18,7 @@ import {
     CardTitle,
 } from "@/components/ui/card";
 import { GoogleMapsLink } from "@/components/shared/google-maps-link";
+import { LinkButton } from "@/components/shared/link-button";
 
 type StaffJobDetailPageProps = {
     params: Promise<{
@@ -64,9 +63,9 @@ const StaffJobDetailPage = async ({ params }: StaffJobDetailPageProps) => {
                     </p>
                 </div>
 
-                <Button asChild variant="outline">
-                    <Link href="/staff/shifts">確定シフトへ戻る</Link>
-                </Button>
+                <LinkButton href="/staff/shifts" variant="outline">
+                    確定シフトへ戻る
+                </LinkButton>
             </section>
 
             <section className="grid gap-4 md:grid-cols-3">
@@ -78,7 +77,9 @@ const StaffJobDetailPage = async ({ params }: StaffJobDetailPageProps) => {
                         </CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <p className="text-xl font-bold">{formatDate(job.workDate)}</p>
+                        <p className="text-xl font-bold">
+                            {formatDate(job.workDate)}
+                        </p>
                     </CardContent>
                 </Card>
 
@@ -93,7 +94,9 @@ const StaffJobDetailPage = async ({ params }: StaffJobDetailPageProps) => {
                         <p className="text-xl font-bold">
                             {assignedSlot.startTime} - {assignedSlot.endTime}
                         </p>
-                        <p className="text-sm text-slate-500">{assignedSlot.name}</p>
+                        <p className="text-sm text-slate-500">
+                            {assignedSlot.name}
+                        </p>
                     </CardContent>
                 </Card>
 
@@ -133,10 +136,15 @@ const StaffJobDetailPage = async ({ params }: StaffJobDetailPageProps) => {
                         <MapPin className="mt-0.5 h-4 w-4 text-slate-500" />
                         <div>
                             <p className="text-slate-500">集合場所</p>
-                            <p className="font-medium">{job.meetingPlace || "未設定"}</p>
+                            <p className="font-medium">
+                                {job.meetingPlace || "未設定"}
+                            </p>
+
                             {job.meetingPlace && (
                                 <div className="mt-2">
-                                    <GoogleMapsLink query={`${job.location} ${job.meetingPlace}`} />
+                                    <GoogleMapsLink
+                                        query={`${job.location} ${job.meetingPlace}`}
+                                    />
                                 </div>
                             )}
                         </div>
@@ -157,7 +165,9 @@ const StaffJobDetailPage = async ({ params }: StaffJobDetailPageProps) => {
                         <Shirt className="mt-0.5 h-4 w-4 text-slate-500" />
                         <div>
                             <p className="text-slate-500">服装</p>
-                            <p className="font-medium">{job.dressCode || "未設定"}</p>
+                            <p className="font-medium">
+                                {job.dressCode || "未設定"}
+                            </p>
                         </div>
                     </div>
 
@@ -165,13 +175,17 @@ const StaffJobDetailPage = async ({ params }: StaffJobDetailPageProps) => {
                         <Utensils className="mt-0.5 h-4 w-4 text-slate-500" />
                         <div>
                             <p className="text-slate-500">食事</p>
-                            <p className="font-medium">{job.hasMeal ? "あり" : "なし"}</p>
+                            <p className="font-medium">
+                                {job.hasMeal ? "あり" : "なし"}
+                            </p>
                         </div>
                     </div>
 
                     <div>
                         <p className="text-slate-500">持ち物</p>
-                        <p className="font-medium">{job.belongings || "未設定"}</p>
+                        <p className="font-medium">
+                            {job.belongings || "未設定"}
+                        </p>
                     </div>
 
                     <div>

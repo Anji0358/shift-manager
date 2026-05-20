@@ -1,4 +1,3 @@
-import Link from "next/link";
 import {
     Card,
     CardContent,
@@ -13,12 +12,13 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { LinkButton } from "@/components/shared/link-button";
 import { getWorkReportsByMonth } from "@/features/work-reports/queries";
 import { buildMonthlyReportSummaries } from "@/features/monthly-reports/services";
 import { formatYen } from "@/lib/format";
 import { getCurrentYearMonth, getMonthRange } from "@/lib/month";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 
 type AdminMonthlySummaryPageProps = {
     searchParams: Promise<{
@@ -177,13 +177,13 @@ const AdminMonthlySummaryPage = async ({
                                         </TableCell>
 
                                         <TableCell className="text-right">
-                                            <Button asChild size="sm" variant="outline">
-                                                <Link
-                                                    href={`/admin/monthly-summary/${summary.employeeId}?month=${targetMonth}`}
-                                                >
-                                                    給与明細の表示
-                                                </Link>
-                                            </Button>
+                                            <LinkButton
+                                                href={`/admin/monthly-summary/${summary.employeeId}?month=${targetMonth}`}
+                                                size="sm"
+                                                variant="outline"
+                                            >
+                                                給与明細の表示
+                                            </LinkButton>
                                         </TableCell>
                                     </TableRow>
                                 ))}

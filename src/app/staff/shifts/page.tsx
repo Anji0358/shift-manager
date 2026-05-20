@@ -1,6 +1,4 @@
-import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import {
     Card,
     CardContent,
@@ -15,6 +13,7 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table";
+import { LinkButton } from "@/components/shared/link-button";
 import { getAssignmentsByEmployeeId } from "@/features/shift-assignments/queries";
 import { getWorkReportsByEmployeeId } from "@/features/work-reports/queries";
 import { formatDate } from "@/lib/format";
@@ -59,7 +58,9 @@ const StaffShiftsPage = async () => {
 
                         <TableBody>
                             {assignments.map((assignment) => {
-                                const alreadyReported = reportedJobIds.has(assignment.jobId);
+                                const alreadyReported = reportedJobIds.has(
+                                    assignment.jobId,
+                                );
 
                                 return (
                                     <TableRow key={assignment.id}>
@@ -74,7 +75,8 @@ const StaffShiftsPage = async () => {
                                         <TableCell>{assignment.slot.name}</TableCell>
 
                                         <TableCell>
-                                            {assignment.slot.startTime}〜{assignment.slot.endTime}
+                                            {assignment.slot.startTime}〜
+                                            {assignment.slot.endTime}
                                         </TableCell>
 
                                         <TableCell>{assignment.job.location}</TableCell>
@@ -85,7 +87,11 @@ const StaffShiftsPage = async () => {
 
                                         <TableCell>
                                             <Badge
-                                                variant={assignment.job.hasMeal ? "default" : "outline"}
+                                                variant={
+                                                    assignment.job.hasMeal
+                                                        ? "default"
+                                                        : "outline"
+                                                }
                                             >
                                                 {assignment.job.hasMeal ? "あり" : "なし"}
                                             </Badge>
@@ -93,22 +99,23 @@ const StaffShiftsPage = async () => {
 
                                         <TableCell className="text-right">
                                             <div className="flex justify-end gap-2">
-                                                <Button asChild size="sm" variant="outline">
-                                                    <Link href={`/staff/jobs/${assignment.jobId}`}>
-                                                        詳細
-                                                    </Link>
-                                                </Button>
+                                                <LinkButton
+                                                    href={`/staff/jobs/${assignment.jobId}`}
+                                                    size="sm"
+                                                    variant="outline"
+                                                >
+                                                    詳細
+                                                </LinkButton>
 
                                                 {alreadyReported ? (
                                                     <Badge variant="secondary">提出済み</Badge>
                                                 ) : (
-                                                    <Button asChild size="sm">
-                                                        <Link
-                                                            href={`/staff/work-reports/new?assignmentId=${assignment.id}`}
-                                                        >
-                                                            報告する
-                                                        </Link>
-                                                    </Button>
+                                                    <LinkButton
+                                                        href={`/staff/work-reports/new?assignmentId=${assignment.id}`}
+                                                        size="sm"
+                                                    >
+                                                        報告する
+                                                    </LinkButton>
                                                 )}
                                             </div>
                                         </TableCell>

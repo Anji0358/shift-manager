@@ -1,6 +1,5 @@
-import Link from "next/link";
 import type { JobShiftSlot } from "@prisma/client";
-import { Button } from "@/components/ui/button";
+import { LinkButton } from "@/components/shared/link-button";
 import {
     Card,
     CardContent,
@@ -31,9 +30,12 @@ export const JobShiftSlotTable = ({
                 <div className="flex items-center justify-between gap-4">
                     <CardTitle>勤務枠一覧</CardTitle>
 
-                    <Button asChild size="sm">
-                        <Link href={`/admin/jobs/${jobId}/slots/new`}>勤務枠を追加</Link>
-                    </Button>
+                    <LinkButton
+                        href={`/admin/jobs/${jobId}/slots/new`}
+                        size="sm"
+                    >
+                        勤務枠を追加
+                    </LinkButton>
                 </div>
             </CardHeader>
 
@@ -51,7 +53,9 @@ export const JobShiftSlotTable = ({
                     <TableBody>
                         {shiftSlots.map((slot) => (
                             <TableRow key={slot.id}>
-                                <TableCell className="font-medium">{slot.name}</TableCell>
+                                <TableCell className="font-medium">
+                                    {slot.name}
+                                </TableCell>
                                 <TableCell>{slot.startTime}</TableCell>
                                 <TableCell>{slot.endTime}</TableCell>
                                 <TableCell className="text-right">

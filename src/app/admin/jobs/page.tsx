@@ -1,7 +1,7 @@
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { SuccessMessage } from "@/components/shared/success-message";
+import { LinkButton } from "@/components/shared/link-button";
+import { SubmitButton } from "@/components/shared/submit-button";
 import { JobTable } from "@/features/jobs/components/job-table";
 import { JobCardList } from "@/features/jobs/components/job-card-list";
 import { getJobs } from "@/features/jobs/queries";
@@ -27,7 +27,7 @@ const AdminJobsPage = async ({ searchParams }: AdminJobsPageProps) => {
                 <div>
                     <h1 className="text-3xl font-bold">案件管理</h1>
                     <p className="mt-2 text-slate-600">
-                        案件情報、勤務時間、集合場所、時給設定を管理します。
+                        案件情報、勤務枠、集合場所、時給設定を管理します。
                     </p>
                 </div>
 
@@ -47,12 +47,10 @@ const AdminJobsPage = async ({ searchParams }: AdminJobsPageProps) => {
                             />
                         </div>
 
-                        <Button type="submit">表示</Button>
+                        <SubmitButton pendingText="表示中...">表示</SubmitButton>
                     </form>
 
-                    <Button asChild>
-                        <Link href="/admin/jobs/new">案件を追加</Link>
-                    </Button>
+                    <LinkButton href="/admin/jobs/new">案件を追加</LinkButton>
                 </div>
             </section>
 

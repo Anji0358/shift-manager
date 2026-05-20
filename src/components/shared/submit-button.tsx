@@ -1,6 +1,7 @@
 "use client";
 
 import { useFormStatus } from "react-dom";
+import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 type SubmitButtonProps = {
@@ -31,15 +32,23 @@ export const SubmitButton = ({
             type="submit"
             disabled={pending}
             className={[
-                "transition active:scale-95 disabled:cursor-not-allowed disabled:opacity-50",
+                "transition active:scale-95 disabled:cursor-not-allowed disabled:opacity-60",
                 className,
             ]
                 .filter(Boolean)
                 .join(" ")}
             variant={variant}
             size={size}
+            aria-disabled={pending}
         >
-            {pending ? pendingText : children}
+            {pending ? (
+                <span className="inline-flex items-center justify-center gap-2">
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    <span>{pendingText}</span>
+                </span>
+            ) : (
+                children
+            )}
         </Button>
     );
 };

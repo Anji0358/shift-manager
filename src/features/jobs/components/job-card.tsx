@@ -1,8 +1,7 @@
-import Link from "next/link";
 import type { Job, JobShiftSlot } from "@prisma/client";
 import { CalendarDays, Clock, MapPin, Users } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { LinkButton } from "@/components/shared/link-button";
 import { formatDate } from "@/lib/format";
 
 type JobWithFulfillment = Job & {
@@ -58,9 +57,13 @@ export const JobCard = ({ job }: JobCardProps) => {
                 </div>
             </div>
 
-            <Button asChild className="mt-4 w-full active:scale-95" variant="outline">
-                <Link href={`/admin/jobs/${job.id}`}>詳細を見る</Link>
-            </Button>
+            <LinkButton
+                href={`/admin/jobs/${job.id}`}
+                className="mt-4 w-full"
+                variant="outline"
+            >
+                詳細を見る
+            </LinkButton>
         </article>
     );
 };

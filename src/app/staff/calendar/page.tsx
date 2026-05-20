@@ -1,7 +1,5 @@
 import Link from "next/link";
 import type { DayOfWeek, UnavailableTime } from "@prisma/client";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import {
     Card,
     CardContent,
@@ -17,6 +15,8 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table";
+import { SubmitButton } from "@/components/shared/submit-button";
+import { LinkButton } from "@/components/shared/link-button";
 import { getAssignmentsByEmployeeIdAndMonth } from "@/features/shift-assignments/queries";
 import { getUnavailableTimesByEmployeeIdAndMonth } from "@/features/unavailable-times/queries";
 import {
@@ -210,10 +210,17 @@ const StaffCalendarPage = async ({ searchParams }: StaffCalendarPageProps) => {
                     <label htmlFor="month" className="text-sm font-medium">
                         対象月
                     </label>
-                    <Input id="month" name="month" type="month" defaultValue={targetMonth} />
+                    <Input
+                        id="month"
+                        name="month"
+                        type="month"
+                        defaultValue={targetMonth}
+                    />
                 </div>
 
-                <Button type="submit">表示</Button>
+                <SubmitButton pendingText="表示中...">
+                    表示
+                </SubmitButton>
             </form>
 
             <section className="flex flex-wrap gap-2">
@@ -360,9 +367,9 @@ const StaffCalendarPage = async ({ searchParams }: StaffCalendarPageProps) => {
 
                                     <TableCell className="text-right">
                                         {item.href ? (
-                                            <Button asChild size="sm" variant="outline">
-                                                <Link href={item.href}>詳細</Link>
-                                            </Button>
+                                            <LinkButton href={item.href} size="sm" variant="outline">
+                                                詳細
+                                            </LinkButton>
                                         ) : (
                                             <span className="text-sm text-slate-400">-</span>
                                         )}

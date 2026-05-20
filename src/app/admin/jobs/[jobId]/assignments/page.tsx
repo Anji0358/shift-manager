@@ -1,7 +1,5 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import {
     Card,
     CardContent,
@@ -16,14 +14,15 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table";
+import { LinkButton } from "@/components/shared/link-button";
+import { SuccessMessage } from "@/components/shared/success-message";
+import { ConfirmSubmitButton } from "@/components/shared/confirm-submit-button";
+import { StaffAssignmentForm } from "@/features/shift-assignments/components/staff-assignment-form";
 import { cancelShiftAssignment } from "@/features/shift-assignments/actions";
 import { getActiveStaffCandidates, getJobById } from "@/features/jobs/queries";
 import { getAssignmentsByJobId } from "@/features/shift-assignments/queries";
 import { isUnavailableForSlot } from "@/features/unavailable-times/services";
 import { formatDate, formatMonth, formatYen } from "@/lib/format";
-import { SuccessMessage } from "@/components/shared/success-message";
-import { ConfirmSubmitButton } from "@/components/shared/confirm-submit-button";
-import { StaffAssignmentForm } from "@/features/shift-assignments/components/staff-assignment-form";
 
 type AdminJobAssignmentsPageProps = {
     params: Promise<{
@@ -62,15 +61,13 @@ const AdminJobAssignmentsPage = async ({
                 </div>
 
                 <div className="flex flex-wrap gap-3">
-                    <Button asChild variant="outline">
-                        <Link href={`/admin/jobs/${job.id}`}>案件詳細へ戻る</Link>
-                    </Button>
+                    <LinkButton href={`/admin/jobs/${job.id}`} variant="outline">
+                        案件詳細へ戻る
+                    </LinkButton>
 
-                    <Button asChild variant="outline">
-                        <Link href={`/admin/jobs/${job.id}/slots/new`}>
-                            勤務枠を追加
-                        </Link>
-                    </Button>
+                    <LinkButton href={`/admin/jobs/${job.id}/slots/new`} variant="outline">
+                        勤務枠を追加
+                    </LinkButton>
                 </div>
             </section>
 
@@ -87,11 +84,9 @@ const AdminJobAssignmentsPage = async ({
                             スタッフを割り振るには、先に勤務枠を登録してください。
                         </p>
 
-                        <Button asChild>
-                            <Link href={`/admin/jobs/${job.id}/slots/new`}>
-                                勤務枠を追加する
-                            </Link>
-                        </Button>
+                        <LinkButton href={`/admin/jobs/${job.id}/slots/new`}>
+                            勤務枠を追加する
+                        </LinkButton>
                     </CardContent>
                 </Card>
             )}

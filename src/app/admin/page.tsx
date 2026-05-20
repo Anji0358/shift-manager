@@ -1,11 +1,10 @@
-import Link from "next/link";
 import {
     Card,
     CardContent,
     CardHeader,
     CardTitle,
 } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { LinkButton } from "@/components/shared/link-button";
 import { getAdminDashboardStats } from "@/features/dashboard/admin-queries";
 import { getCurrentAdmin } from "@/lib/auth/current-user";
 
@@ -28,9 +27,9 @@ const AdminPage = async () => {
                     )}
                 </div>
 
-                <Button asChild>
-                    <Link href="/admin/jobs/new">案件を作成</Link>
-                </Button>
+                <LinkButton href="/admin/jobs/new" pendingText="作成画面へ移動中...">
+                    案件を作成
+                </LinkButton>
             </section>
 
             <section className="grid gap-4 md:grid-cols-4">
@@ -55,7 +54,9 @@ const AdminPage = async () => {
                         </CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <p className="text-3xl font-bold">{stats.monthlyAssignmentCount}</p>
+                        <p className="text-3xl font-bold">
+                            {stats.monthlyAssignmentCount}
+                        </p>
                         <p className="mt-1 text-sm text-slate-500">
                             ASSIGNED の件数
                         </p>
@@ -100,9 +101,13 @@ const AdminPage = async () => {
                         <p className="text-sm text-slate-600">
                             案件作成、勤務枠作成、スタッフ割り振りを行います。
                         </p>
-                        <Button asChild variant="outline">
-                            <Link href="/admin/jobs">案件一覧へ</Link>
-                        </Button>
+                        <LinkButton
+                            href="/admin/jobs"
+                            variant="outline"
+                            pendingText="案件一覧へ移動中..."
+                        >
+                            案件一覧へ
+                        </LinkButton>
                     </CardContent>
                 </Card>
 
@@ -114,9 +119,13 @@ const AdminPage = async () => {
                         <p className="text-sm text-slate-600">
                             提出された就労報告を承認・差し戻しします。
                         </p>
-                        <Button asChild variant="outline">
-                            <Link href="/admin/work-reports">就労報告へ</Link>
-                        </Button>
+                        <LinkButton
+                            href="/admin/work-reports"
+                            variant="outline"
+                            pendingText="就労報告へ移動中..."
+                        >
+                            就労報告へ
+                        </LinkButton>
                     </CardContent>
                 </Card>
             </section>
