@@ -1,9 +1,10 @@
 import Link from "next/link";
-import type { Job } from "@prisma/client";
+import type { Job, JobShiftSlot } from "@prisma/client";
 import { Button } from "@/components/ui/button";
 import { JobCard } from "@/features/jobs/components/job-card";
 
 type JobWithFulfillment = Job & {
+    shiftSlots: JobShiftSlot[];
     requiredPeople: number;
     assignedPeople: number;
     fulfillmentRate: number;
@@ -30,9 +31,7 @@ export const JobCardList = ({ jobs }: JobCardListProps) => {
 
                     <div className="grid gap-2 rounded-xl border bg-white p-4">
                         <Button asChild variant="outline" className="w-full">
-                            <Link href={`/admin/jobs/${job.id}`}>
-                                詳細を見る
-                            </Link>
+                            <Link href={`/admin/jobs/${job.id}`}>詳細を見る</Link>
                         </Button>
 
                         <Button asChild className="w-full">
