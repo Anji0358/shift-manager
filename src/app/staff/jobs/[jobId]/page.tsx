@@ -37,6 +37,9 @@ const StaffJobDetailPage = async ({ params }: StaffJobDetailPageProps) => {
             employeeId,
             status: "ASSIGNED",
         },
+        include: {
+            slot: true,
+        },
     });
 
     if (!assignment) {
@@ -48,6 +51,8 @@ const StaffJobDetailPage = async ({ params }: StaffJobDetailPageProps) => {
     if (!job) {
         notFound();
     }
+
+    const assignedSlot = assignment.slot;
 
     return (
         <div className="space-y-6">
@@ -81,13 +86,14 @@ const StaffJobDetailPage = async ({ params }: StaffJobDetailPageProps) => {
                     <CardHeader>
                         <CardTitle className="flex items-center gap-2 text-sm text-slate-500">
                             <Clock className="h-4 w-4" />
-                            勤務時間
+                            勤務枠
                         </CardTitle>
                     </CardHeader>
-                    <CardContent>
+                    <CardContent className="space-y-1">
                         <p className="text-xl font-bold">
-                            {job.startTime} - {job.endTime}
+                            {assignedSlot.startTime} - {assignedSlot.endTime}
                         </p>
+                        <p className="text-sm text-slate-500">{assignedSlot.name}</p>
                     </CardContent>
                 </Card>
 
@@ -133,6 +139,17 @@ const StaffJobDetailPage = async ({ params }: StaffJobDetailPageProps) => {
                                     <GoogleMapsLink query={`${job.location} ${job.meetingPlace}`} />
                                 </div>
                             )}
+                        </div>
+                    </div>
+
+                    <div className="flex gap-3">
+                        <Clock className="mt-0.5 h-4 w-4 text-slate-500" />
+                        <div>
+                            <p className="text-slate-500">自分の勤務枠</p>
+                            <p className="font-medium">
+                                {assignedSlot.name}：{assignedSlot.startTime} -{" "}
+                                {assignedSlot.endTime}
+                            </p>
                         </div>
                     </div>
 

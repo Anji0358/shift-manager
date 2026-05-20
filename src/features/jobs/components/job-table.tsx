@@ -1,5 +1,5 @@
 import Link from "next/link";
-import type { Job } from "@prisma/client";
+import type { Job, JobShiftSlot } from "@prisma/client";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -13,6 +13,7 @@ import {
 import { formatDate } from "@/lib/format";
 
 type JobWithFulfillment = Job & {
+    shiftSlots: JobShiftSlot[];
     requiredPeople: number;
     assignedPeople: number;
     fulfillmentRate: number;
@@ -30,7 +31,7 @@ export const JobTable = ({ jobs }: JobTableProps) => {
                     <TableRow>
                         <TableHead>勤務日</TableHead>
                         <TableHead>案件名</TableHead>
-                        <TableHead>勤務時間</TableHead>
+                        <TableHead>勤務枠</TableHead>
                         <TableHead>勤務場所</TableHead>
                         <TableHead>充足状況</TableHead>
                         <TableHead className="text-right">操作</TableHead>
@@ -38,55 +39,48 @@ export const JobTable = ({ jobs }: JobTableProps) => {
                 </TableHeader>
 
                 <TableBody>
-                    {jobs.map((job) => (
-                        <TableRow key={job.id}>
-                            <TableCell>{formatDate(job.workDate)}</TableCell>
+                    {jobs.map((job) => {
+                        const shiftSlotSummary = formatShiftSlotSummary(job.shiftSlots);
+                        const isFulfilled = job.fulfillmentRate >= 100;
 
-                            <TableCell className="font-medium">
-                                {job.title}
-                            </TableCell>
+                        return (
+                            <TableRow key={job.id}>
+                                <TableCell>{formatDate(job.workDate)}</TableCell>
 
-                            <TableCell>
-                                {job.startTime} - {job.endTime}
-                            </TableCell>
+                                <TableCell className="font-medium">{job.title}</TableCell>
 
-                            <TableCell>{job.location}</TableCell>
+                                <TableCell>{shiftSlotSummary}</TableCell>
 
-                            <TableCell>
-                                <div className="flex items-center gap-2">
-                                    <Badge
-                                        variant={
-                                            job.fulfillmentRate >= 100
-                                                ? "default"
-                                                : "secondary"
-                                        }
-                                    >
-                                        {job.fulfillmentRate >= 100 ? "充足" : "未充足"}
-                                    </Badge>
+                                <TableCell>{job.location}</TableCell>
 
-                                    <span className="text-sm text-slate-600">
-                                        {job.assignedPeople}/{job.requiredPeople}人
-                                    </span>
-                                </div>
-                            </TableCell>
+                                <TableCell>
+                                    <div className="flex items-center gap-2">
+                                        <Badge variant={isFulfilled ? "default" : "secondary"}>
+                                            {isFulfilled ? "充足" : "未充足"}
+                                        </Badge>
 
-                            <TableCell className="text-right">
-                                <div className="flex justify-end gap-2">
-                                    <Button asChild size="sm" variant="outline">
-                                        <Link href={`/admin/jobs/${job.id}`}>
-                                            詳細
-                                        </Link>
-                                    </Button>
+                                        <span className="text-sm text-slate-600">
+                                            {job.assignedPeople}/{job.requiredPeople}人
+                                        </span>
+                                    </div>
+                                </TableCell>
 
-                                    <Button asChild size="sm">
-                                        <Link href={`/admin/jobs/${job.id}/assignments`}>
-                                            スタッフ割り振り
-                                        </Link>
-                                    </Button>
-                                </div>
-                            </TableCell>
-                        </TableRow>
-                    ))}
+                                <TableCell className="text-right">
+                                    <div className="flex justify-end gap-2">
+                                        <Button asChild size="sm" variant="outline">
+                                            <Link href={`/admin/jobs/${job.id}`}>詳細</Link>
+                                        </Button>
+
+                                        <Button asChild size="sm">
+                                            <Link href={`/admin/jobs/${job.id}/assignments`}>
+                                                スタッフ割り振り
+                                            </Link>
+                                        </Button>
+                                    </div>
+                                </TableCell>
+                            </TableRow>
+                        );
+                    })}
 
                     {jobs.length === 0 && (
                         <TableRow>
@@ -102,4 +96,21 @@ export const JobTable = ({ jobs }: JobTableProps) => {
             </Table>
         </div>
     );
+};
+
+const formatShiftSlotSummary = (shiftSlots: JobShiftSlot[]) => {
+    if (shiftSlots.length === 0) {
+        return "勤務枠未設定";
+    }
+
+    if (shiftSlots.length === 1) {
+        const slot = shiftSlots[0];
+
+        return `${slot.startTime} - ${slot.endTime}`;
+    }
+
+    const firstSlot = shiftSlots[0];
+
+    return `${firstSlot.startTime} - ${firstSlot.endTime} 他${shiftSlots.length - 1
+        }枠`;
 };

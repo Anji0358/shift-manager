@@ -1,11 +1,12 @@
 import Link from "next/link";
-import type { Job } from "@prisma/client";
+import type { Job, JobShiftSlot } from "@prisma/client";
 import { CalendarDays, Clock, MapPin, Users } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { formatDate } from "@/lib/format";
 
 type JobWithFulfillment = Job & {
+    shiftSlots: JobShiftSlot[];
     requiredPeople: number;
     assignedPeople: number;
     fulfillmentRate: number;
@@ -17,6 +18,7 @@ type JobCardProps = {
 
 export const JobCard = ({ job }: JobCardProps) => {
     const isFulfilled = job.fulfillmentRate >= 100;
+    const shiftSlotSummary = formatShiftSlotSummary(job.shiftSlots);
 
     return (
         <article className="rounded-xl border bg-white p-4 shadow-sm">
@@ -39,9 +41,7 @@ export const JobCard = ({ job }: JobCardProps) => {
 
                 <div className="flex items-center gap-2">
                     <Clock className="h-4 w-4" />
-                    <span>
-                        {job.startTime} - {job.endTime}
-                    </span>
+                    <span>{shiftSlotSummary}</span>
                 </div>
 
                 <div className="flex items-center gap-2">
@@ -63,4 +63,21 @@ export const JobCard = ({ job }: JobCardProps) => {
             </Button>
         </article>
     );
+};
+
+const formatShiftSlotSummary = (shiftSlots: JobShiftSlot[]) => {
+    if (shiftSlots.length === 0) {
+        return "勤務枠未設定";
+    }
+
+    if (shiftSlots.length === 1) {
+        const slot = shiftSlots[0];
+
+        return `${slot.startTime} - ${slot.endTime}`;
+    }
+
+    const firstSlot = shiftSlots[0];
+
+    return `${firstSlot.startTime} - ${firstSlot.endTime} 他${shiftSlots.length - 1
+        }枠`;
 };

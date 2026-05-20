@@ -78,15 +78,13 @@ model Job {
   title             String
   workDate          DateTime
   location          String
-  meetingPlace      String
-  startTime         String
-  endTime           String
-  breakMinutes      Int
+  meetingPlace      String?
+  breakMinutes      Int      @default(0)
   hasMeal           Boolean  @default(false)
-  transportationFee Int
-  dressCode         String
-  belongings        String
-  note              String
+  transportationFee Int      @default(0)
+  dressCode         String?
+  belongings        String?
+  note              String?
   wageType          WageType @default(EMPLOYEE)
   fixedHourlyWage   Int?
 
@@ -104,8 +102,6 @@ model JobTemplate {
   title             String
   location          String
   meetingPlace      String?
-  startTime         String
-  endTime           String
   breakMinutes      Int      @default(0)
   hasMeal           Boolean  @default(false)
   transportationFee Int      @default(0)
@@ -114,8 +110,27 @@ model JobTemplate {
   note              String?
   wageType          WageType @default(EMPLOYEE)
   fixedHourlyWage   Int?
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
+
+  shiftSlots JobTemplateShiftSlot[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model JobTemplateShiftSlot {
+  id             String @id @default(cuid())
+  jobTemplateId  String
+  name           String
+  startTime      String
+  endTime        String
+  requiredPeople Int
+
+  jobTemplate JobTemplate @relation(fields: [jobTemplateId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([jobTemplateId])
 }
 
 model JobShiftSlot {

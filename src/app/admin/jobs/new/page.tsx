@@ -36,12 +36,14 @@ const NewJobPage = async ({ searchParams }: NewJobPageProps) => {
         ? templates.find((template) => template.id === templateId)
         : undefined;
 
+    const selectedTemplateSlot = selectedTemplate?.shiftSlots[0];
+
     return (
         <div className="space-y-6">
             <section>
                 <h1 className="text-3xl font-bold">案件追加</h1>
                 <p className="mt-2 text-slate-600">
-                    案件の基本情報、勤務条件、時給設定を登録します。
+                    案件の基本情報、勤務枠、勤務条件、時給設定を登録します。
                 </p>
             </section>
 
@@ -100,6 +102,58 @@ const NewJobPage = async ({ searchParams }: NewJobPageProps) => {
                                         name="meetingPlace"
                                         placeholder="例：横浜駅中央改札"
                                         defaultValue={selectedTemplate?.meetingPlace ?? ""}
+                                    />
+                                </div>
+                            </div>
+                        </section>
+
+                        <section className="space-y-4">
+                            <h2 className="text-lg font-semibold">勤務枠</h2>
+
+                            <div className="grid gap-4 md:grid-cols-4">
+                                <div className="space-y-2">
+                                    <Label htmlFor="slotName">勤務枠名</Label>
+                                    <Input
+                                        id="slotName"
+                                        name="slotName"
+                                        placeholder="例：通し勤務"
+                                        defaultValue={selectedTemplateSlot?.name ?? "基本勤務枠"}
+                                        required
+                                    />
+                                </div>
+
+                                <div className="space-y-2">
+                                    <Label htmlFor="startTime">開始時間</Label>
+                                    <Input
+                                        id="startTime"
+                                        name="startTime"
+                                        type="time"
+                                        defaultValue={selectedTemplateSlot?.startTime ?? ""}
+                                        required
+                                    />
+                                </div>
+
+                                <div className="space-y-2">
+                                    <Label htmlFor="endTime">終了時間</Label>
+                                    <Input
+                                        id="endTime"
+                                        name="endTime"
+                                        type="time"
+                                        defaultValue={selectedTemplateSlot?.endTime ?? ""}
+                                        required
+                                    />
+                                </div>
+
+                                <div className="space-y-2">
+                                    <Label htmlFor="requiredPeople">必要人数</Label>
+                                    <Input
+                                        id="requiredPeople"
+                                        name="requiredPeople"
+                                        type="number"
+                                        min={1}
+                                        step={1}
+                                        placeholder="例：5"
+                                        defaultValue={selectedTemplateSlot?.requiredPeople ?? ""}
                                         required
                                     />
                                 </div>
@@ -110,28 +164,6 @@ const NewJobPage = async ({ searchParams }: NewJobPageProps) => {
                             <h2 className="text-lg font-semibold">勤務条件</h2>
 
                             <div className="grid gap-4 md:grid-cols-3">
-                                <div className="space-y-2">
-                                    <Label htmlFor="startTime">勤務開始時間</Label>
-                                    <Input
-                                        id="startTime"
-                                        name="startTime"
-                                        type="time"
-                                        defaultValue={selectedTemplate?.startTime ?? ""}
-                                        required
-                                    />
-                                </div>
-
-                                <div className="space-y-2">
-                                    <Label htmlFor="endTime">勤務終了時間</Label>
-                                    <Input
-                                        id="endTime"
-                                        name="endTime"
-                                        type="time"
-                                        defaultValue={selectedTemplate?.endTime ?? ""}
-                                        required
-                                    />
-                                </div>
-
                                 <div className="space-y-2">
                                     <Label htmlFor="breakMinutes">休憩時間</Label>
                                     <Input
@@ -149,9 +181,7 @@ const NewJobPage = async ({ searchParams }: NewJobPageProps) => {
                                     <Label htmlFor="hasMeal">食事の有無</Label>
                                     <Select
                                         name="hasMeal"
-                                        defaultValue={
-                                            selectedTemplate?.hasMeal ? "true" : "false"
-                                        }
+                                        defaultValue={selectedTemplate?.hasMeal ? "true" : "false"}
                                     >
                                         <SelectTrigger id="hasMeal">
                                             <SelectValue placeholder="食事の有無を選択" />
@@ -183,7 +213,6 @@ const NewJobPage = async ({ searchParams }: NewJobPageProps) => {
                                         name="dressCode"
                                         placeholder="例：黒スラックス・白シャツ"
                                         defaultValue={selectedTemplate?.dressCode ?? ""}
-                                        required
                                     />
                                 </div>
                             </div>
@@ -195,7 +224,6 @@ const NewJobPage = async ({ searchParams }: NewJobPageProps) => {
                                     name="belongings"
                                     placeholder="例：メモ帳、黒靴"
                                     defaultValue={selectedTemplate?.belongings ?? ""}
-                                    required
                                 />
                             </div>
 
@@ -256,9 +284,7 @@ const NewJobPage = async ({ searchParams }: NewJobPageProps) => {
                                 <Link href="/admin/jobs">キャンセル</Link>
                             </Button>
 
-                            <SubmitButton pendingText="作成中...">
-                                案件を作成
-                            </SubmitButton>
+                            <SubmitButton pendingText="作成中...">案件を作成</SubmitButton>
                         </div>
                     </form>
                 </CardContent>

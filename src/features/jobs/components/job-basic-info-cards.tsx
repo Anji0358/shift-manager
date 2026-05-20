@@ -15,6 +15,8 @@ type JobBasicInfoCardsProps = {
 };
 
 export const JobBasicInfoCards = ({ job }: JobBasicInfoCardsProps) => {
+    const shiftSlotSummary = formatShiftSlotSummary(job.shiftSlots);
+
     return (
         <section className="grid gap-4 md:grid-cols-2">
             <Card>
@@ -43,7 +45,7 @@ export const JobBasicInfoCards = ({ job }: JobBasicInfoCardsProps) => {
                         )}
                     </div>
 
-                    <InfoRow label="勤務時間" value={`${job.startTime}〜${job.endTime}`} />
+                    <InfoRow label="勤務枠" value={shiftSlotSummary} />
                     <InfoRow label="休憩時間" value={`${job.breakMinutes}分`} />
                     <InfoRow label="食事" value={job.hasMeal ? "あり" : "なし"} />
                     <InfoRow label="交通費" value={formatYen(job.transportationFee)} />
@@ -85,6 +87,35 @@ export const JobBasicInfoCards = ({ job }: JobBasicInfoCardsProps) => {
     );
 };
 
+type ShiftSlotForSummary = {
+    name: string;
+    startTime: string;
+    endTime: string;
+    requiredPeople: number;
+};
+
+const formatShiftSlotSummary = (shiftSlots: ShiftSlotForSummary[]) => {
+    if (shiftSlots.length === 0) {
+        return "勤務枠未設定";
+    }
+
+    if (shiftSlots.length === 1) {
+        const slot = shiftSlots[0];
+
+        return `${slot.name}：${slot.startTime}〜${slot.endTime} / ${slot.requiredPeople}人`;
+    }
+
+    const firstSlot = shiftSlots[0];
+
+    const totalRequiredPeople = shiftSlots.reduce(
+        (sum, slot) => sum + slot.requiredPeople,
+        0,
+    );
+
+    return `${firstSlot.startTime}〜${firstSlot.endTime} 他${shiftSlots.length - 1
+        }枠 / 合計${totalRequiredPeople}人`;
+};
+
 type InfoRowProps = {
     label: string;
     value: string;
@@ -94,7 +125,7 @@ const InfoRow = ({ label, value }: InfoRowProps) => {
     return (
         <div className="flex justify-between gap-4">
             <span className="text-slate-500">{label}</span>
-            <span className="font-medium">{value}</span>
+            <span className="text-right font-medium">{value}</span>
         </div>
     );
 };

@@ -18,11 +18,20 @@ const prisma = new PrismaClient({
 });
 
 const main = async () => {
+  /**
+   * 削除順序に注意
+   * relation の子テーブルから先に削除する
+   */
   await prisma.workReport.deleteMany();
   await prisma.shiftAssignment.deleteMany();
   await prisma.unavailableTime.deleteMany();
+
   await prisma.jobShiftSlot.deleteMany();
   await prisma.job.deleteMany();
+
+  await prisma.jobTemplateShiftSlot.deleteMany();
+  await prisma.jobTemplate.deleteMany();
+
   await prisma.employee.deleteMany();
 
   const passwordHash = await bcrypt.hash("password", 10);
@@ -66,23 +75,18 @@ const main = async () => {
     },
   });
 
-  const today = new Date();
-
-  const futureWorkDate = new Date(
-    today.getFullYear(),
-    today.getMonth(),
-    today.getDate() + 7,
-  );
-
-  const job = await prisma.job.create({
+  /**
+   * 案件テンプレート
+   * JobTemplate 本体には案件共通情報を持たせる
+   * 勤務時間・必要人数は JobTemplateShiftSlot に持たせる
+   */
+  const jobTemplate = await prisma.jobTemplate.create({
     data: {
-      id: "job_1",
+      id: "template_1",
+      name: "ホテル宴会テンプレート",
       title: "ホテル宴会サービス",
-      workDate: futureWorkDate,
       location: "横浜ベイホテル",
       meetingPlace: "正面入口",
-      startTime: "10:00",
-      endTime: "18:00",
       breakMinutes: 60,
       hasMeal: true,
       transportationFee: 800,
@@ -91,19 +95,73 @@ const main = async () => {
       note: "集合後に担当卓を確認してください。",
       wageType: "EMPLOYEE",
       fixedHourlyWage: null,
+      shiftSlots: {
+        create: [
+          {
+            id: "template_slot_1",
+            name: "通し勤務",
+            startTime: "10:00",
+            endTime: "18:00",
+            requiredPeople: 2,
+          },
+        ],
+      },
+    },
+    include: {
+      shiftSlots: true,
     },
   });
 
-  const slot = await prisma.jobShiftSlot.create({
+  const today = new Date();
+
+  const futureWorkDate = new Date(
+    today.getFullYear(),
+    today.getMonth(),
+    today.getDate() + 7,
+  );
+
+  /**
+   * 実際の案件
+   * Job には startTime / endTime / requiredPeople を持たせない
+   * 勤務時間・必要人数は JobShiftSlot に保存する
+   */
+  const job = await prisma.job.create({
     data: {
-      id: "slot_1",
-      jobId: job.id,
-      name: "通し勤務",
-      startTime: "10:00",
-      endTime: "18:00",
-      requiredPeople: 2,
+      id: "job_1",
+      title: "ホテル宴会サービス",
+      workDate: futureWorkDate,
+      location: "横浜ベイホテル",
+      meetingPlace: "正面入口",
+      breakMinutes: 60,
+      hasMeal: true,
+      transportationFee: 800,
+      dressCode: "黒スラックス・白シャツ",
+      belongings: "メモ帳、筆記用具",
+      note: "集合後に担当卓を確認してください。",
+      wageType: "EMPLOYEE",
+      fixedHourlyWage: null,
+      shiftSlots: {
+        create: [
+          {
+            id: "slot_1",
+            name: "通し勤務",
+            startTime: "10:00",
+            endTime: "18:00",
+            requiredPeople: 2,
+          },
+        ],
+      },
+    },
+    include: {
+      shiftSlots: true,
     },
   });
+
+  const slot = job.shiftSlots[0];
+
+  if (!slot) {
+    throw new Error("勤務枠の作成に失敗しました。");
+  }
 
   await prisma.shiftAssignment.create({
     data: {
@@ -146,13 +204,32 @@ const main = async () => {
       email: staff2.email,
       role: staff2.role,
     },
+    jobTemplate: {
+      id: jobTemplate.id,
+      name: jobTemplate.name,
+      shiftSlots: jobTemplate.shiftSlots.map((templateSlot) => ({
+        id: templateSlot.id,
+        name: templateSlot.name,
+        startTime: templateSlot.startTime,
+        endTime: templateSlot.endTime,
+        requiredPeople: templateSlot.requiredPeople,
+      })),
+    },
     job: {
       id: job.id,
       title: job.title,
+      shiftSlots: job.shiftSlots.map((jobSlot) => ({
+        id: jobSlot.id,
+        name: jobSlot.name,
+        startTime: jobSlot.startTime,
+        endTime: jobSlot.endTime,
+        requiredPeople: jobSlot.requiredPeople,
+      })),
     },
-    slot: {
-      id: slot.id,
-      name: slot.name,
+    assignment: {
+      id: "assign_1",
+      employeeId: staff.id,
+      slotId: slot.id,
     },
   });
 };
