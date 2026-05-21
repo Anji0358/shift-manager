@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import type { WageType } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import {
   getNonNegativeNumber,
@@ -9,7 +10,6 @@ import {
   getRequiredString,
   validateTimeOrder,
 } from "@/lib/validation";
-import type { WageType } from "@prisma/client";
 import { requireAdmin } from "@/lib/auth/guards";
 
 export const createJob = async (formData: FormData) => {
@@ -45,52 +45,45 @@ export const createJob = async (formData: FormData) => {
     throw new Error("時給タイプが不正です。");
   }
 
- let fixedHourlyWage: number | null = null;
+  let fixedHourlyWage: number | null = null;
 
-if (wageType === "JOB_FIXED") {
-  if (!fixedHourlyWageText) {
-    throw new Error("案件一律時給を入力してください。");
+  if (wageType === "JOB_FIXED") {
+    if (!fixedHourlyWageText) {
+      throw new Error("案件一律時給を入力してください。");
+    }
+
+    const parsedFixedHourlyWage = Number(fixedHourlyWageText);
+
+    if (!Number.isInteger(parsedFixedHourlyWage) || parsedFixedHourlyWage <= 0) {
+      throw new Error("案件一律時給は1以上の整数で入力してください。");
+    }
+
+    fixedHourlyWage = parsedFixedHourlyWage;
   }
 
-  const parsedFixedHourlyWage = Number(fixedHourlyWageText);
-
-  if (
-    !Number.isInteger(parsedFixedHourlyWage) ||
-    parsedFixedHourlyWage <= 0
-  ) {
-    throw new Error("案件一律時給は1以上の整数で入力してください。");
-  }
-
-  fixedHourlyWage = parsedFixedHourlyWage;
-}
-
-  await prisma.$transaction(async (tx) => {
-    const job = await tx.job.create({
-      data: {
-        title,
-        workDate: new Date(workDate),
-        location,
-        meetingPlace,
-        breakMinutes,
-        hasMeal,
-        transportationFee,
-        dressCode,
-        belongings,
-        note,
-        wageType,
-        fixedHourlyWage,
+  await prisma.job.create({
+    data: {
+      title,
+      workDate: new Date(workDate),
+      location,
+      meetingPlace,
+      breakMinutes,
+      hasMeal,
+      transportationFee,
+      dressCode,
+      belongings,
+      note,
+      wageType,
+      fixedHourlyWage,
+      shiftSlots: {
+        create: {
+          name: slotName,
+          startTime,
+          endTime,
+          requiredPeople,
+        },
       },
-    });
-
-    await tx.jobShiftSlot.create({
-      data: {
-        jobId: job.id,
-        name: slotName,
-        startTime,
-        endTime,
-        requiredPeople,
-      },
-    });
+    },
   });
 
   revalidatePath("/admin/jobs");
@@ -113,6 +106,11 @@ export const deleteJob = async (formData: FormData) => {
       },
     }),
     prisma.shiftAssignment.deleteMany({
+      where: {
+        jobId,
+      },
+    }),
+    prisma.externalStaffAssignment.deleteMany({
       where: {
         jobId,
       },
