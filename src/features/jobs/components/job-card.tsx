@@ -8,6 +8,8 @@ type JobWithFulfillment = Job & {
     shiftSlots: JobShiftSlot[];
     requiredPeople: number;
     assignedPeople: number;
+    assignedInternalPeople: number;
+    assignedExternalPeople: number;
     fulfillmentRate: number;
 };
 
@@ -48,12 +50,20 @@ export const JobCard = ({ job }: JobCardProps) => {
                     <span>{job.meetingPlace || "集合場所未設定"}</span>
                 </div>
 
-                <div className="flex items-center gap-2">
-                    <Users className="h-4 w-4" />
-                    <span>
-                        {job.assignedPeople}/{job.requiredPeople}人・
-                        {job.fulfillmentRate}%
-                    </span>
+                <div className="flex items-start gap-2">
+                    <Users className="mt-0.5 h-4 w-4" />
+
+                    <div>
+                        <p>
+                            {job.assignedPeople}/{job.requiredPeople}人・
+                            {job.fulfillmentRate}%
+                        </p>
+
+                        <p className="mt-1 text-xs text-slate-500">
+                            登録スタッフ {job.assignedInternalPeople}人 / 外部人員{" "}
+                            {job.assignedExternalPeople}人
+                        </p>
+                    </div>
                 </div>
             </div>
 

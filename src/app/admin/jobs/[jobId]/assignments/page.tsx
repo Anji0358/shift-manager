@@ -23,6 +23,9 @@ import { getActiveStaffCandidates, getJobById } from "@/features/jobs/queries";
 import { getAssignmentsByJobId } from "@/features/shift-assignments/queries";
 import { isUnavailableForSlot } from "@/features/unavailable-times/services";
 import { formatDate, formatMonth, formatYen } from "@/lib/format";
+import { getExternalShiftAssignmentsByJobId } from "@/features/external-shift-assignments/queries";
+import { ExternalShiftAssignmentForm } from "@/features/external-shift-assignments/components/external-shift-assignment-form";
+import { ExternalShiftAssignmentTable } from "@/features/external-shift-assignments/components/external-shift-assignment-table";
 
 type AdminJobAssignmentsPageProps = {
     params: Promise<{
@@ -48,6 +51,7 @@ const AdminJobAssignmentsPage = async ({
 
     const candidates = await getActiveStaffCandidates();
     const assignments = await getAssignmentsByJobId(job.id);
+    const externalAssignments = await getExternalShiftAssignmentsByJobId(job.id);
     const firstSlot = job.shiftSlots[0];
 
     return (
@@ -81,7 +85,7 @@ const AdminJobAssignmentsPage = async ({
 
                     <CardContent className="space-y-4">
                         <p className="text-sm text-slate-600">
-                            スタッフを割り振るには、先に勤務枠を登録してください。
+                            スタッフや外部人員を割り振るには、先に勤務枠を登録してください。
                         </p>
 
                         <LinkButton href={`/admin/jobs/${job.id}/slots/new`}>
@@ -92,21 +96,33 @@ const AdminJobAssignmentsPage = async ({
             )}
 
             {job.shiftSlots.length > 0 && (
-                <Card>
-                    <CardHeader>
-                        <CardTitle>スタッフ割り振りフォーム</CardTitle>
-                    </CardHeader>
+                <>
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>スタッフ割り振りフォーム</CardTitle>
+                        </CardHeader>
 
-                    <CardContent>
-                        <StaffAssignmentForm
-                            jobId={job.id}
-                            workDate={job.workDate.toISOString()}
-                            shiftSlots={job.shiftSlots}
-                            candidates={candidates}
-                            assignments={assignments}
-                        />
-                    </CardContent>
-                </Card>
+                        <CardContent>
+                            <StaffAssignmentForm
+                                jobId={job.id}
+                                workDate={job.workDate.toISOString()}
+                                shiftSlots={job.shiftSlots}
+                                candidates={candidates}
+                                assignments={assignments}
+                            />
+                        </CardContent>
+                    </Card>
+
+                    <ExternalShiftAssignmentForm
+                        jobId={job.id}
+                        shiftSlots={job.shiftSlots}
+                    />
+
+                    <ExternalShiftAssignmentTable
+                        jobId={job.id}
+                        externalAssignments={externalAssignments}
+                    />
+                </>
             )}
 
             <Card>
@@ -172,6 +188,17 @@ const AdminJobAssignmentsPage = async ({
                                         </TableRow>
                                     );
                                 })}
+
+                                {candidates.length === 0 && (
+                                    <TableRow>
+                                        <TableCell
+                                            colSpan={5}
+                                            className="py-6 text-center text-sm text-slate-500"
+                                        >
+                                            候補者がいません。
+                                        </TableCell>
+                                    </TableRow>
+                                )}
                             </TableBody>
                         </Table>
                     )}
@@ -191,16 +218,31 @@ const AdminJobAssignmentsPage = async ({
                                 <TableHead>時間</TableHead>
                                 <TableHead className="text-right">必要人数</TableHead>
                                 <TableHead className="text-right">
-                                    割り振り人数
+                                    社内スタッフ
+                                </TableHead>
+                                <TableHead className="text-right">
+                                    外部人員
+                                </TableHead>
+                                <TableHead className="text-right">
+                                    合計
                                 </TableHead>
                             </TableRow>
                         </TableHeader>
 
                         <TableBody>
                             {job.shiftSlots.map((slot) => {
-                                const assignedCount = assignments.filter(
+                                const internalAssignedCount = assignments.filter(
                                     (assignment) => assignment.slotId === slot.id,
                                 ).length;
+
+                                const externalAssignedCount = externalAssignments
+                                    .filter((assignment) => assignment.slotId === slot.id)
+                                    .reduce((sum, assignment) => {
+                                        return sum + assignment.headCount;
+                                    }, 0);
+
+                                const totalAssignedCount =
+                                    internalAssignedCount + externalAssignedCount;
 
                                 return (
                                     <TableRow key={slot.id}>
@@ -217,7 +259,15 @@ const AdminJobAssignmentsPage = async ({
                                         </TableCell>
 
                                         <TableCell className="text-right">
-                                            {assignedCount}人
+                                            {internalAssignedCount}人
+                                        </TableCell>
+
+                                        <TableCell className="text-right">
+                                            {externalAssignedCount}人
+                                        </TableCell>
+
+                                        <TableCell className="text-right font-medium">
+                                            {totalAssignedCount}人
                                         </TableCell>
                                     </TableRow>
                                 );
@@ -226,7 +276,7 @@ const AdminJobAssignmentsPage = async ({
                             {job.shiftSlots.length === 0 && (
                                 <TableRow>
                                     <TableCell
-                                        colSpan={4}
+                                        colSpan={6}
                                         className="py-6 text-center text-sm text-slate-500"
                                     >
                                         勤務枠がありません。

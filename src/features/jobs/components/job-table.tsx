@@ -15,6 +15,8 @@ type JobWithFulfillment = Job & {
     shiftSlots: JobShiftSlot[];
     requiredPeople: number;
     assignedPeople: number;
+    assignedInternalPeople: number;
+    assignedExternalPeople: number;
     fulfillmentRate: number;
 };
 
@@ -53,14 +55,21 @@ export const JobTable = ({ jobs }: JobTableProps) => {
                                 <TableCell>{job.location}</TableCell>
 
                                 <TableCell>
-                                    <div className="flex items-center gap-2">
-                                        <Badge variant={isFulfilled ? "default" : "secondary"}>
-                                            {isFulfilled ? "充足" : "未充足"}
-                                        </Badge>
+                                    <div className="space-y-1">
+                                        <div className="flex items-center gap-2">
+                                            <Badge variant={isFulfilled ? "default" : "secondary"}>
+                                                {isFulfilled ? "充足" : "未充足"}
+                                            </Badge>
 
-                                        <span className="text-sm text-slate-600">
-                                            {job.assignedPeople}/{job.requiredPeople}人
-                                        </span>
+                                            <span className="text-sm text-slate-600">
+                                                {job.assignedPeople}/{job.requiredPeople}人
+                                            </span>
+                                        </div>
+
+                                        <p className="text-xs text-slate-500">
+                                            登録スタッフ {job.assignedInternalPeople}人 / 外部人員{" "}
+                                            {job.assignedExternalPeople}人
+                                        </p>
                                     </div>
                                 </TableCell>
 
