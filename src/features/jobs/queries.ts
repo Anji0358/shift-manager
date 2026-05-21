@@ -49,6 +49,48 @@ export type JobDetail = Prisma.JobGetPayload<{
   fulfillmentRate: number;
 };
 
+const calculateFulfillment = <
+  T extends {
+    shiftSlots: {
+      requiredPeople: number;
+    }[];
+    shiftAssignments: unknown[];
+    externalStaffAssignments: {
+      headCount: number;
+    }[];
+  },
+>(
+  job: T,
+) => {
+  const requiredPeople = job.shiftSlots.reduce((sum, slot) => {
+    return sum + slot.requiredPeople;
+  }, 0);
+
+  const assignedInternalPeople = job.shiftAssignments.length;
+
+  const assignedExternalPeople = job.externalStaffAssignments.reduce(
+    (sum, assignment) => {
+      return sum + assignment.headCount;
+    },
+    0,
+  );
+
+  const assignedPeople = assignedInternalPeople + assignedExternalPeople;
+
+  const fulfillmentRate =
+    requiredPeople === 0
+      ? 0
+      : Math.round((assignedPeople / requiredPeople) * 100);
+
+  return {
+    requiredPeople,
+    assignedPeople,
+    assignedInternalPeople,
+    assignedExternalPeople,
+    fulfillmentRate,
+  };
+};
+
 export const getJobs = async (startDate?: Date, endDate?: Date) => {
   const jobs = await prisma.job.findMany({
     where:
@@ -75,28 +117,11 @@ export const getJobs = async (startDate?: Date, endDate?: Date) => {
   });
 
   return jobs.map((job) => {
-    const requiredPeople = job.shiftSlots.reduce(
-      (sum, slot) => sum + slot.requiredPeople,
-      0,
-    );
-
-    const assignedInternalPeople = job.shiftAssignments.length;
-    const assignedExternalPeople = job.externalStaffAssignments.length;
-
-    const assignedPeople = assignedInternalPeople + assignedExternalPeople;
-
-    const fulfillmentRate =
-      requiredPeople === 0
-        ? 0
-        : Math.round((assignedPeople / requiredPeople) * 100);
+    const fulfillment = calculateFulfillment(job);
 
     return {
       ...job,
-      requiredPeople,
-      assignedPeople,
-      assignedInternalPeople,
-      assignedExternalPeople,
-      fulfillmentRate,
+      ...fulfillment,
     };
   });
 };
@@ -113,6 +138,9 @@ export const getJobById = async (jobId: string) => {
         },
       },
       shiftAssignments: {
+        where: {
+          status: "ASSIGNED",
+        },
         include: {
           employee: true,
           slot: true,
@@ -176,27 +204,10 @@ export const getJobDetail = async (
     return null;
   }
 
-  const requiredPeople = job.shiftSlots.reduce(
-    (sum, slot) => sum + slot.requiredPeople,
-    0,
-  );
-
-  const assignedInternalPeople = job.shiftAssignments.length;
-  const assignedExternalPeople = job.externalStaffAssignments.length;
-
-  const assignedPeople = assignedInternalPeople + assignedExternalPeople;
-
-  const fulfillmentRate =
-    requiredPeople === 0
-      ? 0
-      : Math.round((assignedPeople / requiredPeople) * 100);
+  const fulfillment = calculateFulfillment(job);
 
   return {
     ...job,
-    requiredPeople,
-    assignedPeople,
-    assignedInternalPeople,
-    assignedExternalPeople,
-    fulfillmentRate,
+    ...fulfillment,
   };
 };
