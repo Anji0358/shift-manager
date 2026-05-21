@@ -48,6 +48,11 @@ enum ShiftAssignmentStatus {
   CANCELED
 }
 
+enum ExternalStaffAssignmentStatus {
+  ASSIGNED
+  CANCELED
+}
+
 enum WorkReportStatus {
   NOT_SUBMITTED
   SUBMITTED
@@ -91,6 +96,8 @@ model Job {
   shiftSlots       JobShiftSlot[]
   shiftAssignments ShiftAssignment[]
   workReports      WorkReport[]
+  
+  externalStaffAssignments ExternalStaffAssignment[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -144,6 +151,8 @@ model JobShiftSlot {
   job              Job               @relation(fields: [jobId], references: [id], onDelete: Cascade)
   shiftAssignments ShiftAssignment[]
 
+  externalStaffAssignments ExternalStaffAssignment[]
+  
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -167,6 +176,28 @@ model ShiftAssignment {
   @@index([jobId])
   @@index([slotId])
   @@index([employeeId])
+}
+
+model ExternalStaffAssignment {
+  id        String                        @id @default(cuid())
+
+  jobId     String
+  job       Job                           @relation(fields: [jobId], references: [id], onDelete: Cascade)
+
+  slotId    String
+  slot      JobShiftSlot                  @relation(fields: [slotId], references: [id], onDelete: Cascade)
+
+  name      String
+  headCount Int                           @default(1)
+
+  status    ExternalStaffAssignmentStatus @default(ASSIGNED)
+  note      String?
+
+  createdAt DateTime                      @default(now())
+  updatedAt DateTime                      @updatedAt
+
+  @@index([jobId])
+  @@index([slotId])
 }
 
 model UnavailableTime {
