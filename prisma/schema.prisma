@@ -96,8 +96,6 @@ model Job {
   shiftSlots  JobShiftSlot[]
   workReports WorkReport[]
 
-  externalStaffAssignments ExternalStaffAssignment[]
-
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -178,9 +176,6 @@ model ShiftAssignment {
 model ExternalStaffAssignment {
   id String @id @default(cuid())
 
-  jobId String
-  job   Job    @relation(fields: [jobId], references: [id], onDelete: Cascade)
-
   slotId String
   slot   JobShiftSlot @relation(fields: [slotId], references: [id], onDelete: Cascade)
 
@@ -193,7 +188,6 @@ model ExternalStaffAssignment {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@index([jobId])
   @@index([slotId])
 }
 

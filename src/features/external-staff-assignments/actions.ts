@@ -26,17 +26,34 @@ export const createExternalStaffAssignment = async (formData: FormData) => {
     throw new Error("人数は1以上の整数で入力してください。");
   }
 
+  const slot = await prisma.jobShiftSlot.findUnique({
+    where: {
+      id: slotId,
+    },
+  });
+
+  if (!slot) {
+    throw new Error("勤務枠が見つかりません。");
+  }
+
+  if (slot.jobId !== jobId) {
+    throw new Error("指定された勤務枠はこの案件に属していません。");
+  }
+
   await prisma.externalStaffAssignment.create({
     data: {
-      jobId,
       slotId,
       name,
       headCount,
       note: note || null,
+      status: "ASSIGNED",
     },
   });
 
+  revalidatePath(`/admin/jobs/${jobId}`);
   revalidatePath(`/admin/jobs/${jobId}/assignments`);
+  revalidatePath("/admin/jobs");
+
   redirect(`/admin/jobs/${jobId}/assignments?message=外部スタッフを追加しました`);
 };
 
@@ -50,6 +67,23 @@ export const cancelExternalStaffAssignment = async (formData: FormData) => {
     throw new Error("外部スタッフ割り振りが指定されていません。");
   }
 
+  const assignment = await prisma.externalStaffAssignment.findUnique({
+    where: {
+      id: assignmentId,
+    },
+    include: {
+      slot: true,
+    },
+  });
+
+  if (!assignment) {
+    throw new Error("外部スタッフ割り振りが見つかりません。");
+  }
+
+  if (assignment.slot.jobId !== jobId) {
+    throw new Error("指定された案件に属していない外部スタッフ割り振りです。");
+  }
+
   await prisma.externalStaffAssignment.update({
     where: {
       id: assignmentId,
@@ -59,6 +93,9 @@ export const cancelExternalStaffAssignment = async (formData: FormData) => {
     },
   });
 
+  revalidatePath(`/admin/jobs/${jobId}`);
   revalidatePath(`/admin/jobs/${jobId}/assignments`);
+  revalidatePath("/admin/jobs");
+
   redirect(`/admin/jobs/${jobId}/assignments?message=外部スタッフをキャンセルしました`);
 };

@@ -42,6 +42,15 @@ const AdminJobDetailPage = async ({ params }: AdminJobDetailPageProps) => {
         });
     });
 
+    const externalAssignments = job.shiftSlots.flatMap((slot) => {
+        return slot.externalStaffAssignments.map((assignment) => {
+            return {
+                ...assignment,
+                slot,
+            };
+        });
+    });
+
     return (
         <div className="space-y-8">
             <JobDetailHeader
@@ -63,7 +72,7 @@ const AdminJobDetailPage = async ({ params }: AdminJobDetailPageProps) => {
 
             <ExternalShiftAssignmentTable
                 jobId={job.id}
-                externalAssignments={job.externalStaffAssignments}
+                externalAssignments={externalAssignments}
             />
 
             <JobAssignedStaffTable assignments={assignedAssignments} />

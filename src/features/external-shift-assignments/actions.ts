@@ -11,9 +11,6 @@ export const createExternalShiftAssignment = async (formData: FormData) => {
   const jobId = String(formData.get("jobId") ?? "");
   const slotId = String(formData.get("slotId") ?? "");
   const name = String(formData.get("name") ?? "").trim();
-
-  // フォーム側の name="memo" を受け取りつつ、
-  // DBには note として保存する
   const note = String(formData.get("memo") ?? "").trim();
 
   if (!jobId || !slotId) {
@@ -24,12 +21,26 @@ export const createExternalShiftAssignment = async (formData: FormData) => {
     throw new Error("外部人員の名前を入力してください。");
   }
 
+  const slot = await prisma.jobShiftSlot.findUnique({
+    where: {
+      id: slotId,
+    },
+  });
+
+  if (!slot) {
+    throw new Error("勤務枠が見つかりません。");
+  }
+
+  if (slot.jobId !== jobId) {
+    throw new Error("指定された勤務枠はこの案件に属していません。");
+  }
+
   await prisma.externalStaffAssignment.create({
     data: {
-      jobId,
       slotId,
       name,
       note: note || null,
+      status: "ASSIGNED",
     },
   });
 
@@ -50,6 +61,23 @@ export const deleteExternalShiftAssignment = async (formData: FormData) => {
 
   if (!externalAssignmentId || !jobId) {
     throw new Error("削除対象の外部人員が指定されていません。");
+  }
+
+  const externalAssignment = await prisma.externalStaffAssignment.findUnique({
+    where: {
+      id: externalAssignmentId,
+    },
+    include: {
+      slot: true,
+    },
+  });
+
+  if (!externalAssignment) {
+    throw new Error("削除対象の外部人員が見つかりません。");
+  }
+
+  if (externalAssignment.slot.jobId !== jobId) {
+    throw new Error("指定された案件に属していない外部人員は削除できません。");
   }
 
   await prisma.externalStaffAssignment.delete({

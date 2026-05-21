@@ -336,7 +336,6 @@ const main = async () => {
     data: [
       {
         id: "external_assign_1",
-        jobId: "job_2",
         slotId: "slot_2_1",
         name: "外部スタッフA",
         headCount: 2,
@@ -345,7 +344,6 @@ const main = async () => {
       },
       {
         id: "external_assign_2",
-        jobId: "job_4",
         slotId: "slot_4_1",
         name: "外部スタッフB",
         headCount: 1,

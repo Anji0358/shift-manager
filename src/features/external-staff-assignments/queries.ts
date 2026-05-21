@@ -3,12 +3,17 @@ import { prisma } from "@/lib/prisma";
 export const getExternalStaffAssignmentsByJobId = async (jobId: string) => {
   return await prisma.externalStaffAssignment.findMany({
     where: {
-      jobId,
       status: "ASSIGNED",
+      slot: {
+        jobId,
+      },
     },
     include: {
-      job: true,
-      slot: true,
+      slot: {
+        include: {
+          job: true,
+        },
+      },
     },
     orderBy: {
       createdAt: "asc",
@@ -23,8 +28,11 @@ export const getExternalStaffAssignmentsBySlotId = async (slotId: string) => {
       status: "ASSIGNED",
     },
     include: {
-      job: true,
-      slot: true,
+      slot: {
+        include: {
+          job: true,
+        },
+      },
     },
     orderBy: {
       createdAt: "asc",

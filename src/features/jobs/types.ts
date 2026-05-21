@@ -15,11 +15,7 @@ export type JobDetail = Job & {
           employee: Employee;
         }
       >;
-    }
-  >;
-  externalStaffAssignments: Array<
-    ExternalStaffAssignment & {
-      slot: JobShiftSlot;
+      externalStaffAssignments: ExternalStaffAssignment[];
     }
   >;
   workReports: Array<

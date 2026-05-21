@@ -20,14 +20,14 @@ const jobDetailInclude = {
           },
         },
       },
-    },
-  },
-  externalStaffAssignments: {
-    include: {
-      slot: true,
-    },
-    orderBy: {
-      name: "asc",
+      externalStaffAssignments: {
+        where: {
+          status: "ASSIGNED",
+        },
+        orderBy: {
+          name: "asc",
+        },
+      },
     },
   },
   workReports: {
@@ -55,9 +55,9 @@ const calculateFulfillment = <
     shiftSlots: Array<{
       requiredPeople: number;
       shiftAssignments?: unknown[];
-    }>;
-    externalStaffAssignments: Array<{
-      headCount: number;
+      externalStaffAssignments?: Array<{
+        headCount: number;
+      }>;
     }>;
   },
 >(
@@ -71,12 +71,14 @@ const calculateFulfillment = <
     return sum + (slot.shiftAssignments?.length ?? 0);
   }, 0);
 
-  const assignedExternalPeople = job.externalStaffAssignments.reduce(
-    (sum, assignment) => {
-      return sum + assignment.headCount;
-    },
-    0,
-  );
+  const assignedExternalPeople = job.shiftSlots.reduce((sum, slot) => {
+    return (
+      sum +
+      (slot.externalStaffAssignments?.reduce((slotSum, assignment) => {
+        return slotSum + assignment.headCount;
+      }, 0) ?? 0)
+    );
+  }, 0);
 
   const assignedPeople = assignedInternalPeople + assignedExternalPeople;
 
@@ -113,9 +115,13 @@ export const getJobs = async (startDate?: Date, endDate?: Date) => {
               status: "ASSIGNED",
             },
           },
+          externalStaffAssignments: {
+            where: {
+              status: "ASSIGNED",
+            },
+          },
         },
       },
-      externalStaffAssignments: true,
     },
     orderBy: {
       workDate: "asc",

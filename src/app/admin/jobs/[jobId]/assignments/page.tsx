@@ -274,7 +274,9 @@ const AdminJobAssignmentsPage = async ({
 
                                 const externalAssignedCount = externalAssignments
                                     .filter((assignment) => assignment.slotId === slot.id)
-                                    .reduce((sum, assignment) => sum + assignment.headCount, 0);
+                                    .reduce((sum, assignment) => {
+                                        return sum + assignment.headCount;
+                                    }, 0);
 
                                 const totalAssignedCount =
                                     internalAssignedCount + externalAssignedCount;
