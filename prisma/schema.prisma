@@ -93,10 +93,9 @@ model Job {
   wageType          WageType @default(EMPLOYEE)
   fixedHourlyWage   Int?
 
-  shiftSlots       JobShiftSlot[]
-  shiftAssignments ShiftAssignment[]
-  workReports      WorkReport[]
-  
+  shiftSlots  JobShiftSlot[]
+  workReports WorkReport[]
+
   externalStaffAssignments ExternalStaffAssignment[]
 
   createdAt DateTime @default(now())
@@ -148,11 +147,11 @@ model JobShiftSlot {
   endTime        String
   requiredPeople Int
 
-  job              Job               @relation(fields: [jobId], references: [id], onDelete: Cascade)
-  shiftAssignments ShiftAssignment[]
+  job Job @relation(fields: [jobId], references: [id], onDelete: Cascade)
 
+  shiftAssignments         ShiftAssignment[]
   externalStaffAssignments ExternalStaffAssignment[]
-  
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -161,40 +160,38 @@ model JobShiftSlot {
 
 model ShiftAssignment {
   id         String                @id @default(cuid())
-  jobId      String
   slotId     String
   employeeId String
   status     ShiftAssignmentStatus @default(ASSIGNED)
 
-  job      Job          @relation(fields: [jobId], references: [id], onDelete: Cascade)
   slot     JobShiftSlot @relation(fields: [slotId], references: [id], onDelete: Cascade)
   employee Employee     @relation(fields: [employeeId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@index([jobId])
+  @@unique([slotId, employeeId])
   @@index([slotId])
   @@index([employeeId])
 }
 
 model ExternalStaffAssignment {
-  id        String                        @id @default(cuid())
+  id String @id @default(cuid())
 
-  jobId     String
-  job       Job                           @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  jobId String
+  job   Job    @relation(fields: [jobId], references: [id], onDelete: Cascade)
 
-  slotId    String
-  slot      JobShiftSlot                  @relation(fields: [slotId], references: [id], onDelete: Cascade)
+  slotId String
+  slot   JobShiftSlot @relation(fields: [slotId], references: [id], onDelete: Cascade)
 
   name      String
-  headCount Int                           @default(1)
+  headCount Int    @default(1)
 
-  status    ExternalStaffAssignmentStatus @default(ASSIGNED)
-  note      String?
+  status ExternalStaffAssignmentStatus @default(ASSIGNED)
+  note   String?
 
-  createdAt DateTime                      @default(now())
-  updatedAt DateTime                      @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([jobId])
   @@index([slotId])
