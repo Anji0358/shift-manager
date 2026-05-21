@@ -3,12 +3,18 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
+import { requireAdmin } from "@/lib/auth/guards";
 
 export const createExternalShiftAssignment = async (formData: FormData) => {
+  await requireAdmin();
+
   const jobId = String(formData.get("jobId") ?? "");
   const slotId = String(formData.get("slotId") ?? "");
   const name = String(formData.get("name") ?? "").trim();
-  const memo = String(formData.get("memo") ?? "").trim();
+
+  // フォーム側の name="memo" を受け取りつつ、
+  // DBには note として保存する
+  const note = String(formData.get("memo") ?? "").trim();
 
   if (!jobId || !slotId) {
     throw new Error("案件または勤務枠が指定されていません。");
@@ -23,17 +29,20 @@ export const createExternalShiftAssignment = async (formData: FormData) => {
       jobId,
       slotId,
       name,
-      memo: memo || null,
+      note: note || null,
     },
   });
 
   revalidatePath(`/admin/jobs/${jobId}`);
   revalidatePath(`/admin/jobs/${jobId}/assignments`);
+  revalidatePath("/admin/jobs");
 
   redirect(`/admin/jobs/${jobId}/assignments?message=external-created`);
 };
 
 export const deleteExternalShiftAssignment = async (formData: FormData) => {
+  await requireAdmin();
+
   const externalAssignmentId = String(
     formData.get("externalAssignmentId") ?? "",
   );
@@ -51,6 +60,7 @@ export const deleteExternalShiftAssignment = async (formData: FormData) => {
 
   revalidatePath(`/admin/jobs/${jobId}`);
   revalidatePath(`/admin/jobs/${jobId}/assignments`);
+  revalidatePath("/admin/jobs");
 
   redirect(`/admin/jobs/${jobId}/assignments?message=external-deleted`);
 };
