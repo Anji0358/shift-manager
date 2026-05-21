@@ -15,7 +15,12 @@ import {
 } from "@/components/ui/table";
 import type { JobDetail } from "@/features/jobs/types";
 
-type AssignedAssignment = JobDetail["shiftAssignments"][number];
+type ShiftSlotWithAssignments = JobDetail["shiftSlots"][number];
+
+type AssignedAssignment =
+    ShiftSlotWithAssignments["shiftAssignments"][number] & {
+        slot: ShiftSlotWithAssignments;
+    };
 
 type JobAssignedStaffTableProps = {
     assignments: AssignedAssignment[];
@@ -47,8 +52,11 @@ export const JobAssignedStaffTable = ({
                                 <TableCell className="font-medium">
                                     {assignment.employee.name}
                                 </TableCell>
+
                                 <TableCell>{assignment.slot.name}</TableCell>
+
                                 <TableCell>{assignment.employee.email}</TableCell>
+
                                 <TableCell>
                                     <Badge variant="secondary">確定</Badge>
                                 </TableCell>

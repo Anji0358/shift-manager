@@ -5,19 +5,24 @@ export const getAdminDashboardStats = async () => {
   const currentYearMonth = getCurrentYearMonth();
   const { startDate, endDate } = getMonthRange(currentYearMonth);
 
-  const [monthlyJobCount, monthlyAssignmentCount, pendingReportCount, activeEmployeeCount] =
-    await Promise.all([
-      prisma.job.count({
-        where: {
-          workDate: {
-            gte: startDate,
-            lt: endDate,
-          },
+  const [
+    monthlyJobCount,
+    monthlyAssignmentCount,
+    pendingReportCount,
+    activeEmployeeCount,
+  ] = await Promise.all([
+    prisma.job.count({
+      where: {
+        workDate: {
+          gte: startDate,
+          lt: endDate,
         },
-      }),
-      prisma.shiftAssignment.count({
-        where: {
-          status: "ASSIGNED",
+      },
+    }),
+    prisma.shiftAssignment.count({
+      where: {
+        status: "ASSIGNED",
+        slot: {
           job: {
             workDate: {
               gte: startDate,
@@ -25,19 +30,20 @@ export const getAdminDashboardStats = async () => {
             },
           },
         },
-      }),
-      prisma.workReport.count({
-        where: {
-          status: "SUBMITTED",
-        },
-      }),
-      prisma.employee.count({
-        where: {
-          role: "STAFF",
-          employmentStatus: "ACTIVE",
-        },
-      }),
-    ]);
+      },
+    }),
+    prisma.workReport.count({
+      where: {
+        status: "SUBMITTED",
+      },
+    }),
+    prisma.employee.count({
+      where: {
+        role: "STAFF",
+        employmentStatus: "ACTIVE",
+      },
+    }),
+  ]);
 
   return {
     currentYearMonth,

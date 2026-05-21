@@ -15,7 +15,10 @@ const redirectWithMessage = (path: string, message: string): never => {
   redirect(buildRedirectUrl(path, message));
 };
 
-const getSafeRedirectPath = (value: FormDataEntryValue | null, fallback: string) => {
+const getSafeRedirectPath = (
+  value: FormDataEntryValue | null,
+  fallback: string,
+) => {
   const redirectTo = String(value ?? "");
 
   if (!redirectTo.startsWith("/")) {
@@ -65,6 +68,13 @@ export const createShiftAssignment = async (formData: FormData) => {
     return redirectWithMessage(redirectPath, "勤務枠が見つかりません。");
   }
 
+  if (slot.jobId !== jobId) {
+    return redirectWithMessage(
+      redirectPath,
+      "指定された勤務枠はこの案件に属していません。",
+    );
+  }
+
   const employee = await prisma.employee.findUnique({
     where: {
       id: employeeId,
@@ -80,7 +90,6 @@ export const createShiftAssignment = async (formData: FormData) => {
 
   const duplicatedAssignment = await prisma.shiftAssignment.findFirst({
     where: {
-      jobId,
       slotId,
       employeeId,
       status: "ASSIGNED",
@@ -124,7 +133,6 @@ export const createShiftAssignment = async (formData: FormData) => {
 
   await prisma.shiftAssignment.create({
     data: {
-      jobId,
       slotId,
       employeeId,
       status: "ASSIGNED",
@@ -134,6 +142,7 @@ export const createShiftAssignment = async (formData: FormData) => {
   revalidatePath(`/admin/jobs/${jobId}`);
   revalidatePath(`/admin/jobs/${jobId}/assignments`);
   revalidatePath("/admin/jobs");
+  revalidatePath("/staff");
   revalidatePath("/staff/shifts");
   revalidatePath("/staff/calendar");
 
@@ -167,12 +176,22 @@ export const cancelShiftAssignment = async (formData: FormData) => {
     where: {
       id: assignmentId,
     },
+    include: {
+      slot: true,
+    },
   });
 
   if (!assignment) {
     return redirectWithMessage(
       redirectPath,
       "キャンセル対象の割り振りが見つかりません。",
+    );
+  }
+
+  if (assignment.slot.jobId !== jobId) {
+    return redirectWithMessage(
+      redirectPath,
+      "この割り振りは指定された案件に属していません。",
     );
   }
 
@@ -195,6 +214,7 @@ export const cancelShiftAssignment = async (formData: FormData) => {
   revalidatePath(`/admin/jobs/${jobId}`);
   revalidatePath(`/admin/jobs/${jobId}/assignments`);
   revalidatePath("/admin/jobs");
+  revalidatePath("/staff");
   revalidatePath("/staff/shifts");
   revalidatePath("/staff/calendar");
 

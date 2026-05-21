@@ -29,8 +29,10 @@ export const createWorkReport = async (formData: FormData) => {
   const assignment = await prisma.shiftAssignment.findFirst({
     where: {
       employeeId,
-      jobId,
       status: "ASSIGNED",
+      slot: {
+        jobId,
+      },
     },
   });
 
@@ -62,6 +64,7 @@ export const createWorkReport = async (formData: FormData) => {
     },
   });
 
+  revalidatePath("/staff");
   revalidatePath("/staff/shifts");
   revalidatePath("/staff/work-history");
   revalidatePath("/staff/monthly-summary");
@@ -71,7 +74,6 @@ export const createWorkReport = async (formData: FormData) => {
 };
 
 export const approveWorkReport = async (formData: FormData) => {
-
   await requireAdmin();
 
   const reportId = String(formData.get("reportId"));
@@ -95,7 +97,6 @@ export const approveWorkReport = async (formData: FormData) => {
 };
 
 export const rejectWorkReport = async (formData: FormData) => {
-
   await requireAdmin();
 
   const reportId = String(formData.get("reportId"));

@@ -6,6 +6,8 @@ type JobWithFulfillment = Job & {
     shiftSlots: JobShiftSlot[];
     requiredPeople: number;
     assignedPeople: number;
+    assignedInternalPeople: number;
+    assignedExternalPeople: number;
     fulfillmentRate: number;
 };
 

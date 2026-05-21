@@ -49,16 +49,18 @@ const StaffNewWorkReportPage = async ({
         notFound();
     }
 
+    const job = assignment.slot.job;
+    const slot = assignment.slot;
+    const employee = assignment.employee;
+
     const existingReport = await getWorkReportByEmployeeIdAndJobId(
         currentEmployeeId,
-        assignment.jobId,
+        job.id,
     );
 
     if (existingReport) {
         redirect("/staff/shifts");
     }
-
-    const { job, slot, employee } = assignment;
 
     return (
         <div className="space-y-6">
@@ -104,7 +106,9 @@ const StaffNewWorkReportPage = async ({
 
                         <div className="grid gap-4 md:grid-cols-2">
                             <div className="space-y-2">
-                                <Label htmlFor="actualStartTime">実勤務開始時間</Label>
+                                <Label htmlFor="actualStartTime">
+                                    実勤務開始時間
+                                </Label>
                                 <Input
                                     id="actualStartTime"
                                     name="actualStartTime"
@@ -115,7 +119,9 @@ const StaffNewWorkReportPage = async ({
                             </div>
 
                             <div className="space-y-2">
-                                <Label htmlFor="actualEndTime">実勤務終了時間</Label>
+                                <Label htmlFor="actualEndTime">
+                                    実勤務終了時間
+                                </Label>
                                 <Input
                                     id="actualEndTime"
                                     name="actualEndTime"
@@ -126,7 +132,9 @@ const StaffNewWorkReportPage = async ({
                             </div>
 
                             <div className="space-y-2">
-                                <Label htmlFor="actualBreakMinutes">実休憩時間</Label>
+                                <Label htmlFor="actualBreakMinutes">
+                                    実休憩時間
+                                </Label>
                                 <Input
                                     id="actualBreakMinutes"
                                     name="actualBreakMinutes"
@@ -138,7 +146,9 @@ const StaffNewWorkReportPage = async ({
                             </div>
 
                             <div className="space-y-2">
-                                <Label htmlFor="transportationFee">交通費</Label>
+                                <Label htmlFor="transportationFee">
+                                    交通費
+                                </Label>
                                 <Input
                                     id="transportationFee"
                                     name="transportationFee"
@@ -150,24 +160,37 @@ const StaffNewWorkReportPage = async ({
                             </div>
 
                             <div className="space-y-2">
-                                <Label htmlFor="hasMeal">食事の有無</Label>
+                                <Label htmlFor="hasMeal">
+                                    食事の有無
+                                </Label>
+
                                 <Select
                                     name="hasMeal"
-                                    defaultValue={job.hasMeal ? "true" : "false"}
+                                    defaultValue={
+                                        job.hasMeal ? "true" : "false"
+                                    }
                                 >
                                     <SelectTrigger id="hasMeal">
                                         <SelectValue placeholder="食事の有無を選択" />
                                     </SelectTrigger>
+
                                     <SelectContent>
-                                        <SelectItem value="true">あり</SelectItem>
-                                        <SelectItem value="false">なし</SelectItem>
+                                        <SelectItem value="true">
+                                            あり
+                                        </SelectItem>
+                                        <SelectItem value="false">
+                                            なし
+                                        </SelectItem>
                                     </SelectContent>
                                 </Select>
                             </div>
                         </div>
 
                         <div className="flex justify-end gap-3">
-                            <LinkButton href="/staff/shifts" variant="outline">
+                            <LinkButton
+                                href="/staff/shifts"
+                                variant="outline"
+                            >
                                 キャンセル
                             </LinkButton>
 

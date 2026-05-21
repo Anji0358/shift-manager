@@ -58,18 +58,17 @@ const StaffShiftsPage = async () => {
 
                         <TableBody>
                             {assignments.map((assignment) => {
-                                const alreadyReported = reportedJobIds.has(
-                                    assignment.jobId,
-                                );
+                                const job = assignment.slot.job;
+                                const alreadyReported = reportedJobIds.has(job.id);
 
                                 return (
                                     <TableRow key={assignment.id}>
                                         <TableCell>
-                                            {formatDate(assignment.job.workDate)}
+                                            {formatDate(job.workDate)}
                                         </TableCell>
 
                                         <TableCell className="font-medium">
-                                            {assignment.job.title}
+                                            {job.title}
                                         </TableCell>
 
                                         <TableCell>{assignment.slot.name}</TableCell>
@@ -79,28 +78,24 @@ const StaffShiftsPage = async () => {
                                             {assignment.slot.endTime}
                                         </TableCell>
 
-                                        <TableCell>{assignment.job.location}</TableCell>
+                                        <TableCell>{job.location}</TableCell>
 
                                         <TableCell>
-                                            {assignment.job.meetingPlace || "未設定"}
+                                            {job.meetingPlace || "未設定"}
                                         </TableCell>
 
                                         <TableCell>
                                             <Badge
-                                                variant={
-                                                    assignment.job.hasMeal
-                                                        ? "default"
-                                                        : "outline"
-                                                }
+                                                variant={job.hasMeal ? "default" : "outline"}
                                             >
-                                                {assignment.job.hasMeal ? "あり" : "なし"}
+                                                {job.hasMeal ? "あり" : "なし"}
                                             </Badge>
                                         </TableCell>
 
                                         <TableCell className="text-right">
                                             <div className="flex justify-end gap-2">
                                                 <LinkButton
-                                                    href={`/staff/jobs/${assignment.jobId}`}
+                                                    href={`/staff/jobs/${job.id}`}
                                                     size="sm"
                                                     variant="outline"
                                                 >

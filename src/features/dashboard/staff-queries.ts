@@ -8,20 +8,27 @@ export const getNextAssignmentByEmployeeId = async (employeeId: string) => {
     where: {
       employeeId,
       status: "ASSIGNED",
-      job: {
-        workDate: {
-          gte: today,
+      slot: {
+        job: {
+          workDate: {
+            gte: today,
+          },
         },
       },
     },
     include: {
-      job: true,
-      slot: true,
+      slot: {
+        include: {
+          job: true,
+        },
+      },
       employee: true,
     },
     orderBy: {
-      job: {
-        workDate: "asc",
+      slot: {
+        job: {
+          workDate: "asc",
+        },
       },
     },
   });
@@ -38,9 +45,11 @@ export const getStaffDashboardStats = async (employeeId: string) => {
         where: {
           employeeId,
           status: "ASSIGNED",
-          job: {
-            workDate: {
-              gte: today,
+          slot: {
+            job: {
+              workDate: {
+                gte: today,
+              },
             },
           },
         },
