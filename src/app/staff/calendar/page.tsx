@@ -185,13 +185,13 @@ const StaffCalendarPage = async ({ searchParams }: StaffCalendarPageProps) => {
     const listItems: CalendarListItem[] = [
         ...assignments.map((assignment) => ({
             id: assignment.id,
-            date: assignment.job.workDate,
-            title: assignment.job.title,
+            date: assignment.slot.job.workDate,
+            title: assignment.slot.job.title,
             status: "confirmed" as CalendarStatus,
             timeText: `${assignment.slot.startTime}〜${assignment.slot.endTime}`,
-            locationText: assignment.job.location,
-            meetingPlaceText: assignment.job.meetingPlace || "未設定",
-            href: `/staff/jobs/${assignment.jobId}`,
+            locationText: assignment.slot.job.location,
+            meetingPlaceText: assignment.slot.job.meetingPlace || "未設定",
+            href: `/staff/jobs/${assignment.slot.jobId}`,
         })),
         ...unavailableListItems,
     ].sort((a, b) => a.date.getTime() - b.date.getTime());
@@ -266,7 +266,7 @@ const StaffCalendarPage = async ({ searchParams }: StaffCalendarPageProps) => {
                             const targetDate = getDateByYearMonthAndDay(targetMonth, day);
 
                             const assignmentsOfDay = assignments.filter((assignment) => {
-                                return isSameDate(assignment.job.workDate, targetDate);
+                                return isSameDate(assignment.slot.job.workDate, targetDate);
                             });
 
                             const unavailableTimesOfDay = unavailableTimes.filter(
@@ -283,14 +283,14 @@ const StaffCalendarPage = async ({ searchParams }: StaffCalendarPageProps) => {
                                         {assignmentsOfDay.map((assignment) => (
                                             <Link
                                                 key={assignment.id}
-                                                href={`/staff/jobs/${assignment.jobId}`}
+                                                href={`/staff/jobs/${assignment.slot.jobId}`}
                                                 className={[
                                                     "block rounded-md border px-2 py-1.5 text-xs shadow-sm transition hover:opacity-80 active:scale-[0.98]",
                                                     getCalendarStatusClassName("confirmed"),
                                                 ].join(" ")}
                                             >
                                                 <p className="line-clamp-2 font-medium leading-snug">
-                                                    {assignment.job.title}
+                                                    {assignment.slot.job.title}
                                                 </p>
 
                                                 <p className="mt-1">

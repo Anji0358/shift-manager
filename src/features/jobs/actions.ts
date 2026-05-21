@@ -107,7 +107,9 @@ export const deleteJob = async (formData: FormData) => {
     }),
     prisma.shiftAssignment.deleteMany({
       where: {
-        jobId,
+        slot: {
+          jobId,
+        },
       },
     }),
     prisma.externalStaffAssignment.deleteMany({

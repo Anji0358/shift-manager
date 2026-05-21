@@ -6,18 +6,19 @@ const jobDetailInclude = {
     orderBy: {
       startTime: "asc",
     },
-  },
-  shiftAssignments: {
-    where: {
-      status: "ASSIGNED",
-    },
     include: {
-      employee: true,
-      slot: true,
-    },
-    orderBy: {
-      employee: {
-        name: "asc",
+      shiftAssignments: {
+        where: {
+          status: "ASSIGNED",
+        },
+        include: {
+          employee: true,
+        },
+        orderBy: {
+          employee: {
+            name: "asc",
+          },
+        },
       },
     },
   },
@@ -51,13 +52,13 @@ export type JobDetail = Prisma.JobGetPayload<{
 
 const calculateFulfillment = <
   T extends {
-    shiftSlots: {
+    shiftSlots: Array<{
       requiredPeople: number;
-    }[];
-    shiftAssignments: unknown[];
-    externalStaffAssignments: {
+      shiftAssignments?: unknown[];
+    }>;
+    externalStaffAssignments: Array<{
       headCount: number;
-    }[];
+    }>;
   },
 >(
   job: T,
@@ -66,7 +67,9 @@ const calculateFulfillment = <
     return sum + slot.requiredPeople;
   }, 0);
 
-  const assignedInternalPeople = job.shiftAssignments.length;
+  const assignedInternalPeople = job.shiftSlots.reduce((sum, slot) => {
+    return sum + (slot.shiftAssignments?.length ?? 0);
+  }, 0);
 
   const assignedExternalPeople = job.externalStaffAssignments.reduce(
     (sum, assignment) => {
@@ -103,10 +106,13 @@ export const getJobs = async (startDate?: Date, endDate?: Date) => {
           }
         : undefined,
     include: {
-      shiftSlots: true,
-      shiftAssignments: {
-        where: {
-          status: "ASSIGNED",
+      shiftSlots: {
+        include: {
+          shiftAssignments: {
+            where: {
+              status: "ASSIGNED",
+            },
+          },
         },
       },
       externalStaffAssignments: true,
@@ -127,48 +133,23 @@ export const getJobs = async (startDate?: Date, endDate?: Date) => {
 };
 
 export const getJobById = async (jobId: string) => {
-  return await prisma.job.findUnique({
+  const job = await prisma.job.findUnique({
     where: {
       id: jobId,
     },
-    include: {
-      shiftSlots: {
-        orderBy: {
-          startTime: "asc",
-        },
-      },
-      shiftAssignments: {
-        where: {
-          status: "ASSIGNED",
-        },
-        include: {
-          employee: true,
-          slot: true,
-        },
-        orderBy: {
-          employee: {
-            name: "asc",
-          },
-        },
-      },
-      externalStaffAssignments: {
-        include: {
-          slot: true,
-        },
-        orderBy: {
-          name: "asc",
-        },
-      },
-      workReports: {
-        include: {
-          employee: true,
-        },
-        orderBy: {
-          createdAt: "desc",
-        },
-      },
-    },
+    include: jobDetailInclude,
   });
+
+  if (!job) {
+    return null;
+  }
+
+  const fulfillment = calculateFulfillment(job);
+
+  return {
+    ...job,
+    ...fulfillment,
+  };
 };
 
 export const getActiveStaffCandidates = async () => {

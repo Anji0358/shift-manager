@@ -33,8 +33,13 @@ const AdminJobDetailPage = async ({ params }: AdminJobDetailPageProps) => {
     const fulfillmentRate = job.fulfillmentRate;
     const isFulfilled = fulfillmentRate >= 100;
 
-    const assignedAssignments = job.shiftAssignments.filter((assignment) => {
-        return assignment.status === "ASSIGNED";
+    const assignedAssignments = job.shiftSlots.flatMap((slot) => {
+        return slot.shiftAssignments.map((assignment) => {
+            return {
+                ...assignment,
+                slot,
+            };
+        });
     });
 
     return (

@@ -71,7 +71,7 @@ const StaffPage = async () => {
                     <CardContent>
                         {stats.nextAssignment ? (
                             <Badge variant="secondary">
-                                {formatDate(stats.nextAssignment.job.workDate)}
+                                {formatDate(stats.nextAssignment.slot.job.workDate)}
                             </Badge>
                         ) : (
                             <p className="text-sm text-slate-500">予定なし</p>
@@ -89,13 +89,13 @@ const StaffPage = async () => {
                     {stats.nextAssignment ? (
                         <div className="space-y-3">
                             <p className="text-lg font-semibold">
-                                {stats.nextAssignment.job.title}
+                                {stats.nextAssignment.slot.job.title}
                             </p>
 
                             <div className="grid gap-2 text-sm text-slate-600 md:grid-cols-2">
                                 <p>
                                     勤務日：
-                                    {formatDate(stats.nextAssignment.job.workDate)}
+                                    {formatDate(stats.nextAssignment.slot.job.workDate)}
                                 </p>
                                 <p>勤務枠：{stats.nextAssignment.slot.name}</p>
                                 <p>
@@ -103,14 +103,14 @@ const StaffPage = async () => {
                                     {stats.nextAssignment.slot.startTime}〜
                                     {stats.nextAssignment.slot.endTime}
                                 </p>
-                                <p>場所：{stats.nextAssignment.job.location}</p>
+                                <p>場所：{stats.nextAssignment.slot.job.location}</p>
                                 <p>
                                     集合場所：
-                                    {stats.nextAssignment.job.meetingPlace || "未設定"}
+                                    {stats.nextAssignment.slot.job.meetingPlace || "未設定"}
                                 </p>
                                 <p>
                                     食事：
-                                    {stats.nextAssignment.job.hasMeal ? "あり" : "なし"}
+                                    {stats.nextAssignment.slot.job.hasMeal ? "あり" : "なし"}
                                 </p>
                             </div>
 

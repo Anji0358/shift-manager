@@ -1,5 +1,6 @@
 import type {
   Employee,
+  ExternalStaffAssignment,
   Job,
   JobShiftSlot,
   ShiftAssignment,
@@ -7,10 +8,17 @@ import type {
 } from "@prisma/client";
 
 export type JobDetail = Job & {
-  shiftSlots: JobShiftSlot[];
-  shiftAssignments: Array<
-    ShiftAssignment & {
-      employee: Employee;
+  shiftSlots: Array<
+    JobShiftSlot & {
+      shiftAssignments: Array<
+        ShiftAssignment & {
+          employee: Employee;
+        }
+      >;
+    }
+  >;
+  externalStaffAssignments: Array<
+    ExternalStaffAssignment & {
       slot: JobShiftSlot;
     }
   >;
@@ -19,6 +27,11 @@ export type JobDetail = Job & {
       employee: Employee;
     }
   >;
+  requiredPeople: number;
+  assignedPeople: number;
+  assignedInternalPeople: number;
+  assignedExternalPeople: number;
+  fulfillmentRate: number;
 };
 
 export type StaffCandidate = Pick<

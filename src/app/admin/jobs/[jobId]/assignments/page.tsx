@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { prisma } from "@/lib/prisma";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -20,7 +21,7 @@ import { SuccessMessage } from "@/components/shared/success-message";
 import { ConfirmSubmitButton } from "@/components/shared/confirm-submit-button";
 import { StaffAssignmentForm } from "@/features/shift-assignments/components/staff-assignment-form";
 import { cancelShiftAssignment } from "@/features/shift-assignments/actions";
-import { getActiveStaffCandidates, getJobById } from "@/features/jobs/queries";
+import { getActiveStaffCandidates } from "@/features/jobs/queries";
 import { getAssignmentsByJobId } from "@/features/shift-assignments/queries";
 import { isUnavailableForSlot } from "@/features/unavailable-times/services";
 import { formatDate, formatMonth, formatYen } from "@/lib/format";
@@ -44,7 +45,41 @@ const AdminJobAssignmentsPage = async ({
     const { jobId } = await params;
     const { message } = await searchParams;
 
-    const job = await getJobById(jobId);
+    const job = await prisma.job.findUnique({
+        where: {
+            id: jobId,
+        },
+        select: {
+            id: true,
+            title: true,
+            workDate: true,
+            location: true,
+            meetingPlace: true,
+            breakMinutes: true,
+            hasMeal: true,
+            transportationFee: true,
+            dressCode: true,
+            belongings: true,
+            note: true,
+            wageType: true,
+            fixedHourlyWage: true,
+            shiftSlots: {
+                orderBy: {
+                    startTime: "asc",
+                },
+                select: {
+                    id: true,
+                    jobId: true,
+                    name: true,
+                    startTime: true,
+                    endTime: true,
+                    requiredPeople: true,
+                    createdAt: true,
+                    updatedAt: true,
+                },
+            },
+        },
+    });
 
     if (!job) {
         notFound();
@@ -239,9 +274,7 @@ const AdminJobAssignmentsPage = async ({
 
                                 const externalAssignedCount = externalAssignments
                                     .filter((assignment) => assignment.slotId === slot.id)
-                                    .reduce((sum, assignment) => {
-                                        return sum + assignment.headCount;
-                                    }, 0);
+                                    .reduce((sum, assignment) => sum + assignment.headCount, 0);
 
                                 const totalAssignedCount =
                                     internalAssignedCount + externalAssignedCount;
@@ -323,7 +356,7 @@ const AdminJobAssignmentsPage = async ({
                                     </TableCell>
 
                                     <TableCell>
-                                        {formatDate(assignment.job.workDate)}
+                                        {formatDate(job.workDate)}
                                     </TableCell>
 
                                     <TableCell>

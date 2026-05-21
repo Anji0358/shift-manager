@@ -7,8 +7,12 @@ export const getFirstAssignmentByEmployeeId = async (employeeId: string) => {
       status: "ASSIGNED",
     },
     include: {
-      job: true,
-      slot: true,
+      slot: {
+        include: {
+          job: true,
+        },
+      },
+      employee: true,
     },
     orderBy: {
       createdAt: "asc",
@@ -23,8 +27,11 @@ export const getAssignmentsByEmployeeId = async (employeeId: string) => {
       status: "ASSIGNED",
     },
     include: {
-      job: true,
-      slot: true,
+      slot: {
+        include: {
+          job: true,
+        },
+      },
       employee: true,
     },
     orderBy: {
@@ -36,11 +43,12 @@ export const getAssignmentsByEmployeeId = async (employeeId: string) => {
 export const getAssignmentsByJobId = async (jobId: string) => {
   return await prisma.shiftAssignment.findMany({
     where: {
-      jobId,
       status: "ASSIGNED",
+      slot: {
+        jobId,
+      },
     },
     include: {
-      job: true,
       slot: true,
       employee: true,
     },
@@ -56,8 +64,11 @@ export const getAssignmentById = async (assignmentId: string) => {
       id: assignmentId,
     },
     include: {
-      job: true,
-      slot: true,
+      slot: {
+        include: {
+          job: true,
+        },
+      },
       employee: true,
     },
   });
@@ -72,21 +83,28 @@ export const getAssignmentsByEmployeeIdAndMonth = async (
     where: {
       employeeId,
       status: "ASSIGNED",
-      job: {
-        workDate: {
-          gte: startDate,
-          lt: endDate,
+      slot: {
+        job: {
+          workDate: {
+            gte: startDate,
+            lt: endDate,
+          },
         },
       },
     },
     include: {
-      job: true,
-      slot: true,
+      slot: {
+        include: {
+          job: true,
+        },
+      },
       employee: true,
     },
     orderBy: {
-      job: {
-        workDate: "asc",
+      slot: {
+        job: {
+          workDate: "asc",
+        },
       },
     },
   });

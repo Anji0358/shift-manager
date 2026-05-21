@@ -7,7 +7,6 @@ import {
     Utensils,
     Wallet,
 } from "lucide-react";
-import { getJobDetail } from "@/features/jobs/queries";
 import { getCurrentEmployeeId } from "@/lib/auth/current-user";
 import { prisma } from "@/lib/prisma";
 import { formatDate, formatYen } from "@/lib/format";
@@ -32,12 +31,19 @@ const StaffJobDetailPage = async ({ params }: StaffJobDetailPageProps) => {
 
     const assignment = await prisma.shiftAssignment.findFirst({
         where: {
-            jobId,
             employeeId,
             status: "ASSIGNED",
+            slot: {
+                jobId,
+            },
         },
         include: {
-            slot: true,
+            slot: {
+                include: {
+                    job: true,
+                },
+            },
+            employee: true,
         },
     });
 
@@ -45,13 +51,8 @@ const StaffJobDetailPage = async ({ params }: StaffJobDetailPageProps) => {
         notFound();
     }
 
-    const job = await getJobDetail(jobId);
-
-    if (!job) {
-        notFound();
-    }
-
     const assignedSlot = assignment.slot;
+    const job = assignedSlot.job;
 
     return (
         <div className="space-y-6">
