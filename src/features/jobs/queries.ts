@@ -107,24 +107,68 @@ export const getJobs = async (startDate?: Date, endDate?: Date) => {
             },
           }
         : undefined,
-    include: {
+    orderBy: {
+      workDate: "asc",
+    },
+    select: {
+      id: true,
+      title: true,
+      workDate: true,
+      location: true,
+      meetingPlace: true,
+      breakMinutes: true,
+      hasMeal: true,
+      transportationFee: true,
+      dressCode: true,
+      belongings: true,
+      note: true,
+      wageType: true,
+      fixedHourlyWage: true,
+      createdAt: true,
+      updatedAt: true,
       shiftSlots: {
-        include: {
+        orderBy: {
+          startTime: "asc",
+        },
+        select: {
+          id: true,
+          jobId: true,
+          name: true,
+          startTime: true,
+          endTime: true,
+          requiredPeople: true,
+          createdAt: true,
+          updatedAt: true,
           shiftAssignments: {
             where: {
               status: "ASSIGNED",
+            },
+            select: {
+              id: true,
+              slotId: true,
+              employeeId: true,
+              status: true,
+              createdAt: true,
+              updatedAt: true,
             },
           },
           externalStaffAssignments: {
             where: {
               status: "ASSIGNED",
             },
+            select: {
+              id: true,
+              slotId: true,
+              name: true,
+              headCount: true,
+              status: true,
+              note: true,
+              createdAt: true,
+              updatedAt: true,
+            },
           },
         },
       },
-    },
-    orderBy: {
-      workDate: "asc",
     },
   });
 
