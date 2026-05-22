@@ -5,6 +5,7 @@ import {
     ClipboardList,
     FileText,
     Home,
+    MessageSquareText,
     Users,
     WalletCards,
 } from "lucide-react";
@@ -59,6 +60,11 @@ const AdminLayout = async ({ children }: AdminLayoutProps) => {
                             <NavLink href="/admin/monthly-summary">
                                 <WalletCards className="h-4 w-4" />
                                 月次集計
+                            </NavLink>
+
+                            <NavLink href="/admin/line-message">
+                                <MessageSquareText className="h-4 w-4" />
+                                LINE作成
                             </NavLink>
 
                             <NavLink href="/staff">
