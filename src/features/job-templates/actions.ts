@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { requireAdmin } from "@/lib/auth/guards";
+import { timeTextToMinutes } from "@/lib/time";
 
 const validateTimeOrder = (startTime: string, endTime: string) => {
   if (startTime >= endTime) {
@@ -92,6 +93,9 @@ export const createJobTemplate = async (formData: FormData) => {
 
   validateTimeOrder(startTime, endTime);
 
+  const startTimeMinutes = timeTextToMinutes(startTime);
+  const endTimeMinutes = timeTextToMinutes(endTime);
+
   if (requiredPeople === null) {
     throw new Error("必要人数は1以上の整数で入力してください。");
   }
@@ -138,6 +142,8 @@ export const createJobTemplate = async (formData: FormData) => {
         name: slotName,
         startTime,
         endTime,
+        startTimeMinutes,
+        endTimeMinutes,
         requiredPeople,
       },
     });
@@ -215,6 +221,9 @@ export const updateJobTemplate = async (formData: FormData) => {
 
   validateTimeOrder(startTime, endTime);
 
+  const startTimeMinutes = timeTextToMinutes(startTime);
+  const endTimeMinutes = timeTextToMinutes(endTime);
+
   if (requiredPeople === null) {
     throw new Error("必要人数は1以上の整数で入力してください。");
   }
@@ -270,6 +279,8 @@ export const updateJobTemplate = async (formData: FormData) => {
         name: slotName,
         startTime,
         endTime,
+        startTimeMinutes,
+        endTimeMinutes,
         requiredPeople,
       },
     });

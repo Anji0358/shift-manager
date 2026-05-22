@@ -132,6 +132,8 @@ model JobTemplateShiftSlot {
   name           String
   startTime      String
   endTime        String
+  startTimeMinutes Int
+  endTimeMinutes   Int
   requiredPeople Int
 
   jobTemplate JobTemplate @relation(fields: [jobTemplateId], references: [id], onDelete: Cascade)
@@ -148,6 +150,8 @@ model JobShiftSlot {
   name           String
   startTime      String
   endTime        String
+  startTimeMinutes Int
+  endTimeMinutes   Int
   requiredPeople Int
 
   job Job @relation(fields: [jobId], references: [id], onDelete: Cascade)
@@ -160,6 +164,7 @@ model JobShiftSlot {
 
   @@index([jobId])
   @@index([jobId, startTime])
+  @@index([jobId, startTimeMinutes])
 }
 
 model ShiftAssignment {

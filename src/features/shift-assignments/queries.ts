@@ -112,146 +112,153 @@ export const getAssignmentsByEmployeeIdAndMonth = async (
 
 export const getAssignmentPageData = async (jobId: string) => {
   const job = await prisma.job.findUnique({
-  where: {
-    id: jobId,
-  },
-  select: {
-    id: true,
-    title: true,
-    workDate: true,
-    location: true,
-    meetingPlace: true,
-    shiftSlots: {
-      orderBy: {
-        startTime: "asc",
-      },
-      select: {
-        id: true,
-        jobId: true,
-        name: true,
-        startTime: true,
-        endTime: true,
-        requiredPeople: true,
-        createdAt: true,
-        updatedAt: true,
-        shiftAssignments: {
-          where: {
-            status: "ASSIGNED",
-          },
-          select: {
-            id: true,
-            slotId: true,
-            employeeId: true,
-            status: true,
-            createdAt: true,
-            updatedAt: true,
-            employee: {
-              select: {
-                id: true,
-                name: true,
-                email: true,
-                role: true,
-                hourlyWage: true,
-                startedWorkingAt: true,
+    where: {
+      id: jobId,
+    },
+    select: {
+      id: true,
+      title: true,
+      workDate: true,
+      location: true,
+      meetingPlace: true,
+      shiftSlots: {
+        orderBy: {
+          startTime: "asc",
+        },
+        select: {
+          id: true,
+          jobId: true,
+          name: true,
+          startTime: true,
+          endTime: true,
+          startTimeMinutes: true,
+          endTimeMinutes: true,
+          requiredPeople: true,
+          createdAt: true,
+          updatedAt: true,
+          shiftAssignments: {
+            where: {
+              status: "ASSIGNED",
+            },
+            select: {
+              id: true,
+              slotId: true,
+              employeeId: true,
+              status: true,
+              createdAt: true,
+              updatedAt: true,
+              employee: {
+                select: {
+                  id: true,
+                  name: true,
+                  email: true,
+                  role: true,
+                  hourlyWage: true,
+                  startedWorkingAt: true,
+                },
               },
             },
           },
-        },
-        externalStaffAssignments: {
-          where: {
-            status: "ASSIGNED",
-          },
-          select: {
-            id: true,
-            slotId: true,
-            name: true,
-            headCount: true,
-            status: true,
-            note: true,
-            createdAt: true,
-            updatedAt: true,
+          externalStaffAssignments: {
+            where: {
+              status: "ASSIGNED",
+            },
+            select: {
+              id: true,
+              slotId: true,
+              name: true,
+              headCount: true,
+              status: true,
+              note: true,
+              createdAt: true,
+              updatedAt: true,
+            },
           },
         },
       },
     },
-  },
-});
+  });
 
   if (!job) {
     return null;
   }
 
   const candidates = await prisma.employee.findMany({
-  where: {
-    employmentStatus: "ACTIVE",
-  },
-  orderBy: [
-    {
-      role: "asc",
+    where: {
+      employmentStatus: "ACTIVE",
     },
-    {
-      startedWorkingAt: "asc",
-    },
-  ],
-  select: {
-    id: true,
-    name: true,
-    email: true,
-    passwordHash: true,
-    role: true,
-    hourlyWage: true,
-    startedWorkingAt: true,
-    employmentStatus: true,
-    createdAt: true,
-    updatedAt: true,
-    unavailableTimes: {
-      select: {
-        id: true,
-        employeeId: true,
-        type: true,
-        date: true,
-        dayOfWeek: true,
-        startTime: true,
-        endTime: true,
-        reason: true,
-        createdAt: true,
-        updatedAt: true,
+    orderBy: [
+      {
+        role: "asc",
       },
-    },
-    shiftAssignments: {
-      where: {
-        status: "ASSIGNED",
-        slot: {
-          job: {
-            workDate: job.workDate,
-          },
+      {
+        startedWorkingAt: "asc",
+      },
+    ],
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      passwordHash: true,
+      role: true,
+      hourlyWage: true,
+      startedWorkingAt: true,
+      employmentStatus: true,
+      createdAt: true,
+      updatedAt: true,
+      unavailableTimes: {
+        select: {
+          id: true,
+          employeeId: true,
+          type: true,
+          date: true,
+          dayOfWeek: true,
+          startTime: true,
+          endTime: true,
+          reason: true,
+          createdAt: true,
+          updatedAt: true,
         },
       },
-      select: {
-        id: true,
-        slotId: true,
-        employeeId: true,
-        status: true,
-        slot: {
-          select: {
-            id: true,
-            jobId: true,
-            name: true,
-            startTime: true,
-            endTime: true,
+      shiftAssignments: {
+        where: {
+          status: "ASSIGNED",
+          slot: {
             job: {
-              select: {
-                id: true,
-                title: true,
-                workDate: true,
+              workDate: job.workDate,
+            },
+          },
+        },
+        select: {
+          id: true,
+          slotId: true,
+          employeeId: true,
+          status: true,
+          slot: {
+            select: {
+              id: true,
+              jobId: true,
+              name: true,
+              startTime: true,
+              endTime: true,
+              startTimeMinutes: true,
+              endTimeMinutes: true,
+              requiredPeople: true,
+              createdAt: true,
+              updatedAt: true,
+              job: {
+                select: {
+                  id: true,
+                  title: true,
+                  workDate: true,
+                },
               },
             },
           },
         },
       },
     },
-  },
-});
+  });
 
   const assignments = job.shiftSlots.flatMap((slot) => {
     return slot.shiftAssignments.map((assignment) => {
@@ -263,6 +270,8 @@ export const getAssignmentPageData = async (jobId: string) => {
           name: slot.name,
           startTime: slot.startTime,
           endTime: slot.endTime,
+          startTimeMinutes: slot.startTimeMinutes,
+          endTimeMinutes: slot.endTimeMinutes,
           requiredPeople: slot.requiredPeople,
           createdAt: slot.createdAt,
           updatedAt: slot.updatedAt,
@@ -281,6 +290,8 @@ export const getAssignmentPageData = async (jobId: string) => {
           name: slot.name,
           startTime: slot.startTime,
           endTime: slot.endTime,
+          startTimeMinutes: slot.startTimeMinutes,
+          endTimeMinutes: slot.endTimeMinutes,
           requiredPeople: slot.requiredPeople,
           createdAt: slot.createdAt,
           updatedAt: slot.updatedAt,

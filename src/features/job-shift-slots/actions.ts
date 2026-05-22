@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
+import { timeTextToMinutes } from "@/lib/time";
 import { requireAdmin } from "@/lib/auth/guards";
 
 const redirectToNewSlotPage = (jobId: string, message: string): never => {
@@ -24,6 +25,8 @@ export const createJobShiftSlot = async (formData: FormData) => {
   const name = String(formData.get("name") ?? "").trim();
   const startTime = String(formData.get("startTime") ?? "");
   const endTime = String(formData.get("endTime") ?? "");
+  const startTimeMinutes = timeTextToMinutes(startTime);
+const endTimeMinutes = timeTextToMinutes(endTime);
   const requiredPeopleText = String(formData.get("requiredPeople") ?? "");
 
   if (!jobId) {
@@ -64,15 +67,17 @@ export const createJobShiftSlot = async (formData: FormData) => {
     redirectToNewSlotPage(jobId, "案件が見つかりません。");
   }
 
-  await prisma.jobShiftSlot.create({
-    data: {
-      jobId,
-      name,
-      startTime,
-      endTime,
-      requiredPeople,
-    },
-  });
+await prisma.jobShiftSlot.create({
+  data: {
+    jobId,
+    name,
+    startTime,
+    endTime,
+    startTimeMinutes,
+    endTimeMinutes,
+    requiredPeople,
+  },
+});
 
   revalidatePath(`/admin/jobs/${jobId}`);
   revalidatePath(`/admin/jobs/${jobId}/assignments`);

@@ -11,6 +11,7 @@ import {
   validateTimeOrder,
 } from "@/lib/validation";
 import { requireAdmin } from "@/lib/auth/guards";
+import { timeTextToMinutes } from "@/lib/time";
 
 export const createJob = async (formData: FormData) => {
   await requireAdmin();
@@ -36,6 +37,9 @@ export const createJob = async (formData: FormData) => {
   const fixedHourlyWageText = getOptionalString(formData, "fixedHourlyWage");
 
   validateTimeOrder(startTime, endTime);
+
+  const startTimeMinutes = timeTextToMinutes(startTime);
+  const endTimeMinutes = timeTextToMinutes(endTime);
 
   if (!Number.isInteger(requiredPeople) || requiredPeople <= 0) {
     throw new Error("必要人数は1以上の整数で入力してください。");
@@ -80,6 +84,8 @@ export const createJob = async (formData: FormData) => {
           name: slotName,
           startTime,
           endTime,
+          startTimeMinutes,
+          endTimeMinutes,
           requiredPeople,
         },
       },

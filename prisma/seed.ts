@@ -2,6 +2,7 @@ import "dotenv/config";
 import { PrismaClient } from "@prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
 import bcrypt from "bcryptjs";
+import { timeTextToMinutes } from "../src/lib/time";
 
 const connectionString = process.env.DATABASE_URL;
 
@@ -23,6 +24,24 @@ const addDays = (baseDate: Date, days: number) => {
     baseDate.getMonth(),
     baseDate.getDate() + days,
   );
+};
+
+const createSlot = <
+  T extends {
+    id: string;
+    name: string;
+    startTime: string;
+    endTime: string;
+    requiredPeople: number;
+  },
+>(
+  slot: T,
+) => {
+  return {
+    ...slot,
+    startTimeMinutes: timeTextToMinutes(slot.startTime),
+    endTimeMinutes: timeTextToMinutes(slot.endTime),
+  };
 };
 
 const main = async () => {
@@ -123,20 +142,20 @@ const main = async () => {
       fixedHourlyWage: null,
       shiftSlots: {
         create: [
-          {
+          createSlot({
             id: "template_slot_1",
             name: "午前枠",
             startTime: "09:00",
             endTime: "13:00",
             requiredPeople: 3,
-          },
-          {
+          }),
+          createSlot({
             id: "template_slot_2",
             name: "午後枠",
             startTime: "13:00",
             endTime: "18:00",
             requiredPeople: 3,
-          },
+          }),
         ],
       },
     },
@@ -161,20 +180,20 @@ const main = async () => {
       fixedHourlyWage: null,
       shiftSlots: {
         create: [
-          {
+          createSlot({
             id: "slot_1_1",
             name: "午前枠",
             startTime: "09:00",
             endTime: "13:00",
             requiredPeople: 3,
-          },
-          {
+          }),
+          createSlot({
             id: "slot_1_2",
             name: "午後枠",
             startTime: "13:00",
             endTime: "18:00",
             requiredPeople: 3,
-          },
+          }),
         ],
       },
     },
@@ -194,13 +213,13 @@ const main = async () => {
       fixedHourlyWage: null,
       shiftSlots: {
         create: [
-          {
+          createSlot({
             id: "slot_2_1",
             name: "通し枠",
             startTime: "10:00",
             endTime: "18:00",
             requiredPeople: 4,
-          },
+          }),
         ],
       },
     },
@@ -220,20 +239,20 @@ const main = async () => {
       fixedHourlyWage: null,
       shiftSlots: {
         create: [
-          {
+          createSlot({
             id: "slot_3_1",
             name: "前半枠",
             startTime: "10:00",
             endTime: "15:00",
             requiredPeople: 2,
-          },
-          {
+          }),
+          createSlot({
             id: "slot_3_2",
             name: "後半枠",
             startTime: "15:00",
             endTime: "20:00",
             requiredPeople: 2,
-          },
+          }),
         ],
       },
     },
@@ -253,13 +272,13 @@ const main = async () => {
       fixedHourlyWage: 1500,
       shiftSlots: {
         create: [
-          {
+          createSlot({
             id: "slot_4_1",
             name: "短時間枠",
             startTime: "14:00",
             endTime: "17:00",
             requiredPeople: 3,
-          },
+          }),
         ],
       },
     },
@@ -279,13 +298,13 @@ const main = async () => {
       fixedHourlyWage: null,
       shiftSlots: {
         create: [
-          {
+          createSlot({
             id: "slot_5_1",
             name: "運営枠",
             startTime: "12:00",
             endTime: "18:00",
             requiredPeople: 4,
-          },
+          }),
         ],
       },
     },

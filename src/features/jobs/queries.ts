@@ -136,6 +136,8 @@ export const getJobs = async (startDate?: Date, endDate?: Date) => {
           name: true,
           startTime: true,
           endTime: true,
+          startTimeMinutes: true,
+          endTimeMinutes: true,
           requiredPeople: true,
           createdAt: true,
           updatedAt: true,
