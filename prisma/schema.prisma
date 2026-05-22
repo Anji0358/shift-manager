@@ -132,8 +132,6 @@ model JobTemplateShiftSlot {
   name           String
   startTime      String
   endTime        String
-  startTimeMinutes Int
-  endTimeMinutes   Int
   requiredPeople Int
 
   jobTemplate JobTemplate @relation(fields: [jobTemplateId], references: [id], onDelete: Cascade)

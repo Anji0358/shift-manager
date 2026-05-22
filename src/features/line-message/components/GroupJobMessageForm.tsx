@@ -6,58 +6,39 @@ import { Button } from "@/components/ui/button";
 import { generateGroupJobMessage } from "../message-generators";
 import type { GroupMessageOptions, GroupMessageType } from "../types";
 
-const sampleJobs = [
-    {
-        id: "sample-job-1",
-        title: "テスト案件",
-        workDate: new Date("2026-05-20T00:00:00"),
-        location: "横浜駅",
-        meetingPlace: "〒220-0005 神奈川県横浜市西区南幸1丁目10-16",
-        dressCode:
-            "白ギャルソンスタイル\n白Yシャツ、黒スラックス、黒革靴(パンプスOK)、黒ネクタイ、黒ベルト、ベスト、タブリエ、黒靴下(くるぶしソックスNG、女性はストッキングOK)",
-        belongings: "・白手\n・メモ帳\n・ボールペン",
-        note: "各入り時間の10分前に集合場所に着くようにお願いします",
-        shiftSlots: [
-            {
-                id: "sample-slot-1",
-                startTime: new Date("2026-05-20T10:00:00"),
-                endTime: new Date("2026-05-20T14:00:00"),
-                assignments: [
-                    {
-                        employee: {
-                            name: "スタッフA",
-                        },
-                    },
-                ],
-            },
-            {
-                id: "sample-slot-2",
-                startTime: new Date("2026-05-20T10:00:00"),
-                endTime: new Date("2026-05-20T15:00:00"),
-                assignments: [
-                    {
-                        employee: {
-                            name: "スタッフB",
-                        },
-                    },
-                    {
-                        employee: {
-                            name: "スタッフC",
-                        },
-                    },
-                    {
-                        employee: {
-                            name: "スタッフD",
-                        },
-                    },
-                ],
-            },
-        ],
-    },
-];
+type GroupJobMessageFormProps = {
+    jobs: {
+        id: string;
+        title: string;
+        workDate: Date;
+        location: string;
+        meetingPlace: string | null;
+        dressCode: string | null;
+        belongings: string | null;
+        note: string | null;
+        shiftSlots: {
+            id: string;
+            name: string;
+            startTime: string;
+            endTime: string;
+            startTimeMinutes: number;
+            endTimeMinutes: number;
+            requiredPeople: number;
+            shiftAssignments: {
+                employee: {
+                    name: string;
+                };
+            }[];
+            externalStaffAssignments: {
+                name: string;
+                headCount: number;
+            }[];
+        }[];
+    }[];
+};
 
-export const GroupJobMessageForm = () => {
-    const [selectedJobId, setSelectedJobId] = useState(sampleJobs[0]?.id ?? "");
+export const GroupJobMessageForm = ({ jobs }: GroupJobMessageFormProps) => {
+    const [selectedJobId, setSelectedJobId] = useState(jobs[0]?.id ?? "");
     const [messageType, setMessageType] =
         useState<GroupMessageType>("scheduleConfirm");
     const [options, setOptions] = useState<GroupMessageOptions>({
@@ -70,14 +51,15 @@ export const GroupJobMessageForm = () => {
     const [copied, setCopied] = useState(false);
 
     const selectedJob = useMemo(() => {
-        return sampleJobs.find((job) => job.id === selectedJobId);
-    }, [selectedJobId]);
+        return jobs.find((job) => job.id === selectedJobId);
+    }, [jobs, selectedJobId]);
 
     const handleOptionChange = (key: keyof GroupMessageOptions) => {
         setOptions((current) => ({
             ...current,
             [key]: !current[key],
         }));
+        setCopied(false);
     };
 
     const handleGenerate = () => {
@@ -105,6 +87,19 @@ export const GroupJobMessageForm = () => {
         setCopied(true);
     };
 
+    if (jobs.length === 0) {
+        return (
+            <div className="rounded-2xl border bg-white p-6 shadow-sm">
+                <h2 className="text-lg font-semibold">
+                    案件グループ用メッセージ
+                </h2>
+                <p className="mt-2 text-sm text-slate-500">
+                    メッセージを作成できる案件がまだありません。
+                </p>
+            </div>
+        );
+    }
+
     return (
         <div className="space-y-6">
             <div className="rounded-2xl border bg-white p-6 shadow-sm">
@@ -128,10 +123,14 @@ export const GroupJobMessageForm = () => {
                         <label className="text-sm font-medium">案件</label>
                         <select
                             value={selectedJobId}
-                            onChange={(event) => setSelectedJobId(event.target.value)}
+                            onChange={(event) => {
+                                setSelectedJobId(event.target.value);
+                                setMessage("");
+                                setCopied(false);
+                            }}
                             className="w-full rounded-xl border bg-white px-3 py-2 text-sm"
                         >
-                            {sampleJobs.map((job) => (
+                            {jobs.map((job) => (
                                 <option key={job.id} value={job.id}>
                                     {job.title}
                                 </option>
@@ -145,9 +144,11 @@ export const GroupJobMessageForm = () => {
                         </label>
                         <select
                             value={messageType}
-                            onChange={(event) =>
-                                setMessageType(event.target.value as GroupMessageType)
-                            }
+                            onChange={(event) => {
+                                setMessageType(event.target.value as GroupMessageType);
+                                setMessage("");
+                                setCopied(false);
+                            }}
                             className="w-full rounded-xl border bg-white px-3 py-2 text-sm"
                         >
                             <option value="scheduleConfirm">

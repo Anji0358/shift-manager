@@ -18,12 +18,16 @@ type GroupMessageJob = {
     note: string | null;
     shiftSlots: {
         id: string;
-        startTime: Date;
-        endTime: Date;
-        assignments: {
+        startTime: string;
+        endTime: string;
+        shiftAssignments: {
             employee: {
                 name: string;
             };
+        }[];
+        externalStaffAssignments: {
+            name: string;
+            headCount: number;
         }[];
     }[];
 };
@@ -40,11 +44,21 @@ export const defaultScheduleConfirmClosing = `スケジュール如何ですか�
 const buildSlotLines = (job: GroupMessageJob) => {
     return job.shiftSlots
         .map((slot) => {
-            const names = slot.assignments
-                .map((assignment) => getDisplayName(assignment.employee.name))
-                .join("、");
+            const employeeNames = slot.shiftAssignments.map((assignment) =>
+                getDisplayName(assignment.employee.name)
+            );
 
-            return `${formatSlotTime(slot.startTime, slot.endTime)}\n${names || "未割当"}`;
+            const externalNames = slot.externalStaffAssignments.flatMap((assignment) => {
+                if (assignment.headCount <= 1) {
+                    return [assignment.name];
+                }
+
+                return [`${assignment.name}×${assignment.headCount}`];
+            });
+
+            const names = [...employeeNames, ...externalNames].join("、");
+
+            return `${slot.startTime}〜${slot.endTime}予定\n${names || "未割当"}`;
         })
         .join("\n\n");
 };

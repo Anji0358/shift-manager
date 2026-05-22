@@ -1,7 +1,10 @@
 import { MessageSquareText } from "lucide-react";
 import { GroupJobMessageForm } from "@/features/line-message/components/GroupJobMessageForm";
+import { getJobsForGroupMessages } from "@/features/line-message/queries";
 
-const AdminLineMessagePage = () => {
+const AdminLineMessagePage = async () => {
+    const jobs = await getJobsForGroupMessages();
+
     return (
         <div className="space-y-6">
             <div className="rounded-2xl border bg-white p-6 shadow-sm">
@@ -21,7 +24,7 @@ const AdminLineMessagePage = () => {
                 </div>
             </div>
 
-            <GroupJobMessageForm />
+            <GroupJobMessageForm jobs={jobs} />
         </div>
     );
 };
