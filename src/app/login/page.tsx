@@ -2,7 +2,6 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { loginAction } from "@/features/auth/actions";
-import { Button } from "@/components/ui/button";
 import {
     Card,
     CardContent,
@@ -23,16 +22,12 @@ const LoginPage = async ({ searchParams }: LoginPageProps) => {
     const session = await auth();
     const { error } = await searchParams;
 
-    if (session?.user) {
-        if (session.user.role === "ADMIN") {
-            redirect("/admin");
-        }
+    if (session?.user?.role === "ADMIN") {
+        redirect("/admin");
+    }
 
-        if (session.user.role === "STAFF") {
-            redirect("/staff");
-        }
-
-        redirect("/");
+    if (session?.user?.role === "STAFF") {
+        redirect("/staff");
     }
 
     return (
@@ -80,12 +75,12 @@ const LoginPage = async ({ searchParams }: LoginPageProps) => {
                     <div className="rounded-md bg-slate-100 p-3 text-sm text-slate-600">
                         <p className="font-medium">デモ用アカウント</p>
                         <p className="mt-2">管理者：admin@example.com / password</p>
-                        <p>スタッフ：staff@example.com / password</p>
+                        <p>スタッフ：staff1@example.com / password</p>
                     </div>
 
                     <div className="text-center text-sm">
-                        <Link href="/" className="text-slate-500 hover:text-slate-900">
-                            トップページへ戻る
+                        <Link href="/login" className="text-slate-500 hover:text-slate-900">
+                            ログイン画面に戻る
                         </Link>
                     </div>
                 </CardContent>

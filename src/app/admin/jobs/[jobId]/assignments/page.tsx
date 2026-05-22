@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { prisma } from "@/lib/prisma";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -20,12 +19,14 @@ import {
 import { SuccessMessage } from "@/components/shared/success-message";
 import { ConfirmSubmitButton } from "@/components/shared/confirm-submit-button";
 import { StaffAssignmentForm } from "@/features/shift-assignments/components/staff-assignment-form";
-import { cancelShiftAssignment } from "@/features/shift-assignments/actions";
-import { getActiveStaffCandidates } from "@/features/jobs/queries";
-import { getAssignmentsByJobId } from "@/features/shift-assignments/queries";
+import {
+    cancelShiftAssignment,
+} from "@/features/shift-assignments/actions";
+import {
+    getAssignmentPageData,
+} from "@/features/shift-assignments/queries";
 import { isUnavailableForSlot } from "@/features/unavailable-times/services";
 import { formatDate, formatMonth, formatYen } from "@/lib/format";
-import { getExternalShiftAssignmentsByJobId } from "@/features/external-shift-assignments/queries";
 import { ExternalShiftAssignmentForm } from "@/features/external-shift-assignments/components/external-shift-assignment-form";
 import { ExternalShiftAssignmentTable } from "@/features/external-shift-assignments/components/external-shift-assignment-table";
 
@@ -45,51 +46,13 @@ const AdminJobAssignmentsPage = async ({
     const { jobId } = await params;
     const { message } = await searchParams;
 
-    const job = await prisma.job.findUnique({
-        where: {
-            id: jobId,
-        },
-        select: {
-            id: true,
-            title: true,
-            workDate: true,
-            location: true,
-            meetingPlace: true,
-            breakMinutes: true,
-            hasMeal: true,
-            transportationFee: true,
-            dressCode: true,
-            belongings: true,
-            note: true,
-            wageType: true,
-            fixedHourlyWage: true,
-            shiftSlots: {
-                orderBy: {
-                    startTime: "asc",
-                },
-                select: {
-                    id: true,
-                    jobId: true,
-                    name: true,
-                    startTime: true,
-                    endTime: true,
-                    requiredPeople: true,
-                    createdAt: true,
-                    updatedAt: true,
-                },
-            },
-        },
-    });
+    const pageData = await getAssignmentPageData(jobId);
 
-    if (!job) {
+    if (!pageData) {
         notFound();
     }
 
-    const [candidates, assignments, externalAssignments] = await Promise.all([
-        getActiveStaffCandidates(),
-        getAssignmentsByJobId(job.id),
-        getExternalShiftAssignmentsByJobId(job.id),
-    ]);
+    const { job, candidates, assignments, externalAssignments } = pageData;
 
     const firstSlot = job.shiftSlots[0];
 
