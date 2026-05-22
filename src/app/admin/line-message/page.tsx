@@ -2,8 +2,27 @@ import { MessageSquareText } from "lucide-react";
 import { GroupJobMessageForm } from "@/features/line-message/components/GroupJobMessageForm";
 import { getJobsForGroupMessages } from "@/features/line-message/queries";
 
-const AdminLineMessagePage = async () => {
-    const jobs = await getJobsForGroupMessages();
+type AdminLineMessagePageProps = {
+    searchParams: Promise<{
+        month?: string;
+    }>;
+};
+
+const getCurrentMonth = () => {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, "0");
+
+    return `${year}-${month}`;
+};
+
+const AdminLineMessagePage = async ({
+    searchParams,
+}: AdminLineMessagePageProps) => {
+    const params = await searchParams;
+    const selectedMonth = params.month ?? getCurrentMonth();
+
+    const jobs = await getJobsForGroupMessages(selectedMonth);
 
     return (
         <div className="space-y-6">
@@ -24,7 +43,7 @@ const AdminLineMessagePage = async () => {
                 </div>
             </div>
 
-            <GroupJobMessageForm jobs={jobs} />
+            <GroupJobMessageForm jobs={jobs} selectedMonth={selectedMonth} />
         </div>
     );
 };

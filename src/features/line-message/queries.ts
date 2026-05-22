@@ -1,15 +1,39 @@
 import { prisma } from "@/lib/prisma";
 
-export const getJobsForGroupMessages = async () => {
+const getMonthRange = (yearMonth: string) => {
+    const [year, month] = yearMonth.split("-").map(Number);
+
+    const startDate = new Date(year, month - 1, 1);
+    const endDate = new Date(year, month, 1);
+
+    return {
+        startDate,
+        endDate,
+    };
+};
+
+export const getJobsForGroupMessages = async (yearMonth: string) => {
+    const { startDate, endDate } = getMonthRange(yearMonth);
+
     return prisma.job.findMany({
+        where: {
+            workDate: {
+                gte: startDate,
+                lt: endDate,
+            },
+        },
         orderBy: [
-            { workDate: "asc" },
-            { title: "asc" },
+            {
+                workDate: "asc",
+            },
+            {
+                title: "asc",
+            },
         ],
         include: {
             shiftSlots: {
                 orderBy: {
-                    startTimeMinutes: "asc",
+                    startTime: "asc",
                 },
                 include: {
                     shiftAssignments: {

@@ -7,6 +7,7 @@ import { generateGroupJobMessage } from "../message-generators";
 import type { GroupMessageOptions, GroupMessageType } from "../types";
 
 type GroupJobMessageFormProps = {
+    selectedMonth: string;
     jobs: {
         id: string;
         title: string;
@@ -37,7 +38,10 @@ type GroupJobMessageFormProps = {
     }[];
 };
 
-export const GroupJobMessageForm = ({ jobs }: GroupJobMessageFormProps) => {
+export const GroupJobMessageForm = ({
+    jobs,
+    selectedMonth,
+}: GroupJobMessageFormProps) => {
     const [selectedJobId, setSelectedJobId] = useState(jobs[0]?.id ?? "");
     const [messageType, setMessageType] =
         useState<GroupMessageType>("scheduleConfirm");
@@ -119,6 +123,19 @@ export const GroupJobMessageForm = ({ jobs }: GroupJobMessageFormProps) => {
                 </div>
 
                 <div className="mt-6 grid gap-5 md:grid-cols-2">
+                    <form className="space-y-2">
+                        <label className="text-sm font-medium">対象月</label>
+                        <input
+                            type="month"
+                            name="month"
+                            defaultValue={selectedMonth}
+                            onChange={(event) => {
+                                event.currentTarget.form?.requestSubmit();
+                            }}
+                            className="w-full rounded-xl border bg-white px-3 py-2 text-sm"
+                        />
+                    </form>
+
                     <div className="space-y-2">
                         <label className="text-sm font-medium">案件</label>
                         <select
