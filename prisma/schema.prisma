@@ -76,6 +76,9 @@ model Employee {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@index([role, employmentStatus])
+  @@index([employmentStatus, startedWorkingAt])
 }
 
 model Job {
@@ -98,6 +101,8 @@ model Job {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@index([workDate])
 }
 
 model JobTemplate {
@@ -154,6 +159,7 @@ model JobShiftSlot {
   updatedAt DateTime @updatedAt
 
   @@index([jobId])
+  @@index([jobId, startTime])
 }
 
 model ShiftAssignment {
@@ -171,6 +177,8 @@ model ShiftAssignment {
   @@unique([slotId, employeeId])
   @@index([slotId])
   @@index([employeeId])
+  @@index([slotId, status])
+  @@index([employeeId, status])
 }
 
 model ExternalStaffAssignment {
@@ -189,6 +197,7 @@ model ExternalStaffAssignment {
   updatedAt DateTime @updatedAt
 
   @@index([slotId])
+  @@index([slotId, status])
 }
 
 model UnavailableTime {
@@ -207,6 +216,8 @@ model UnavailableTime {
   updatedAt DateTime @updatedAt
 
   @@index([employeeId])
+  @@index([employeeId, date])
+  @@index([employeeId, dayOfWeek])
 }
 
 model WorkReport {
@@ -226,6 +237,9 @@ model WorkReport {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  @@unique([jobId, employeeId])
   @@index([jobId])
   @@index([employeeId])
+  @@index([jobId, status])
+  @@index([employeeId, status])
 }
