@@ -58,6 +58,17 @@ export const GroupJobMessageForm = ({
         return jobs.find((job) => job.id === selectedJobId);
     }, [jobs, selectedJobId]);
 
+    const hasNoShiftSlots = selectedJob ? selectedJob.shiftSlots.length === 0 : false;
+
+    const hasNoAssignedStaff = selectedJob
+        ? selectedJob.shiftSlots.length > 0 &&
+        selectedJob.shiftSlots.every(
+            (slot) =>
+                slot.shiftAssignments.length === 0 &&
+                slot.externalStaffAssignments.length === 0
+        )
+        : false;
+
     const handleOptionChange = (key: keyof GroupMessageOptions) => {
         setOptions((current) => ({
             ...current,
@@ -153,6 +164,18 @@ export const GroupJobMessageForm = ({
                                 </option>
                             ))}
                         </select>
+
+                        {hasNoShiftSlots && (
+                            <p className="text-sm text-amber-600">
+                                この案件には勤務枠が登録されていません。
+                            </p>
+                        )}
+
+                        {hasNoAssignedStaff && (
+                            <p className="text-sm text-amber-600">
+                                この案件にはまだ割当スタッフがいません。
+                            </p>
+                        )}
                     </div>
 
                     <div className="space-y-2">
@@ -219,7 +242,11 @@ export const GroupJobMessageForm = ({
                 </div>
 
                 <div className="mt-6">
-                    <Button type="button" onClick={handleGenerate}>
+                    <Button
+                        type="button"
+                        onClick={handleGenerate}
+                        disabled={!selectedJob || hasNoShiftSlots}
+                    >
                         文章生成
                     </Button>
                 </div>
