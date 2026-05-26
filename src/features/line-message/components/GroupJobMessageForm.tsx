@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Copy, MessageSquareText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { generateGroupJobMessage } from "../message-generators";
@@ -92,6 +92,23 @@ export const GroupJobMessageForm = ({
         setMessage(generatedMessage);
         setCopied(false);
     };
+
+    useEffect(() => {
+        if (!selectedJob || hasNoShiftSlots) {
+            setMessage("");
+            setCopied(false);
+            return;
+        }
+
+        const generatedMessage = generateGroupJobMessage({
+            job: selectedJob,
+            type: messageType,
+            options,
+        });
+
+        setMessage(generatedMessage);
+        setCopied(false);
+    }, [selectedJob, messageType, options, hasNoShiftSlots]);
 
     const handleCopy = async () => {
         if (!message) {
@@ -247,7 +264,7 @@ export const GroupJobMessageForm = ({
                         onClick={handleGenerate}
                         disabled={!selectedJob || hasNoShiftSlots}
                     >
-                        文章生成
+                        再生成
                     </Button>
                 </div>
             </div>
