@@ -55,7 +55,10 @@ export const LineMessageTabs = ({
             {activeTab === "group" ? (
                 <GroupJobMessageForm jobs={jobs} selectedMonth={selectedMonth} />
             ) : (
-                <PersonalLineMessageForm />
+                <PersonalLineMessageForm
+                    employees={employees}
+                    selectedMonth={selectedMonth}
+                />
             )}
         </div>
     );
