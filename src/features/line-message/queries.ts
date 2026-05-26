@@ -54,3 +54,18 @@ export const getJobsForGroupMessages = async (yearMonth: string) => {
         },
     });
 };
+
+export const getEmployeesForPersonalMessages = async () => {
+    return prisma.employee.findMany({
+        where: {
+            employmentStatus: "ACTIVE",
+        },
+        orderBy: {
+            startedWorkingAt: "asc",
+        },
+        select: {
+            id: true,
+            name: true,
+        },
+    });
+};
