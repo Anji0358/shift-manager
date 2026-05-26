@@ -1,5 +1,5 @@
 import { MessageSquareText } from "lucide-react";
-import { GroupJobMessageForm } from "@/features/line-message/components/GroupJobMessageForm";
+import { LineMessageTabs } from "@/features/line-message/components/LineMessageTabs";
 import { getJobsForGroupMessages } from "@/features/line-message/queries";
 
 type AdminLineMessagePageProps = {
@@ -43,7 +43,7 @@ const AdminLineMessagePage = async ({
                 </div>
             </div>
 
-            <GroupJobMessageForm jobs={jobs} selectedMonth={selectedMonth} />
+            <LineMessageTabs jobs={jobs} selectedMonth={selectedMonth} />
         </div>
     );
 };
