@@ -117,3 +117,35 @@ export const getJobsForPersonalMessages = async (yearMonth: string) => {
         },
     });
 };
+
+export const getUnavailableTimesForPersonalMessages = async (
+    yearMonth: string
+) => {
+    const { startDate, endDate } = getMonthRange(yearMonth);
+
+    return prisma.unavailableTime.findMany({
+        where: {
+            OR: [
+                {
+                    date: {
+                        gte: startDate,
+                        lt: endDate,
+                    },
+                },
+                {
+                    type: "WEEKLY_FIXED",
+                },
+            ],
+        },
+        select: {
+            id: true,
+            employeeId: true,
+            type: true,
+            date: true,
+            dayOfWeek: true,
+            startTime: true,
+            endTime: true,
+            reason: true,
+        },
+    });
+};
