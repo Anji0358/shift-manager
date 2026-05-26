@@ -149,7 +149,7 @@ export const GroupJobMessageForm = ({
                         >
                             {jobs.map((job) => (
                                 <option key={job.id} value={job.id}>
-                                    {job.title}
+                                    {`${job.workDate.getMonth() + 1}/${job.workDate.getDate()} ${job.title} / ${job.location}`}
                                 </option>
                             ))}
                         </select>
