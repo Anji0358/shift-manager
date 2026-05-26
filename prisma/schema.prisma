@@ -127,12 +127,14 @@ model JobTemplate {
 }
 
 model JobTemplateShiftSlot {
-  id             String @id @default(cuid())
-  jobTemplateId  String
-  name           String
-  startTime      String
-  endTime        String
-  requiredPeople Int
+  id               String @id @default(cuid())
+  jobTemplateId    String
+  name             String
+  startTime        String
+  endTime          String
+  startTimeMinutes Int
+  endTimeMinutes   Int
+  requiredPeople   Int
 
   jobTemplate JobTemplate @relation(fields: [jobTemplateId], references: [id], onDelete: Cascade)
 
@@ -140,6 +142,7 @@ model JobTemplateShiftSlot {
   updatedAt DateTime @updatedAt
 
   @@index([jobTemplateId])
+  @@index([jobTemplateId, startTimeMinutes])
 }
 
 model JobShiftSlot {
