@@ -1,6 +1,9 @@
 import { MessageSquareText } from "lucide-react";
 import { LineMessageTabs } from "@/features/line-message/components/LineMessageTabs";
-import { getJobsForGroupMessages } from "@/features/line-message/queries";
+import {
+    getEmployeesForPersonalMessages,
+    getJobsForGroupMessages,
+} from "@/features/line-message/queries";
 
 type AdminLineMessagePageProps = {
     searchParams: Promise<{
@@ -22,7 +25,10 @@ const AdminLineMessagePage = async ({
     const params = await searchParams;
     const selectedMonth = params.month ?? getCurrentMonth();
 
-    const jobs = await getJobsForGroupMessages(selectedMonth);
+    const [jobs, employees] = await Promise.all([
+        getJobsForGroupMessages(selectedMonth),
+        getEmployeesForPersonalMessages(),
+    ]);
 
     return (
         <div className="space-y-6">
@@ -43,7 +49,11 @@ const AdminLineMessagePage = async ({
                 </div>
             </div>
 
-            <LineMessageTabs jobs={jobs} selectedMonth={selectedMonth} />
+            <LineMessageTabs
+                jobs={jobs}
+                employees={employees}
+                selectedMonth={selectedMonth}
+            />
         </div>
     );
 };
