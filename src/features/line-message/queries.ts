@@ -69,3 +69,51 @@ export const getEmployeesForPersonalMessages = async () => {
         },
     });
 };
+
+export const getJobsForPersonalMessages = async (yearMonth: string) => {
+    const { startDate, endDate } = getMonthRange(yearMonth);
+
+    return prisma.job.findMany({
+        where: {
+            workDate: {
+                gte: startDate,
+                lt: endDate,
+            },
+        },
+        orderBy: [
+            {
+                workDate: "asc",
+            },
+            {
+                title: "asc",
+            },
+        ],
+        include: {
+            shiftSlots: {
+                orderBy: {
+                    startTime: "asc",
+                },
+                include: {
+                    shiftAssignments: {
+                        where: {
+                            status: "ASSIGNED",
+                        },
+                        include: {
+                            employee: {
+                                select: {
+                                    id: true,
+                                    name: true,
+                                },
+                            },
+                        },
+                    },
+                    externalStaffAssignments: {
+                        where: {
+                            status: "ASSIGNED",
+                        },
+                    },
+                },
+            },
+        },
+    });
+};
