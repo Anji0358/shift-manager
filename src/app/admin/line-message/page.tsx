@@ -3,6 +3,8 @@ import { LineMessageTabs } from "@/features/line-message/components/LineMessageT
 import {
     getEmployeesForPersonalMessages,
     getJobsForGroupMessages,
+    getJobsForPersonalMessages,
+    getUnavailableTimesForPersonalMessages,
 } from "@/features/line-message/queries";
 
 type AdminLineMessagePageProps = {
@@ -25,9 +27,11 @@ const AdminLineMessagePage = async ({
     const params = await searchParams;
     const selectedMonth = params.month ?? getCurrentMonth();
 
-    const [jobs, employees] = await Promise.all([
+    const [jobs, employees, personalJobs, unavailableTimes] = await Promise.all([
         getJobsForGroupMessages(selectedMonth),
         getEmployeesForPersonalMessages(),
+        getJobsForPersonalMessages(selectedMonth),
+        getUnavailableTimesForPersonalMessages(selectedMonth),
     ]);
 
     return (
@@ -52,6 +56,8 @@ const AdminLineMessagePage = async ({
             <LineMessageTabs
                 jobs={jobs}
                 employees={employees}
+                personalJobs={personalJobs}
+                unavailableTimes={unavailableTimes}
                 selectedMonth={selectedMonth}
             />
         </div>
