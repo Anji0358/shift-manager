@@ -7,11 +7,16 @@ import { PersonalLineMessageForm } from "./PersonalLineMessageForm";
 type LineMessageTabsProps = {
     selectedMonth: string;
     jobs: React.ComponentProps<typeof GroupJobMessageForm>["jobs"];
+    employees: {
+        id: string;
+        name: string;
+    }[];
 };
 
 export const LineMessageTabs = ({
     selectedMonth,
     jobs,
+    employees,
 }: LineMessageTabsProps) => {
     const [activeTab, setActiveTab] = useState<"group" | "personal">("group");
 
