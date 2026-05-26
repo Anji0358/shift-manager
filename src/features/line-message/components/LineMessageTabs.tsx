@@ -11,12 +11,18 @@ type LineMessageTabsProps = {
         id: string;
         name: string;
     }[];
+    personalJobs: React.ComponentProps<typeof PersonalLineMessageForm>["jobs"];
+    unavailableTimes: React.ComponentProps<
+        typeof PersonalLineMessageForm
+    >["unavailableTimes"];
 };
 
 export const LineMessageTabs = ({
     selectedMonth,
     jobs,
     employees,
+    personalJobs,
+    unavailableTimes,
 }: LineMessageTabsProps) => {
     const [activeTab, setActiveTab] = useState<"group" | "personal">("group");
 
@@ -57,6 +63,8 @@ export const LineMessageTabs = ({
             ) : (
                 <PersonalLineMessageForm
                     employees={employees}
+                    jobs={personalJobs}
+                    unavailableTimes={unavailableTimes}
                     selectedMonth={selectedMonth}
                 />
             )}
