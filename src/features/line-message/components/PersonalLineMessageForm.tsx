@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 type PersonalLineMessageFormProps = {
     selectedMonth: string;
@@ -8,15 +8,73 @@ type PersonalLineMessageFormProps = {
         id: string;
         name: string;
     }[];
+    jobs: {
+        id: string;
+        title: string;
+        workDate: Date;
+        location: string;
+        meetingPlace: string | null;
+        note: string | null;
+        shiftSlots: {
+            id: string;
+            name: string;
+            startTime: string;
+            endTime: string;
+            startTimeMinutes: number;
+            endTimeMinutes: number;
+            requiredPeople: number;
+            shiftAssignments: {
+                employee: {
+                    id: string;
+                    name: string;
+                };
+            }[];
+            externalStaffAssignments: {
+                name: string;
+                headCount: number;
+            }[];
+        }[];
+    }[];
+    unavailableTimes: {
+        id: string;
+        employeeId: string;
+        type: "FULL_DAY" | "TIME_RANGE" | "WEEKLY_FIXED" | "TEMPORARY";
+        date: Date | null;
+        dayOfWeek:
+        | "MONDAY"
+        | "TUESDAY"
+        | "WEDNESDAY"
+        | "THURSDAY"
+        | "FRIDAY"
+        | "SATURDAY"
+        | "SUNDAY"
+        | null;
+        startTime: string | null;
+        endTime: string | null;
+        reason: string | null;
+    }[];
 };
 
 export const PersonalLineMessageForm = ({
     selectedMonth,
     employees,
+    jobs,
+    unavailableTimes,
 }: PersonalLineMessageFormProps) => {
     const [selectedEmployeeId, setSelectedEmployeeId] = useState(
         employees[0]?.id ?? ""
     );
+
+    const selectedEmployee = useMemo(() => {
+        return employees.find((employee) => employee.id === selectedEmployeeId);
+    }, [employees, selectedEmployeeId]);
+
+    const selectedEmployeeUnavailableTimes = useMemo(() => {
+        return unavailableTimes.filter(
+            (unavailableTime) =>
+                unavailableTime.employeeId === selectedEmployeeId
+        );
+    }, [unavailableTimes, selectedEmployeeId]);
 
     if (employees.length === 0) {
         return (
@@ -63,6 +121,29 @@ export const PersonalLineMessageForm = ({
                         ))}
                     </select>
                 </div>
+            </div>
+
+            <div className="mt-6 rounded-xl border bg-slate-50 p-4">
+                <p className="text-sm font-medium text-slate-700">
+                    選択中のスタッフ
+                </p>
+                <p className="mt-1 text-sm text-slate-500">
+                    {selectedEmployee?.name ?? "未選択"}
+                </p>
+
+                <p className="mt-4 text-sm font-medium text-slate-700">
+                    登録されているNG件数
+                </p>
+                <p className="mt-1 text-sm text-slate-500">
+                    {selectedEmployeeUnavailableTimes.length}件
+                </p>
+
+                <p className="mt-4 text-sm font-medium text-slate-700">
+                    対象月の案件数
+                </p>
+                <p className="mt-1 text-sm text-slate-500">
+                    {jobs.length}件
+                </p>
             </div>
         </div>
     );
