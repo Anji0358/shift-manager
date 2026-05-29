@@ -172,10 +172,14 @@ const isSlotUnavailable = (
 };
 
 const generatePersonalRequestMessage = ({
-    selectedMonth,
+    greeting,
+    introText,
+    closing,
     slots,
 }: {
-    selectedMonth: string;
+    greeting: string;
+    introText: string;
+    closing: string;
     slots: AvailablePersonalSlot[];
 }) => {
     if (slots.length === 0) {
@@ -217,15 +221,7 @@ const generatePersonalRequestMessage = ({
         })
         .join("\n\n");
 
-    return [
-        "おつかれさま～(^^)/",
-        "",
-        `${getMonthLabel(selectedMonth)}の現状お願いしたい日を共有するね！`,
-        "",
-        slotBlocks,
-        "",
-        "よろしくお願いします",
-    ].join("\n");
+    return [greeting, "", introText, "", slotBlocks, "", closing].join("\n");
 };
 
 export const PersonalLineMessageForm = ({
@@ -240,6 +236,11 @@ export const PersonalLineMessageForm = ({
 
     const [selectedSlotIds, setSelectedSlotIds] = useState<string[]>([]);
     const [message, setMessage] = useState("");
+    const [greeting, setGreeting] = useState("おつかれさま～(^^)/");
+    const [introText, setIntroText] = useState(
+        `${Number(selectedMonth.split("-")[1])}月の現状お願いしたい日を共有するね！`
+    );
+    const [closing, setClosing] = useState("こんな感じだよぉ～");
 
     const selectedEmployee = useMemo(() => {
         return employees.find((employee) => employee.id === selectedEmployeeId);
@@ -293,7 +294,9 @@ export const PersonalLineMessageForm = ({
 
     const handleGenerateMessage = () => {
         const generatedMessage = generatePersonalRequestMessage({
-            selectedMonth,
+            greeting,
+            introText,
+            closing,
             slots: selectedSlots,
         });
 
@@ -384,6 +387,41 @@ export const PersonalLineMessageForm = ({
                 <p className="mt-1 text-sm text-slate-500">
                     {requestableSlots.length}件
                 </p>
+            </div>
+
+            <div className="mt-6 grid gap-4">
+                <div className="space-y-2">
+                    <label className="text-sm font-medium text-slate-700">
+                        冒頭の挨拶
+                    </label>
+                    <textarea
+                        value={greeting}
+                        onChange={(event) => setGreeting(event.target.value)}
+                        className="min-h-20 w-full rounded-xl border bg-white p-3 text-sm leading-6"
+                    />
+                </div>
+
+                <div className="space-y-2">
+                    <label className="text-sm font-medium text-slate-700">
+                        案内文
+                    </label>
+                    <textarea
+                        value={introText}
+                        onChange={(event) => setIntroText(event.target.value)}
+                        className="min-h-20 w-full rounded-xl border bg-white p-3 text-sm leading-6"
+                    />
+                </div>
+
+                <div className="space-y-2">
+                    <label className="text-sm font-medium text-slate-700">
+                        最後の文言
+                    </label>
+                    <textarea
+                        value={closing}
+                        onChange={(event) => setClosing(event.target.value)}
+                        className="min-h-20 w-full rounded-xl border bg-white p-3 text-sm leading-6"
+                    />
+                </div>
             </div>
 
             <div className="mt-6 space-y-3">
