@@ -1,5 +1,6 @@
 "use client";
 
+import { Copy } from "lucide-react";
 import { useMemo, useState } from "react";
 
 type PersonalLineMessageFormProps = {
@@ -236,6 +237,7 @@ export const PersonalLineMessageForm = ({
 
     const [selectedSlotIds, setSelectedSlotIds] = useState<string[]>([]);
     const [message, setMessage] = useState("");
+    const [copied, setCopied] = useState(false);
     const [greeting, setGreeting] = useState("おつかれさま～(^^)/");
     const [introText, setIntroText] = useState(
         `${Number(selectedMonth.split("-")[1])}月の現状お願いしたい日を共有するね！`
@@ -301,6 +303,16 @@ export const PersonalLineMessageForm = ({
         });
 
         setMessage(generatedMessage);
+        setCopied(false);
+    };
+
+    const handleCopy = async () => {
+        if (!message) {
+            return;
+        }
+
+        await navigator.clipboard.writeText(message);
+        setCopied(true);
     };
 
     if (employees.length === 0) {
@@ -340,6 +352,7 @@ export const PersonalLineMessageForm = ({
                             setSelectedEmployeeId(event.target.value);
                             setSelectedSlotIds([]);
                             setMessage("");
+                            setCopied(false);
                         }}
                         className="w-full rounded-xl border bg-white px-3 py-2 text-sm"
                     >
@@ -487,16 +500,21 @@ export const PersonalLineMessageForm = ({
                 </button>
             </div>
 
-            <div className="mt-6 space-y-2">
+
+            <div className="flex items-center justify-between gap-3">
                 <label className="text-sm font-medium text-slate-700">
                     生成結果
                 </label>
-                <textarea
-                    value={message}
-                    onChange={(event) => setMessage(event.target.value)}
-                    placeholder="ここに個人依頼文が表示されます。"
-                    className="min-h-80 w-full rounded-xl border bg-slate-50 p-4 text-sm leading-7"
-                />
+
+                <button
+                    type="button"
+                    onClick={handleCopy}
+                    disabled={!message}
+                    className="inline-flex items-center rounded-xl border bg-white px-3 py-2 text-sm font-medium text-slate-700 disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                    <Copy className="mr-2 h-4 w-4" />
+                    {copied ? "コピー済み" : "コピー"}
+                </button>
             </div>
         </div>
     );
