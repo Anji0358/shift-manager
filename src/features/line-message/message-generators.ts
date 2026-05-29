@@ -1,36 +1,13 @@
-import type { GroupMessageOptions, GroupMessageType } from "./types";
+import type {
+    GroupLineMessageJob,
+    GroupMessageOptions,
+    GroupMessageType,
+} from "./types";
+import { formatDateWithDay, formatShortDate } from "./utils/date";
 import {
-    formatDateWithDay,
-    formatShortDate,
-    formatSlotTime,
     getDisplayName,
     removeEmptyLines,
 } from "./utils";
-
-type GroupMessageJob = {
-    id: string;
-    title: string;
-    workDate: Date;
-    location: string;
-    meetingPlace: string | null;
-    dressCode: string | null;
-    belongings: string | null;
-    note: string | null;
-    shiftSlots: {
-        id: string;
-        startTime: string;
-        endTime: string;
-        shiftAssignments: {
-            employee: {
-                name: string;
-            };
-        }[];
-        externalStaffAssignments: {
-            name: string;
-            headCount: number;
-        }[];
-    }[];
-};
 
 export const defaultScheduleConfirmClosing = `スケジュール如何ですか？
 
@@ -41,20 +18,22 @@ export const defaultScheduleConfirmClosing = `スケジュール如何ですか�
 
 宜しくお願い致します。`;
 
-const buildSlotLines = (job: GroupMessageJob) => {
+const buildSlotLines = (job: GroupLineMessageJob) => {
     return job.shiftSlots
         .map((slot) => {
             const employeeNames = slot.shiftAssignments.map((assignment) =>
                 getDisplayName(assignment.employee.name)
             );
 
-            const externalNames = slot.externalStaffAssignments.flatMap((assignment) => {
-                if (assignment.headCount <= 1) {
-                    return [assignment.name];
-                }
+            const externalNames = slot.externalStaffAssignments.flatMap(
+                (assignment) => {
+                    if (assignment.headCount <= 1) {
+                        return [assignment.name];
+                    }
 
-                return [`${assignment.name}×${assignment.headCount}`];
-            });
+                    return [`${assignment.name}×${assignment.headCount}`];
+                }
+            );
 
             const names = [...employeeNames, ...externalNames].join("、");
 
@@ -64,7 +43,7 @@ const buildSlotLines = (job: GroupMessageJob) => {
 };
 
 const generateScheduleConfirmMessage = (
-    job: GroupMessageJob,
+    job: GroupLineMessageJob,
     options: GroupMessageOptions
 ) => {
     return removeEmptyLines([
@@ -82,7 +61,7 @@ const generateScheduleConfirmMessage = (
 };
 
 const generateDetailMessage = (
-    job: GroupMessageJob,
+    job: GroupLineMessageJob,
     options: GroupMessageOptions
 ) => {
     return removeEmptyLines([
@@ -113,7 +92,7 @@ export const generateGroupJobMessage = ({
     type,
     options,
 }: {
-    job: GroupMessageJob;
+    job: GroupLineMessageJob;
     type: GroupMessageType;
     options: GroupMessageOptions;
 }) => {

@@ -10,6 +10,8 @@ import type {
     PersonalLineMessageJob,
 } from "../types";
 
+import { formatDateWithDay, isSameDate } from "../utils/date";
+
 type PersonalLineMessageFormProps = {
     selectedMonth: string;
     employees: LineMessageEmployee[];
@@ -35,21 +37,6 @@ const dayOfWeekMap = [
     "FRIDAY",
     "SATURDAY",
 ] as const;
-
-const dayLabels = ["日", "月", "火", "水", "木", "金", "土"];
-
-const formatDateWithDay = (date: Date) => {
-    const day = dayLabels[date.getDay()];
-    return `${date.getMonth() + 1}/${date.getDate()}(${day})`;
-};
-
-const isSameDate = (dateA: Date, dateB: Date) => {
-    return (
-        dateA.getFullYear() === dateB.getFullYear() &&
-        dateA.getMonth() === dateB.getMonth() &&
-        dateA.getDate() === dateB.getDate()
-    );
-};
 
 const isTimeOverlapping = (
     slotStartMinutes: number,
