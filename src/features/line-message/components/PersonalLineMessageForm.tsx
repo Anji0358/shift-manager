@@ -169,6 +169,8 @@ export const PersonalLineMessageForm = ({
         employees[0]?.id ?? ""
     );
 
+    const [selectedSlotIds, setSelectedSlotIds] = useState<string[]>([]);
+
     const selectedEmployee = useMemo(() => {
         return employees.find((employee) => employee.id === selectedEmployeeId);
     }, [employees, selectedEmployeeId]);
@@ -203,6 +205,16 @@ export const PersonalLineMessageForm = ({
         );
     }, [availableSlots, selectedEmployeeUnavailableTimes]);
 
+    const handleToggleSlot = (slotId: string) => {
+        setSelectedSlotIds((current) => {
+            if (current.includes(slotId)) {
+                return current.filter((id) => id !== slotId);
+            }
+
+            return [...current, slotId];
+        });
+    };
+
     if (employees.length === 0) {
         return (
             <div className="rounded-2xl border bg-white p-6 shadow-sm">
@@ -236,9 +248,10 @@ export const PersonalLineMessageForm = ({
                     <label className="text-sm font-medium">スタッフ</label>
                     <select
                         value={selectedEmployeeId}
-                        onChange={(event) =>
-                            setSelectedEmployeeId(event.target.value)
-                        }
+                        onChange={(event) => {
+                            setSelectedEmployeeId(event.target.value);
+                            setSelectedSlotIds([]);
+                        }}
                         className="w-full rounded-xl border bg-white px-3 py-2 text-sm"
                     >
                         {employees.map((employee) => (
@@ -288,9 +301,14 @@ export const PersonalLineMessageForm = ({
             </div>
 
             <div className="mt-6 space-y-3">
-                <p className="text-sm font-medium text-slate-700">
-                    依頼可能な勤務枠一覧
-                </p>
+                <div>
+                    <p className="text-sm font-medium text-slate-700">
+                        依頼可能な勤務枠一覧
+                    </p>
+                    <p className="mt-1 text-sm text-slate-500">
+                        選択中：{selectedSlotIds.length}件
+                    </p>
+                </div>
 
                 {requestableSlots.length === 0 ? (
                     <p className="text-sm text-slate-500">
@@ -298,22 +316,38 @@ export const PersonalLineMessageForm = ({
                     </p>
                 ) : (
                     <div className="space-y-2">
-                        {requestableSlots.map((slot) => (
-                            <div
-                                key={slot.slotId}
-                                className="rounded-xl border bg-white p-3 text-sm"
-                            >
-                                <p className="font-medium text-slate-800">
-                                    {`${slot.workDate.getMonth() + 1}/${slot.workDate.getDate()} ${slot.title}`}
-                                </p>
-                                <p className="mt-1 text-slate-500">
-                                    {slot.location}
-                                </p>
-                                <p className="mt-1 text-slate-500">
-                                    {slot.startTime}〜{slot.endTime}
-                                </p>
-                            </div>
-                        ))}
+                        {requestableSlots.map((slot) => {
+                            const checked = selectedSlotIds.includes(slot.slotId);
+
+                            return (
+                                <label
+                                    key={slot.slotId}
+                                    className={[
+                                        "flex cursor-pointer items-start gap-3 rounded-xl border bg-white p-3 text-sm transition",
+                                        checked ? "border-slate-900 bg-slate-50" : "hover:bg-slate-50",
+                                    ].join(" ")}
+                                >
+                                    <input
+                                        type="checkbox"
+                                        checked={checked}
+                                        onChange={() => handleToggleSlot(slot.slotId)}
+                                        className="mt-1"
+                                    />
+
+                                    <div>
+                                        <p className="font-medium text-slate-800">
+                                            {`${slot.workDate.getMonth() + 1}/${slot.workDate.getDate()} ${slot.title}`}
+                                        </p>
+                                        <p className="mt-1 text-slate-500">
+                                            {slot.location}
+                                        </p>
+                                        <p className="mt-1 text-slate-500">
+                                            {slot.startTime}〜{slot.endTime}
+                                        </p>
+                                    </div>
+                                </label>
+                            );
+                        })}
                     </div>
                 )}
             </div>
