@@ -55,6 +55,18 @@ type PersonalLineMessageFormProps = {
     }[];
 };
 
+type AvailablePersonalSlot = {
+    jobId: string;
+    slotId: string;
+    title: string;
+    workDate: Date;
+    location: string;
+    startTime: string;
+    endTime: string;
+    startTimeMinutes: number;
+    endTimeMinutes: number;
+};
+
 export const PersonalLineMessageForm = ({
     selectedMonth,
     employees,
@@ -75,6 +87,22 @@ export const PersonalLineMessageForm = ({
                 unavailableTime.employeeId === selectedEmployeeId
         );
     }, [unavailableTimes, selectedEmployeeId]);
+
+    const availableSlots = useMemo<AvailablePersonalSlot[]>(() => {
+        return jobs.flatMap((job) =>
+            job.shiftSlots.map((slot) => ({
+                jobId: job.id,
+                slotId: slot.id,
+                title: job.title,
+                workDate: job.workDate,
+                location: job.location,
+                startTime: slot.startTime,
+                endTime: slot.endTime,
+                startTimeMinutes: slot.startTimeMinutes,
+                endTimeMinutes: slot.endTimeMinutes,
+            }))
+        );
+    }, [jobs]);
 
     if (employees.length === 0) {
         return (
@@ -144,6 +172,43 @@ export const PersonalLineMessageForm = ({
                 <p className="mt-1 text-sm text-slate-500">
                     {jobs.length}件
                 </p>
+                <p className="mt-4 text-sm font-medium text-slate-700">
+                    対象月の勤務枠数
+                </p>
+                <p className="mt-1 text-sm text-slate-500">
+                    {availableSlots.length}件
+                </p>
+            </div>
+
+            <div className="mt-6 space-y-3">
+                <p className="text-sm font-medium text-slate-700">
+                    勤務枠一覧
+                </p>
+
+                {availableSlots.length === 0 ? (
+                    <p className="text-sm text-slate-500">
+                        対象月に勤務枠がありません。
+                    </p>
+                ) : (
+                    <div className="space-y-2">
+                        {availableSlots.map((slot) => (
+                            <div
+                                key={slot.slotId}
+                                className="rounded-xl border bg-white p-3 text-sm"
+                            >
+                                <p className="font-medium text-slate-800">
+                                    {`${slot.workDate.getMonth() + 1}/${slot.workDate.getDate()} ${slot.title}`}
+                                </p>
+                                <p className="mt-1 text-slate-500">
+                                    {slot.location}
+                                </p>
+                                <p className="mt-1 text-slate-500">
+                                    {slot.startTime}〜{slot.endTime}
+                                </p>
+                            </div>
+                        ))}
+                    </div>
+                )}
             </div>
         </div>
     );
