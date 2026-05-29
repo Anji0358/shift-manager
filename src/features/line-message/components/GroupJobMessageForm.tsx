@@ -38,6 +38,12 @@ type GroupJobMessageFormProps = {
     }[];
 };
 
+const inputClassName =
+    "w-full rounded-xl border bg-white px-3 py-2 text-sm shadow-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100";
+
+const textareaClassName =
+    "mt-4 min-h-96 w-full rounded-xl border bg-slate-50 p-4 text-sm leading-7 shadow-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100";
+
 export const GroupJobMessageForm = ({
     jobs,
     selectedMonth,
@@ -58,7 +64,9 @@ export const GroupJobMessageForm = ({
         return jobs.find((job) => job.id === selectedJobId);
     }, [jobs, selectedJobId]);
 
-    const hasNoShiftSlots = selectedJob ? selectedJob.shiftSlots.length === 0 : false;
+    const hasNoShiftSlots = selectedJob
+        ? selectedJob.shiftSlots.length === 0
+        : false;
 
     const hasNoAssignedStaff = selectedJob
         ? selectedJob.shiftSlots.length > 0 &&
@@ -69,6 +77,18 @@ export const GroupJobMessageForm = ({
         )
         : false;
 
+    const assignedStaffCount = selectedJob
+        ? selectedJob.shiftSlots.reduce((total, slot) => {
+            const internalCount = slot.shiftAssignments.length;
+            const externalCount = slot.externalStaffAssignments.reduce(
+                (sum, assignment) => sum + assignment.headCount,
+                0
+            );
+
+            return total + internalCount + externalCount;
+        }, 0)
+        : 0;
+
     const handleOptionChange = (key: keyof GroupMessageOptions) => {
         setOptions((current) => ({
             ...current,
@@ -78,7 +98,7 @@ export const GroupJobMessageForm = ({
     };
 
     const handleGenerate = () => {
-        if (!selectedJob) {
+        if (!selectedJob || hasNoShiftSlots) {
             setMessage("");
             return;
         }
@@ -136,12 +156,12 @@ export const GroupJobMessageForm = ({
         <div className="space-y-6">
             <div className="rounded-2xl border bg-white p-6 shadow-sm">
                 <div className="flex items-center gap-3">
-                    <div className="rounded-2xl bg-slate-100 p-3">
-                        <MessageSquareText className="h-5 w-5 text-slate-700" />
+                    <div className="rounded-2xl bg-blue-50 p-3 shadow-sm">
+                        <MessageSquareText className="h-5 w-5 text-blue-600" />
                     </div>
 
                     <div>
-                        <h2 className="text-lg font-semibold">
+                        <h2 className="text-lg font-semibold text-slate-900">
                             案件グループ用メッセージ
                         </h2>
                         <p className="mt-1 text-sm text-slate-500">
@@ -150,9 +170,11 @@ export const GroupJobMessageForm = ({
                     </div>
                 </div>
 
-                <div className="mt-6 grid gap-5 md:grid-cols-2">
+                <div className="mt-6 grid gap-5 lg:grid-cols-3">
                     <form className="space-y-2">
-                        <label className="text-sm font-medium">対象月</label>
+                        <label className="text-sm font-medium text-slate-700">
+                            対象月
+                        </label>
                         <input
                             type="month"
                             name="month"
@@ -160,12 +182,14 @@ export const GroupJobMessageForm = ({
                             onChange={(event) => {
                                 event.currentTarget.form?.requestSubmit();
                             }}
-                            className="w-full rounded-xl border bg-white px-3 py-2 text-sm"
+                            className={inputClassName}
                         />
                     </form>
 
                     <div className="space-y-2">
-                        <label className="text-sm font-medium">案件</label>
+                        <label className="text-sm font-medium text-slate-700">
+                            案件
+                        </label>
                         <select
                             value={selectedJobId}
                             onChange={(event) => {
@@ -173,7 +197,7 @@ export const GroupJobMessageForm = ({
                                 setMessage("");
                                 setCopied(false);
                             }}
-                            className="w-full rounded-xl border bg-white px-3 py-2 text-sm"
+                            className={inputClassName}
                         >
                             {jobs.map((job) => (
                                 <option key={job.id} value={job.id}>
@@ -196,7 +220,7 @@ export const GroupJobMessageForm = ({
                     </div>
 
                     <div className="space-y-2">
-                        <label className="text-sm font-medium">
+                        <label className="text-sm font-medium text-slate-700">
                             メッセージ種類
                         </label>
                         <select
@@ -206,7 +230,7 @@ export const GroupJobMessageForm = ({
                                 setMessage("");
                                 setCopied(false);
                             }}
-                            className="w-full rounded-xl border bg-white px-3 py-2 text-sm"
+                            className={inputClassName}
                         >
                             <option value="scheduleConfirm">
                                 スケジュール確認
@@ -216,45 +240,95 @@ export const GroupJobMessageForm = ({
                     </div>
                 </div>
 
+                <div className="mt-6 grid gap-3 rounded-2xl bg-blue-50/60 p-4 md:grid-cols-4">
+                    <div>
+                        <p className="text-xs font-medium text-blue-600">
+                            選択中の案件
+                        </p>
+                        <p className="mt-2 font-semibold text-slate-900">
+                            {selectedJob?.title ?? "未選択"}
+                        </p>
+                    </div>
+
+                    <div>
+                        <p className="text-xs font-medium text-blue-600">
+                            勤務枠数
+                        </p>
+                        <p className="mt-2 font-semibold text-slate-900">
+                            {selectedJob?.shiftSlots.length ?? 0}件
+                        </p>
+                    </div>
+
+                    <div>
+                        <p className="text-xs font-medium text-blue-600">
+                            割当人数
+                        </p>
+                        <p className="mt-2 font-semibold text-slate-900">
+                            {assignedStaffCount}人
+                        </p>
+                    </div>
+
+                    <div>
+                        <p className="text-xs font-medium text-blue-600">
+                            種類
+                        </p>
+                        <p className="mt-2 font-semibold text-slate-900">
+                            {messageType === "scheduleConfirm"
+                                ? "確認"
+                                : "詳細"}
+                        </p>
+                    </div>
+                </div>
+
                 <div className="mt-6 space-y-3">
-                    <p className="text-sm font-medium">表示する項目</p>
+                    <p className="text-sm font-medium text-slate-700">
+                        表示する項目
+                    </p>
 
                     <div className="grid gap-3 md:grid-cols-2">
-                        <label className="flex items-center gap-2 rounded-xl border bg-slate-50 px-3 py-2 text-sm">
-                            <input
-                                type="checkbox"
-                                checked={options.includeMeetingPlace}
-                                onChange={() => handleOptionChange("includeMeetingPlace")}
-                            />
-                            集合場所を含める
-                        </label>
+                        {[
+                            {
+                                key: "includeMeetingPlace",
+                                label: "集合場所を含める",
+                            },
+                            {
+                                key: "includeDressCode",
+                                label: "服装を含める",
+                            },
+                            {
+                                key: "includeBelongings",
+                                label: "持ち物を含める",
+                            },
+                            {
+                                key: "includeNote",
+                                label: "備考を含める",
+                            },
+                        ].map((item) => {
+                            const optionKey =
+                                item.key as keyof GroupMessageOptions;
+                            const checked = options[optionKey];
 
-                        <label className="flex items-center gap-2 rounded-xl border bg-slate-50 px-3 py-2 text-sm">
-                            <input
-                                type="checkbox"
-                                checked={options.includeDressCode}
-                                onChange={() => handleOptionChange("includeDressCode")}
-                            />
-                            服装を含める
-                        </label>
-
-                        <label className="flex items-center gap-2 rounded-xl border bg-slate-50 px-3 py-2 text-sm">
-                            <input
-                                type="checkbox"
-                                checked={options.includeBelongings}
-                                onChange={() => handleOptionChange("includeBelongings")}
-                            />
-                            持ち物を含める
-                        </label>
-
-                        <label className="flex items-center gap-2 rounded-xl border bg-slate-50 px-3 py-2 text-sm">
-                            <input
-                                type="checkbox"
-                                checked={options.includeNote}
-                                onChange={() => handleOptionChange("includeNote")}
-                            />
-                            備考を含める
-                        </label>
+                            return (
+                                <label
+                                    key={item.key}
+                                    className={[
+                                        "flex cursor-pointer items-center gap-2 rounded-xl border px-3 py-2 text-sm transition",
+                                        checked
+                                            ? "border-blue-400 bg-blue-50 text-slate-900"
+                                            : "bg-white text-slate-600 hover:bg-slate-50",
+                                    ].join(" ")}
+                                >
+                                    <input
+                                        type="checkbox"
+                                        checked={checked}
+                                        onChange={() =>
+                                            handleOptionChange(optionKey)
+                                        }
+                                    />
+                                    {item.label}
+                                </label>
+                            );
+                        })}
                     </div>
                 </div>
 
@@ -264,6 +338,7 @@ export const GroupJobMessageForm = ({
                         onClick={handleGenerate}
                         disabled={!selectedJob || hasNoShiftSlots}
                     >
+                        <MessageSquareText className="mr-2 h-4 w-4" />
                         再生成
                     </Button>
                 </div>
@@ -272,7 +347,9 @@ export const GroupJobMessageForm = ({
             <div className="rounded-2xl border bg-white p-6 shadow-sm">
                 <div className="flex items-center justify-between gap-3">
                     <div>
-                        <h3 className="font-semibold">生成結果</h3>
+                        <h3 className="font-semibold text-slate-900">
+                            生成結果
+                        </h3>
                         <p className="mt-1 text-sm text-slate-500">
                             必要に応じて編集してからコピーできます。
                         </p>
@@ -296,7 +373,7 @@ export const GroupJobMessageForm = ({
                         setCopied(false);
                     }}
                     placeholder="ここに生成されたメッセージが表示されます。"
-                    className="mt-4 min-h-96 w-full rounded-xl border bg-slate-50 p-4 text-sm leading-7"
+                    className={textareaClassName}
                 />
             </div>
         </div>
