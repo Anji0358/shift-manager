@@ -77,6 +77,18 @@ const dayOfWeekMap = [
     "SATURDAY",
 ] as const;
 
+const dayLabels = ["日", "月", "火", "水", "木", "金", "土"];
+
+const formatDateWithDay = (date: Date) => {
+    const day = dayLabels[date.getDay()];
+    return `${date.getMonth() + 1}/${date.getDate()}(${day})`;
+};
+
+const getMonthLabel = (yearMonth: string) => {
+    const [, month] = yearMonth.split("-");
+    return `${Number(month)}月`;
+};
+
 const isSameDate = (dateA: Date, dateB: Date) => {
     return (
         dateA.getFullYear() === dateB.getFullYear() &&
@@ -159,6 +171,63 @@ const isSlotUnavailable = (
     });
 };
 
+const generatePersonalRequestMessage = ({
+    selectedMonth,
+    slots,
+}: {
+    selectedMonth: string;
+    slots: AvailablePersonalSlot[];
+}) => {
+    if (slots.length === 0) {
+        return "";
+    }
+
+    const groupedSlots = slots.reduce<Record<string, AvailablePersonalSlot[]>>(
+        (groups, slot) => {
+            const key = `${slot.workDate.toISOString()}-${slot.title}-${slot.location}`;
+
+            return {
+                ...groups,
+                [key]: [...(groups[key] ?? []), slot],
+            };
+        },
+        {}
+    );
+
+    const slotBlocks = Object.values(groupedSlots)
+        .map((group) => {
+            const firstSlot = group[0];
+
+            const timeLines = group
+                .sort((a, b) => a.startTimeMinutes - b.startTimeMinutes)
+                .map((slot, index) => {
+                    if (index === 0) {
+                        return `${slot.startTime}-${slot.endTime}`;
+                    }
+
+                    return `or\n${slot.startTime}-${slot.endTime}`;
+                })
+                .join("\n");
+
+            return [
+                formatDateWithDay(firstSlot.workDate),
+                firstSlot.title,
+                timeLines,
+            ].join("\n");
+        })
+        .join("\n\n");
+
+    return [
+        "おつかれさま～(^^)/",
+        "",
+        `${getMonthLabel(selectedMonth)}の現状お願いしたい日を共有するね！`,
+        "",
+        slotBlocks,
+        "",
+        "よろしくお願いします",
+    ].join("\n");
+};
+
 export const PersonalLineMessageForm = ({
     selectedMonth,
     employees,
@@ -170,6 +239,7 @@ export const PersonalLineMessageForm = ({
     );
 
     const [selectedSlotIds, setSelectedSlotIds] = useState<string[]>([]);
+    const [message, setMessage] = useState("");
 
     const selectedEmployee = useMemo(() => {
         return employees.find((employee) => employee.id === selectedEmployeeId);
@@ -205,6 +275,12 @@ export const PersonalLineMessageForm = ({
         );
     }, [availableSlots, selectedEmployeeUnavailableTimes]);
 
+    const selectedSlots = useMemo(() => {
+        return requestableSlots.filter((slot) =>
+            selectedSlotIds.includes(slot.slotId)
+        );
+    }, [requestableSlots, selectedSlotIds]);
+
     const handleToggleSlot = (slotId: string) => {
         setSelectedSlotIds((current) => {
             if (current.includes(slotId)) {
@@ -213,6 +289,15 @@ export const PersonalLineMessageForm = ({
 
             return [...current, slotId];
         });
+    };
+
+    const handleGenerateMessage = () => {
+        const generatedMessage = generatePersonalRequestMessage({
+            selectedMonth,
+            slots: selectedSlots,
+        });
+
+        setMessage(generatedMessage);
     };
 
     if (employees.length === 0) {
@@ -251,6 +336,7 @@ export const PersonalLineMessageForm = ({
                         onChange={(event) => {
                             setSelectedEmployeeId(event.target.value);
                             setSelectedSlotIds([]);
+                            setMessage("");
                         }}
                         className="w-full rounded-xl border bg-white px-3 py-2 text-sm"
                     >
@@ -350,6 +436,29 @@ export const PersonalLineMessageForm = ({
                         })}
                     </div>
                 )}
+            </div>
+
+            <div className="mt-4">
+                <button
+                    type="button"
+                    onClick={handleGenerateMessage}
+                    disabled={selectedSlots.length === 0}
+                    className="rounded-xl bg-slate-900 px-4 py-2 text-sm font-medium text-white disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                    文章生成
+                </button>
+            </div>
+
+            <div className="mt-6 space-y-2">
+                <label className="text-sm font-medium text-slate-700">
+                    生成結果
+                </label>
+                <textarea
+                    value={message}
+                    onChange={(event) => setMessage(event.target.value)}
+                    placeholder="ここに個人依頼文が表示されます。"
+                    className="min-h-80 w-full rounded-xl border bg-slate-50 p-4 text-sm leading-7"
+                />
             </div>
         </div>
     );
