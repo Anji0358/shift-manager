@@ -85,11 +85,6 @@ const formatDateWithDay = (date: Date) => {
     return `${date.getMonth() + 1}/${date.getDate()}(${day})`;
 };
 
-const getMonthLabel = (yearMonth: string) => {
-    const [, month] = yearMonth.split("-");
-    return `${Number(month)}月`;
-};
-
 const isSameDate = (dateA: Date, dateB: Date) => {
     return (
         dateA.getFullYear() === dateB.getFullYear() &&
@@ -234,7 +229,6 @@ export const PersonalLineMessageForm = ({
     const [selectedEmployeeId, setSelectedEmployeeId] = useState(
         employees[0]?.id ?? ""
     );
-
     const [selectedSlotIds, setSelectedSlotIds] = useState<string[]>([]);
     const [message, setMessage] = useState("");
     const [copied, setCopied] = useState(false);
@@ -292,6 +286,7 @@ export const PersonalLineMessageForm = ({
 
             return [...current, slotId];
         });
+        setCopied(false);
     };
 
     const handleGenerateMessage = () => {
@@ -409,7 +404,10 @@ export const PersonalLineMessageForm = ({
                     </label>
                     <textarea
                         value={greeting}
-                        onChange={(event) => setGreeting(event.target.value)}
+                        onChange={(event) => {
+                            setGreeting(event.target.value);
+                            setCopied(false);
+                        }}
                         className="min-h-20 w-full rounded-xl border bg-white p-3 text-sm leading-6"
                     />
                 </div>
@@ -420,7 +418,10 @@ export const PersonalLineMessageForm = ({
                     </label>
                     <textarea
                         value={introText}
-                        onChange={(event) => setIntroText(event.target.value)}
+                        onChange={(event) => {
+                            setIntroText(event.target.value);
+                            setCopied(false);
+                        }}
                         className="min-h-20 w-full rounded-xl border bg-white p-3 text-sm leading-6"
                     />
                 </div>
@@ -431,7 +432,10 @@ export const PersonalLineMessageForm = ({
                     </label>
                     <textarea
                         value={closing}
-                        onChange={(event) => setClosing(event.target.value)}
+                        onChange={(event) => {
+                            setClosing(event.target.value);
+                            setCopied(false);
+                        }}
                         className="min-h-20 w-full rounded-xl border bg-white p-3 text-sm leading-6"
                     />
                 </div>
@@ -461,7 +465,9 @@ export const PersonalLineMessageForm = ({
                                     key={slot.slotId}
                                     className={[
                                         "flex cursor-pointer items-start gap-3 rounded-xl border bg-white p-3 text-sm transition",
-                                        checked ? "border-slate-900 bg-slate-50" : "hover:bg-slate-50",
+                                        checked
+                                            ? "border-slate-900 bg-slate-50"
+                                            : "hover:bg-slate-50",
                                     ].join(" ")}
                                 >
                                     <input
@@ -473,7 +479,7 @@ export const PersonalLineMessageForm = ({
 
                                     <div>
                                         <p className="font-medium text-slate-800">
-                                            {`${slot.workDate.getMonth() + 1}/${slot.workDate.getDate()} ${slot.title}`}
+                                            {`${formatDateWithDay(slot.workDate)} ${slot.title}`}
                                         </p>
                                         <p className="mt-1 text-slate-500">
                                             {slot.location}
@@ -500,21 +506,32 @@ export const PersonalLineMessageForm = ({
                 </button>
             </div>
 
+            <div className="mt-6 space-y-2">
+                <div className="flex items-center justify-between gap-3">
+                    <label className="text-sm font-medium text-slate-700">
+                        生成結果
+                    </label>
 
-            <div className="flex items-center justify-between gap-3">
-                <label className="text-sm font-medium text-slate-700">
-                    生成結果
-                </label>
+                    <button
+                        type="button"
+                        onClick={handleCopy}
+                        disabled={!message}
+                        className="inline-flex items-center rounded-xl border bg-white px-3 py-2 text-sm font-medium text-slate-700 disabled:cursor-not-allowed disabled:opacity-50"
+                    >
+                        <Copy className="mr-2 h-4 w-4" />
+                        {copied ? "コピー済み" : "コピー"}
+                    </button>
+                </div>
 
-                <button
-                    type="button"
-                    onClick={handleCopy}
-                    disabled={!message}
-                    className="inline-flex items-center rounded-xl border bg-white px-3 py-2 text-sm font-medium text-slate-700 disabled:cursor-not-allowed disabled:opacity-50"
-                >
-                    <Copy className="mr-2 h-4 w-4" />
-                    {copied ? "コピー済み" : "コピー"}
-                </button>
+                <textarea
+                    value={message}
+                    onChange={(event) => {
+                        setMessage(event.target.value);
+                        setCopied(false);
+                    }}
+                    placeholder="ここに個人依頼文が表示されます。"
+                    className="min-h-80 w-full rounded-xl border bg-slate-50 p-4 text-sm leading-7"
+                />
             </div>
         </div>
     );
