@@ -4,38 +4,15 @@ import { useEffect, useMemo, useState } from "react";
 import { Copy, MessageSquareText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { generateGroupJobMessage } from "../message-generators";
-import type { GroupMessageOptions, GroupMessageType } from "../types";
+import type {
+    GroupLineMessageJob,
+    GroupMessageOptions,
+    GroupMessageType,
+} from "../types";
 
 type GroupJobMessageFormProps = {
     selectedMonth: string;
-    jobs: {
-        id: string;
-        title: string;
-        workDate: Date;
-        location: string;
-        meetingPlace: string | null;
-        dressCode: string | null;
-        belongings: string | null;
-        note: string | null;
-        shiftSlots: {
-            id: string;
-            name: string;
-            startTime: string;
-            endTime: string;
-            startTimeMinutes: number;
-            endTimeMinutes: number;
-            requiredPeople: number;
-            shiftAssignments: {
-                employee: {
-                    name: string;
-                };
-            }[];
-            externalStaffAssignments: {
-                name: string;
-                headCount: number;
-            }[];
-        }[];
-    }[];
+    jobs: GroupLineMessageJob[];
 };
 
 const inputClassName =
