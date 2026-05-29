@@ -9,8 +9,8 @@ import type {
     LineMessageUnavailableTime,
     PersonalLineMessageJob,
 } from "../types";
-
 import { formatDateWithDay, isSameDate } from "../utils/date";
+import { isSlotUnavailable } from "../utils/unavailable-time";
 
 type PersonalLineMessageFormProps = {
     selectedMonth: string;
@@ -27,90 +27,6 @@ const textareaClassName =
 
 const resultTextareaClassName =
     "min-h-80 w-full rounded-xl border bg-slate-50 p-4 text-sm leading-7 shadow-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100";
-
-const dayOfWeekMap = [
-    "SUNDAY",
-    "MONDAY",
-    "TUESDAY",
-    "WEDNESDAY",
-    "THURSDAY",
-    "FRIDAY",
-    "SATURDAY",
-] as const;
-
-const isTimeOverlapping = (
-    slotStartMinutes: number,
-    slotEndMinutes: number,
-    unavailableStartTime: string | null,
-    unavailableEndTime: string | null
-) => {
-    if (!unavailableStartTime || !unavailableEndTime) {
-        return true;
-    }
-
-    const [unavailableStartHour, unavailableStartMinute] =
-        unavailableStartTime.split(":").map(Number);
-    const [unavailableEndHour, unavailableEndMinute] =
-        unavailableEndTime.split(":").map(Number);
-
-    const unavailableStartMinutes =
-        unavailableStartHour * 60 + unavailableStartMinute;
-    const unavailableEndMinutes =
-        unavailableEndHour * 60 + unavailableEndMinute;
-
-    return (
-        slotStartMinutes < unavailableEndMinutes &&
-        unavailableStartMinutes < slotEndMinutes
-    );
-};
-
-const isSlotUnavailable = (
-    slot: AvailablePersonalSlot,
-    unavailableTimes: PersonalLineMessageFormProps["unavailableTimes"]
-) => {
-    return unavailableTimes.some((unavailableTime) => {
-        if (unavailableTime.type === "FULL_DAY") {
-            return unavailableTime.date
-                ? isSameDate(slot.workDate, unavailableTime.date)
-                : false;
-        }
-
-        if (
-            unavailableTime.type === "TIME_RANGE" ||
-            unavailableTime.type === "TEMPORARY"
-        ) {
-            if (!unavailableTime.date) {
-                return false;
-            }
-
-            return (
-                isSameDate(slot.workDate, unavailableTime.date) &&
-                isTimeOverlapping(
-                    slot.startTimeMinutes,
-                    slot.endTimeMinutes,
-                    unavailableTime.startTime,
-                    unavailableTime.endTime
-                )
-            );
-        }
-
-        if (unavailableTime.type === "WEEKLY_FIXED") {
-            const slotDayOfWeek = dayOfWeekMap[slot.workDate.getDay()];
-
-            return (
-                unavailableTime.dayOfWeek === slotDayOfWeek &&
-                isTimeOverlapping(
-                    slot.startTimeMinutes,
-                    slot.endTimeMinutes,
-                    unavailableTime.startTime,
-                    unavailableTime.endTime
-                )
-            );
-        }
-
-        return false;
-    });
-};
 
 const generatePersonalRequestMessage = ({
     greeting,
