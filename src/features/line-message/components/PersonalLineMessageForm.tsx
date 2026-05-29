@@ -67,6 +67,98 @@ type AvailablePersonalSlot = {
     endTimeMinutes: number;
 };
 
+const dayOfWeekMap = [
+    "SUNDAY",
+    "MONDAY",
+    "TUESDAY",
+    "WEDNESDAY",
+    "THURSDAY",
+    "FRIDAY",
+    "SATURDAY",
+] as const;
+
+const isSameDate = (dateA: Date, dateB: Date) => {
+    return (
+        dateA.getFullYear() === dateB.getFullYear() &&
+        dateA.getMonth() === dateB.getMonth() &&
+        dateA.getDate() === dateB.getDate()
+    );
+};
+
+const isTimeOverlapping = (
+    slotStartMinutes: number,
+    slotEndMinutes: number,
+    unavailableStartTime: string | null,
+    unavailableEndTime: string | null
+) => {
+    if (!unavailableStartTime || !unavailableEndTime) {
+        return true;
+    }
+
+    const [unavailableStartHour, unavailableStartMinute] =
+        unavailableStartTime.split(":").map(Number);
+    const [unavailableEndHour, unavailableEndMinute] =
+        unavailableEndTime.split(":").map(Number);
+
+    const unavailableStartMinutes =
+        unavailableStartHour * 60 + unavailableStartMinute;
+    const unavailableEndMinutes =
+        unavailableEndHour * 60 + unavailableEndMinute;
+
+    return (
+        slotStartMinutes < unavailableEndMinutes &&
+        unavailableStartMinutes < slotEndMinutes
+    );
+};
+
+const isSlotUnavailable = (
+    slot: AvailablePersonalSlot,
+    unavailableTimes: PersonalLineMessageFormProps["unavailableTimes"]
+) => {
+    return unavailableTimes.some((unavailableTime) => {
+        if (unavailableTime.type === "FULL_DAY") {
+            return unavailableTime.date
+                ? isSameDate(slot.workDate, unavailableTime.date)
+                : false;
+        }
+
+        if (
+            unavailableTime.type === "TIME_RANGE" ||
+            unavailableTime.type === "TEMPORARY"
+        ) {
+            if (!unavailableTime.date) {
+                return false;
+            }
+
+            return (
+                isSameDate(slot.workDate, unavailableTime.date) &&
+                isTimeOverlapping(
+                    slot.startTimeMinutes,
+                    slot.endTimeMinutes,
+                    unavailableTime.startTime,
+                    unavailableTime.endTime
+                )
+            );
+        }
+
+        if (unavailableTime.type === "WEEKLY_FIXED") {
+            const slotDayOfWeek = dayOfWeekMap[slot.workDate.getDay()];
+
+            return (
+                unavailableTime.dayOfWeek === slotDayOfWeek &&
+                isTimeOverlapping(
+                    slot.startTimeMinutes,
+                    slot.endTimeMinutes,
+                    unavailableTime.startTime,
+                    unavailableTime.endTime
+                )
+            );
+        }
+
+        return false;
+    });
+};
+
 export const PersonalLineMessageForm = ({
     selectedMonth,
     employees,
@@ -104,6 +196,13 @@ export const PersonalLineMessageForm = ({
         );
     }, [jobs]);
 
+    const requestableSlots = useMemo(() => {
+        return availableSlots.filter(
+            (slot) =>
+                !isSlotUnavailable(slot, selectedEmployeeUnavailableTimes)
+        );
+    }, [availableSlots, selectedEmployeeUnavailableTimes]);
+
     if (employees.length === 0) {
         return (
             <div className="rounded-2xl border bg-white p-6 shadow-sm">
@@ -119,7 +218,7 @@ export const PersonalLineMessageForm = ({
         <div className="rounded-2xl border bg-white p-6 shadow-sm">
             <h2 className="text-lg font-semibold">個人依頼文</h2>
             <p className="mt-2 text-sm text-slate-500">
-                スタッフのNG日時と重複しない案件を選び、個人LINEに送る依頼文を作成します。
+                スタッフのNG日時と重複しない勤務枠を選び、個人LINEに送る依頼文を作成します。
             </p>
 
             <div className="mt-6 grid gap-5 md:grid-cols-2">
@@ -172,26 +271,34 @@ export const PersonalLineMessageForm = ({
                 <p className="mt-1 text-sm text-slate-500">
                     {jobs.length}件
                 </p>
+
                 <p className="mt-4 text-sm font-medium text-slate-700">
                     対象月の勤務枠数
                 </p>
                 <p className="mt-1 text-sm text-slate-500">
                     {availableSlots.length}件
                 </p>
+
+                <p className="mt-4 text-sm font-medium text-slate-700">
+                    NGと被っていない勤務枠数
+                </p>
+                <p className="mt-1 text-sm text-slate-500">
+                    {requestableSlots.length}件
+                </p>
             </div>
 
             <div className="mt-6 space-y-3">
                 <p className="text-sm font-medium text-slate-700">
-                    勤務枠一覧
+                    依頼可能な勤務枠一覧
                 </p>
 
-                {availableSlots.length === 0 ? (
+                {requestableSlots.length === 0 ? (
                     <p className="text-sm text-slate-500">
-                        対象月に勤務枠がありません。
+                        NGと被っていない勤務枠がありません。
                     </p>
                 ) : (
                     <div className="space-y-2">
-                        {availableSlots.map((slot) => (
+                        {requestableSlots.map((slot) => (
                             <div
                                 key={slot.slotId}
                                 className="rounded-xl border bg-white p-3 text-sm"
