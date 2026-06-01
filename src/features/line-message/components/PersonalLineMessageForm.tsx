@@ -13,6 +13,7 @@ import { formatDateWithDay } from "../utils/date";
 import { isSlotUnavailable } from "../utils/unavailable-time";
 import { generatePersonalRequestMessage } from "../message-generators/personal-message";
 import { PersonalSummaryCards } from "./personal/PersonalSummaryCards";
+import { PersonalMessageTextFields } from "./personal/PersonalMessageTextFields";
 
 type PersonalLineMessageFormProps = {
     selectedMonth: string;
@@ -198,47 +199,23 @@ export const PersonalLineMessageForm = ({
 
                 <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.25fr)]">
                     <div className="space-y-4">
-                        <div className="space-y-2">
-                            <label className="text-sm font-medium text-slate-700">
-                                冒頭の挨拶
-                            </label>
-                            <textarea
-                                value={greeting}
-                                onChange={(event) => {
-                                    setGreeting(event.target.value);
-                                    setCopied(false);
-                                }}
-                                className={`${textareaClassName} min-h-20`}
-                            />
-                        </div>
-
-                        <div className="space-y-2">
-                            <label className="text-sm font-medium text-slate-700">
-                                案内文
-                            </label>
-                            <textarea
-                                value={introText}
-                                onChange={(event) => {
-                                    setIntroText(event.target.value);
-                                    setCopied(false);
-                                }}
-                                className={`${textareaClassName} min-h-24`}
-                            />
-                        </div>
-
-                        <div className="space-y-2">
-                            <label className="text-sm font-medium text-slate-700">
-                                最後の文言
-                            </label>
-                            <textarea
-                                value={closing}
-                                onChange={(event) => {
-                                    setClosing(event.target.value);
-                                    setCopied(false);
-                                }}
-                                className={`${textareaClassName} min-h-24`}
-                            />
-                        </div>
+                        <PersonalMessageTextFields
+                            greeting={greeting}
+                            introText={introText}
+                            closing={closing}
+                            onGreetingChange={(value) => {
+                                setGreeting(value);
+                                setCopied(false);
+                            }}
+                            onIntroTextChange={(value) => {
+                                setIntroText(value);
+                                setCopied(false);
+                            }}
+                            onClosingChange={(value) => {
+                                setClosing(value);
+                                setCopied(false);
+                            }}
+                        />
 
                         <Button
                             type="button"
