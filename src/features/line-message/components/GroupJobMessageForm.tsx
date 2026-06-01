@@ -10,14 +10,12 @@ import type {
     GroupMessageType,
 } from "../types";
 import { GeneratedMessagePanel } from "./GeneratedMessagePanel";
+import { inputClassName } from "../styles";
 
 type GroupJobMessageFormProps = {
     selectedMonth: string;
     jobs: GroupLineMessageJob[];
 };
-
-const inputClassName =
-    "w-full rounded-xl border bg-white px-3 py-2 text-sm shadow-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100";
 
 export const GroupJobMessageForm = ({
     jobs,
