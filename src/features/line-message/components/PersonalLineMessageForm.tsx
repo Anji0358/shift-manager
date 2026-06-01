@@ -12,6 +12,7 @@ import type {
 import { formatDateWithDay } from "../utils/date";
 import { isSlotUnavailable } from "../utils/unavailable-time";
 import { generatePersonalRequestMessage } from "../message-generators/personal-message";
+import { PersonalSummaryCards } from "./personal/PersonalSummaryCards";
 
 type PersonalLineMessageFormProps = {
     selectedMonth: string;
@@ -187,52 +188,13 @@ export const PersonalLineMessageForm = ({
                     </div>
                 </div>
 
-                <div className="mt-6 grid gap-3 rounded-2xl bg-blue-50/60 p-4 md:grid-cols-5">
-                    <div>
-                        <p className="text-xs font-medium text-blue-600">
-                            選択中のスタッフ
-                        </p>
-                        <p className="mt-2 font-semibold text-slate-900">
-                            {selectedEmployee?.name ?? "未選択"}
-                        </p>
-                    </div>
-
-                    <div>
-                        <p className="text-xs font-medium text-blue-600">
-                            登録NG件数
-                        </p>
-                        <p className="mt-2 font-semibold text-slate-900">
-                            {selectedEmployeeUnavailableTimes.length}件
-                        </p>
-                    </div>
-
-                    <div>
-                        <p className="text-xs font-medium text-blue-600">
-                            対象月の案件数
-                        </p>
-                        <p className="mt-2 font-semibold text-slate-900">
-                            {jobs.length}件
-                        </p>
-                    </div>
-
-                    <div>
-                        <p className="text-xs font-medium text-blue-600">
-                            勤務枠数
-                        </p>
-                        <p className="mt-2 font-semibold text-slate-900">
-                            {availableSlots.length}件
-                        </p>
-                    </div>
-
-                    <div>
-                        <p className="text-xs font-medium text-blue-600">
-                            依頼可能枠
-                        </p>
-                        <p className="mt-2 font-semibold text-slate-900">
-                            {requestableSlots.length}件
-                        </p>
-                    </div>
-                </div>
+                <PersonalSummaryCards
+                    selectedEmployee={selectedEmployee}
+                    unavailableCount={selectedEmployeeUnavailableTimes.length}
+                    jobCount={jobs.length}
+                    slotCount={availableSlots.length}
+                    requestableSlotCount={requestableSlots.length}
+                />
 
                 <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.25fr)]">
                     <div className="space-y-4">
