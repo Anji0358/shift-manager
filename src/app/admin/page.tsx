@@ -1,134 +1,205 @@
 import {
-    Card,
     CardContent,
     CardHeader,
     CardTitle,
 } from "@/components/ui/card";
 import { LinkButton } from "@/components/shared/link-button";
+import { PageShell } from "@/components/shared/page-shell";
+import { PageHeader } from "@/components/shared/page-header";
+import { BridalCard } from "@/components/shared/bridal-card";
 import { getAdminDashboardStats } from "@/features/dashboard/admin-queries";
 import { getCurrentAdmin } from "@/lib/auth/current-user";
+import {
+    BriefcaseBusiness,
+    CalendarCheck,
+    ClipboardCheck,
+    FileText,
+    Plus,
+    Users,
+} from "lucide-react";
 
 const AdminPage = async () => {
     const currentAdmin = await getCurrentAdmin();
     const stats = await getAdminDashboardStats();
 
     return (
-        <div className="space-y-8">
-            <section className="flex items-start justify-between gap-4">
-                <div>
-                    <h1 className="text-3xl font-bold">管理者ダッシュボード</h1>
-                    <p className="mt-2 text-slate-600">
-                        案件、シフト、就労報告、スタッフの状況を確認します。
-                    </p>
+        <PageShell>
+            <PageHeader
+                title="管理者ダッシュボード"
+                description="案件、シフト、就労報告、スタッフの状況を確認します。"
+                action={
+                    <LinkButton
+                        href="/admin/jobs/new"
+                        pendingText="作成画面へ移動中..."
+                        className="rounded-xl bg-[#b8872d] px-5 text-white shadow-md shadow-yellow-900/10 hover:bg-[#a77925] hover:text-white"
+                    >
+                        <Plus className="mr-2 h-4 w-4" />
+                        案件を作成
+                    </LinkButton>
+                }
+            />
 
-                    <p className="mt-1 text-sm text-slate-500">
-                        現在の管理者：{currentAdmin.name}
-                    </p>
-                </div>
-
-                <LinkButton href="/admin/jobs/new" pendingText="作成画面へ移動中...">
-                    案件を作成
-                </LinkButton>
-            </section>
+            <div className="mb-6 rounded-2xl border border-[#eadcc1] bg-white/72 px-5 py-4 text-sm text-slate-600 shadow-md shadow-yellow-900/5 backdrop-blur">
+                現在の管理者：
+                <span className="ml-1 font-medium text-slate-900">
+                    {currentAdmin.name}
+                </span>
+            </div>
 
             <section className="grid gap-4 md:grid-cols-4">
-                <Card>
-                    <CardHeader>
-                        <CardTitle className="text-sm text-slate-500">
-                            今月の案件数
-                        </CardTitle>
+                <BridalCard>
+                    <CardHeader className="space-y-0 p-5 pb-3">
+                        <div className="flex items-center justify-between gap-3">
+                            <CardTitle className="text-sm font-medium text-slate-500">
+                                今月の案件数
+                            </CardTitle>
+                            <div className="flex h-10 w-10 items-center justify-center rounded-full border border-[#ead9b5] bg-[#fffaf0] text-[#b8872d]">
+                                <BriefcaseBusiness className="h-5 w-5" />
+                            </div>
+                        </div>
                     </CardHeader>
-                    <CardContent>
-                        <p className="text-3xl font-bold">{stats.monthlyJobCount}</p>
+                    <CardContent className="p-5 pt-0">
+                        <p className="text-3xl font-semibold tracking-tight text-slate-900">
+                            {stats.monthlyJobCount}
+                        </p>
                         <p className="mt-1 text-sm text-slate-500">
                             {stats.currentYearMonth}
                         </p>
                     </CardContent>
-                </Card>
+                </BridalCard>
 
-                <Card>
-                    <CardHeader>
-                        <CardTitle className="text-sm text-slate-500">
-                            今月の確定シフト数
-                        </CardTitle>
+                <BridalCard>
+                    <CardHeader className="space-y-0 p-5 pb-3">
+                        <div className="flex items-center justify-between gap-3">
+                            <CardTitle className="text-sm font-medium text-slate-500">
+                                今月の確定シフト数
+                            </CardTitle>
+                            <div className="flex h-10 w-10 items-center justify-center rounded-full border border-[#ead9b5] bg-[#fffaf0] text-[#b8872d]">
+                                <CalendarCheck className="h-5 w-5" />
+                            </div>
+                        </div>
                     </CardHeader>
-                    <CardContent>
-                        <p className="text-3xl font-bold">
+                    <CardContent className="p-5 pt-0">
+                        <p className="text-3xl font-semibold tracking-tight text-slate-900">
                             {stats.monthlyAssignmentCount}
                         </p>
                         <p className="mt-1 text-sm text-slate-500">
                             ASSIGNED の件数
                         </p>
                     </CardContent>
-                </Card>
+                </BridalCard>
 
-                <Card>
-                    <CardHeader>
-                        <CardTitle className="text-sm text-slate-500">
-                            未承認の就労報告
-                        </CardTitle>
+                <BridalCard>
+                    <CardHeader className="space-y-0 p-5 pb-3">
+                        <div className="flex items-center justify-between gap-3">
+                            <CardTitle className="text-sm font-medium text-slate-500">
+                                未承認の就労報告
+                            </CardTitle>
+                            <div className="flex h-10 w-10 items-center justify-center rounded-full border border-[#ead9b5] bg-[#fffaf0] text-[#b8872d]">
+                                <ClipboardCheck className="h-5 w-5" />
+                            </div>
+                        </div>
                     </CardHeader>
-                    <CardContent>
-                        <p className="text-3xl font-bold">{stats.pendingReportCount}</p>
+                    <CardContent className="p-5 pt-0">
+                        <p className="text-3xl font-semibold tracking-tight text-slate-900">
+                            {stats.pendingReportCount}
+                        </p>
                         <p className="mt-1 text-sm text-slate-500">
                             SUBMITTED の件数
                         </p>
                     </CardContent>
-                </Card>
+                </BridalCard>
 
-                <Card>
-                    <CardHeader>
-                        <CardTitle className="text-sm text-slate-500">
-                            在籍中スタッフ
-                        </CardTitle>
+                <BridalCard>
+                    <CardHeader className="space-y-0 p-5 pb-3">
+                        <div className="flex items-center justify-between gap-3">
+                            <CardTitle className="text-sm font-medium text-slate-500">
+                                在籍中スタッフ
+                            </CardTitle>
+                            <div className="flex h-10 w-10 items-center justify-center rounded-full border border-[#ead9b5] bg-[#fffaf0] text-[#b8872d]">
+                                <Users className="h-5 w-5" />
+                            </div>
+                        </div>
                     </CardHeader>
-                    <CardContent>
-                        <p className="text-3xl font-bold">{stats.activeEmployeeCount}</p>
+                    <CardContent className="p-5 pt-0">
+                        <p className="text-3xl font-semibold tracking-tight text-slate-900">
+                            {stats.activeEmployeeCount}
+                        </p>
                         <p className="mt-1 text-sm text-slate-500">
                             ACTIVE のスタッフ
                         </p>
                     </CardContent>
-                </Card>
+                </BridalCard>
             </section>
 
-            <section className="grid gap-4 md:grid-cols-2">
-                <Card>
-                    <CardHeader>
-                        <CardTitle>案件管理</CardTitle>
+            <section className="mt-6 grid gap-4 md:grid-cols-2">
+                <BridalCard className="transition hover:-translate-y-0.5 hover:bg-white hover:shadow-xl">
+                    <CardHeader className="p-5 pb-3">
+                        <div className="flex items-start gap-3">
+                            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-[#ead9b5] bg-[#fffaf0] text-[#b8872d]">
+                                <BriefcaseBusiness className="h-5 w-5" />
+                            </div>
+                            <div>
+                                <CardTitle className="font-serif text-xl font-medium text-slate-900">
+                                    案件管理
+                                </CardTitle>
+                                <p className="mt-1 text-sm text-slate-500">
+                                    案件作成、勤務枠作成、スタッフ割り振り
+                                </p>
+                            </div>
+                        </div>
                     </CardHeader>
-                    <CardContent className="space-y-3">
-                        <p className="text-sm text-slate-600">
-                            案件作成、勤務枠作成、スタッフ割り振りを行います。
+
+                    <CardContent className="space-y-4 p-5 pt-0">
+                        <p className="text-sm leading-6 text-slate-600">
+                            現場ごとの案件情報、勤務枠、必要人数、割り振り状況をまとめて管理します。
                         </p>
+
                         <LinkButton
                             href="/admin/jobs"
                             variant="outline"
                             pendingText="案件一覧へ移動中..."
+                            className="rounded-xl border-[#d6b56d]/60 bg-white/80 text-[#8a641f] hover:bg-[#fff8e8] hover:text-[#8a641f]"
                         >
                             案件一覧へ
                         </LinkButton>
                     </CardContent>
-                </Card>
+                </BridalCard>
 
-                <Card>
-                    <CardHeader>
-                        <CardTitle>就労報告管理</CardTitle>
+                <BridalCard className="transition hover:-translate-y-0.5 hover:bg-white hover:shadow-xl">
+                    <CardHeader className="p-5 pb-3">
+                        <div className="flex items-start gap-3">
+                            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-[#ead9b5] bg-[#fffaf0] text-[#b8872d]">
+                                <FileText className="h-5 w-5" />
+                            </div>
+                            <div>
+                                <CardTitle className="font-serif text-xl font-medium text-slate-900">
+                                    就労報告管理
+                                </CardTitle>
+                                <p className="mt-1 text-sm text-slate-500">
+                                    提出内容の確認、承認、差し戻し
+                                </p>
+                            </div>
+                        </div>
                     </CardHeader>
-                    <CardContent className="space-y-3">
-                        <p className="text-sm text-slate-600">
-                            提出された就労報告を承認・差し戻しします。
+
+                    <CardContent className="space-y-4 p-5 pt-0">
+                        <p className="text-sm leading-6 text-slate-600">
+                            スタッフから提出された就労報告を確認し、承認または差し戻しを行います。
                         </p>
+
                         <LinkButton
                             href="/admin/work-reports"
                             variant="outline"
                             pendingText="就労報告へ移動中..."
+                            className="rounded-xl border-[#d6b56d]/60 bg-white/80 text-[#8a641f] hover:bg-[#fff8e8] hover:text-[#8a641f]"
                         >
                             就労報告へ
                         </LinkButton>
                     </CardContent>
-                </Card>
+                </BridalCard>
             </section>
-        </div>
+        </PageShell>
     );
 };
 
