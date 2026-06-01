@@ -9,8 +9,9 @@ import type {
     LineMessageUnavailableTime,
     PersonalLineMessageJob,
 } from "../types";
-import { formatDateWithDay, isSameDate } from "../utils/date";
+import { formatDateWithDay } from "../utils/date";
 import { isSlotUnavailable } from "../utils/unavailable-time";
+import { generatePersonalRequestMessage } from "../message-generators/personal-message";
 
 type PersonalLineMessageFormProps = {
     selectedMonth: string;
@@ -27,59 +28,6 @@ const textareaClassName =
 
 const resultTextareaClassName =
     "min-h-80 w-full rounded-xl border bg-slate-50 p-4 text-sm leading-7 shadow-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100";
-
-const generatePersonalRequestMessage = ({
-    greeting,
-    introText,
-    closing,
-    slots,
-}: {
-    greeting: string;
-    introText: string;
-    closing: string;
-    slots: AvailablePersonalSlot[];
-}) => {
-    if (slots.length === 0) {
-        return "";
-    }
-
-    const groupedSlots = slots.reduce<Record<string, AvailablePersonalSlot[]>>(
-        (groups, slot) => {
-            const key = `${slot.workDate.toISOString()}-${slot.title}-${slot.location}`;
-
-            return {
-                ...groups,
-                [key]: [...(groups[key] ?? []), slot],
-            };
-        },
-        {}
-    );
-
-    const slotBlocks = Object.values(groupedSlots)
-        .map((group) => {
-            const firstSlot = group[0];
-
-            const timeLines = group
-                .sort((a, b) => a.startTimeMinutes - b.startTimeMinutes)
-                .map((slot, index) => {
-                    if (index === 0) {
-                        return `${slot.startTime}-${slot.endTime}`;
-                    }
-
-                    return `or\n${slot.startTime}-${slot.endTime}`;
-                })
-                .join("\n");
-
-            return [
-                formatDateWithDay(firstSlot.workDate),
-                firstSlot.title,
-                timeLines,
-            ].join("\n");
-        })
-        .join("\n\n");
-
-    return [greeting, "", introText, "", slotBlocks, "", closing].join("\n");
-};
 
 export const PersonalLineMessageForm = ({
     selectedMonth,
