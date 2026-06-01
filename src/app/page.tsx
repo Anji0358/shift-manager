@@ -9,10 +9,13 @@ import {
 } from "@/components/ui/card";
 import {
   ArrowRight,
+  BarChart3,
   CalendarCheck,
+  ClipboardList,
   LayoutDashboard,
   ShieldCheck,
   Users,
+  Utensils,
 } from "lucide-react";
 
 const HomePage = async () => {
@@ -20,119 +23,162 @@ const HomePage = async () => {
 
   return (
     <div className="relative mx-auto flex min-h-[75vh] max-w-6xl flex-col justify-center overflow-hidden px-4 py-10">
-      <div className="absolute inset-0 -z-10 rounded-[2rem] bg-[radial-gradient(circle_at_top_left,_rgba(59,130,246,0.35),_transparent_35%),radial-gradient(circle_at_bottom_right,_rgba(168,85,247,0.28),_transparent_35%),linear-gradient(135deg,_#020617,_#0f172a_45%,_#111827)]" />
+      <div className="absolute inset-0 -z-10 rounded-[2rem] bg-[radial-gradient(circle_at_top_left,_rgba(251,146,60,0.22),_transparent_32%),radial-gradient(circle_at_top_right,_rgba(34,197,94,0.18),_transparent_30%),linear-gradient(135deg,_#fff7ed,_#ffffff_48%,_#ecfdf5)]" />
 
-      <div className="rounded-[2rem] border border-white/10 bg-white/[0.04] px-6 py-10 shadow-2xl backdrop-blur md:px-10 md:py-14">
-        <section className="mx-auto max-w-3xl space-y-6 text-center">
-          <div className="mx-auto inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/10 px-4 py-2 text-sm font-medium text-slate-200">
-            <ShieldCheck className="h-4 w-4 text-blue-300" />
-            Catering Shift Management
-          </div>
+      <div className="pointer-events-none absolute left-8 top-10 -z-10 h-40 w-40 rounded-full bg-orange-200/30 blur-3xl" />
+      <div className="pointer-events-none absolute bottom-10 right-8 -z-10 h-48 w-48 rounded-full bg-emerald-200/30 blur-3xl" />
 
-          <div className="space-y-4">
-            <h1 className="text-4xl font-bold tracking-tight text-white md:text-6xl">
-              Shift Manager
-            </h1>
+      <div className="relative overflow-hidden rounded-[2rem] border border-orange-100/80 bg-white px-6 py-10 shadow-xl shadow-orange-100/60 md:px-10 md:py-14">
+        <div
+          className="pointer-events-none absolute left-0 top-0 hidden h-80 w-[36%] rounded-tl-[2rem] bg-cover bg-left opacity-35 md:block"
+          style={{
+            backgroundImage: "url('/images/catering-table.png')",
+          }}
+        />
 
-            <p className="text-lg font-medium text-blue-100 md:text-xl">
-              現場のシフト管理を、もっとスマートに。
-            </p>
+        <div
+          className="pointer-events-none absolute right-0 top-0 hidden h-80 w-[36%] rounded-tr-[2rem] bg-cover bg-right opacity-35 md:block"
+          style={{
+            backgroundImage: "url('/images/catering-food.png')",
+          }}
+        />
 
-            <p className="mx-auto max-w-2xl leading-7 text-slate-300">
-              案件管理、勤務枠、スタッフ割り振り、勤務不可情報、就労報告、月次集計までを一元管理。
-              ケータリング現場の複雑なシフト運用を、シンプルに整理します。
-            </p>
-          </div>
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-96 bg-[linear-gradient(90deg,_rgba(255,255,255,0.82),_rgba(255,255,255,0.97)_28%,_rgba(255,255,255,0.97)_72%,_rgba(255,255,255,0.82))]" />
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-96 bg-gradient-to-b from-white/30 via-white/80 to-white" />
 
-          <div className="mx-auto grid max-w-2xl gap-3 pt-2 text-sm text-slate-300 md:grid-cols-3">
-            <div className="rounded-xl border border-white/10 bg-white/[0.06] px-4 py-3">
-              案件管理
+        <div className="pointer-events-none absolute -left-10 bottom-20 h-40 w-40 rounded-full bg-orange-100/60 blur-3xl" />
+        <div className="pointer-events-none absolute -right-10 bottom-16 h-48 w-48 rounded-full bg-emerald-100/70 blur-3xl" />
+
+        <div className="relative z-10">
+          <section className="mx-auto max-w-3xl space-y-6 text-center">
+            <div className="mx-auto inline-flex items-center gap-2 rounded-full border border-orange-200 bg-orange-50/90 px-4 py-2 text-sm font-medium text-orange-700 shadow-sm backdrop-blur">
+              <Utensils className="h-4 w-4 text-orange-500" />
+              Catering Shift Management
             </div>
-            <div className="rounded-xl border border-white/10 bg-white/[0.06] px-4 py-3">
-              スタッフ割り振り
-            </div>
-            <div className="rounded-xl border border-white/10 bg-white/[0.06] px-4 py-3">
-              月次集計
-            </div>
-          </div>
-        </section>
 
-        <section className="mt-10 grid gap-5 md:grid-cols-2">
-          <Card className="group rounded-2xl border-white/10 bg-white/[0.08] text-white shadow-xl backdrop-blur transition hover:-translate-y-1 hover:bg-white/[0.12]">
-            <CardHeader className="space-y-4">
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-500/20 text-blue-200 ring-1 ring-blue-300/20">
-                <LayoutDashboard className="h-6 w-6" />
-              </div>
+            <div className="space-y-4">
+              <h1 className="bg-gradient-to-r from-orange-600 via-amber-600 to-emerald-700 bg-clip-text text-4xl font-bold tracking-tight text-transparent md:text-6xl">
+                Shift Manager
+              </h1>
 
-              <div>
-                <CardTitle className="text-xl text-white">管理者ログイン</CardTitle>
-                <p className="mt-2 text-sm text-slate-300">
-                  案件・スタッフ・集計を管理する方はこちら
-                </p>
-              </div>
-            </CardHeader>
-
-            <CardContent className="space-y-5">
-              <p className="text-sm leading-6 text-slate-300">
-                案件作成、勤務枠作成、スタッフ割り振り、就労報告の確認、月次集計を行えます。
+              <p className="text-lg font-semibold text-slate-800 md:text-xl">
+                現場のシフト管理を、もっとスマートに。
               </p>
 
-              <Button
-                asChild
-                className="w-full rounded-xl bg-gradient-to-r from-blue-500 to-indigo-500 text-white shadow-lg shadow-blue-500/20 hover:from-blue-400 hover:to-indigo-400 hover:text-white"
-              >
-                <Link href={session ? "/admin" : "/login"}>
-                  管理者として進む
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Link>
-              </Button>
-            </CardContent>
-          </Card>
-
-          <Card className="group rounded-2xl border-white/10 bg-white/[0.08] text-white shadow-xl backdrop-blur transition hover:-translate-y-1 hover:bg-white/[0.12]">
-            <CardHeader className="space-y-4">
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-violet-500/20 text-violet-200 ring-1 ring-violet-300/20">
-                <Users className="h-6 w-6" />
-              </div>
-
-              <div>
-                <CardTitle className="text-xl text-white">スタッフログイン</CardTitle>
-                <p className="mt-2 text-sm text-slate-300">
-                  シフト確認・勤務報告を行う方はこちら
-                </p>
-              </div>
-            </CardHeader>
-
-            <CardContent className="space-y-5">
-              <p className="text-sm leading-6 text-slate-300">
-                確定シフトの確認、勤務不可情報の登録、就労報告の提出を行えます。
+              <p className="mx-auto max-w-2xl leading-7 text-slate-600">
+                案件管理、勤務枠、スタッフ割り振り、勤務不可情報、就労報告、月次集計までを一元管理。
+                ケータリング現場の複雑なシフト運用を、シンプルに整理します。
               </p>
-
-              <Button
-                asChild
-                className="w-full rounded-xl bg-gradient-to-r from-violet-500 to-fuchsia-500 text-white shadow-lg shadow-violet-500/20 hover:from-violet-400 hover:to-fuchsia-400 hover:text-white"
-              >
-                <Link href={session ? "/staff" : "/login"}>
-                  スタッフとして進む
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Link>
-              </Button>
-            </CardContent>
-          </Card>
-        </section>
-
-        <section className="mt-8 rounded-2xl border border-white/10 bg-white/[0.05] p-4">
-          <div className="flex flex-col gap-3 text-sm text-slate-300 md:flex-row md:items-center md:justify-between">
-            <div className="flex items-center gap-2">
-              <CalendarCheck className="h-4 w-4 text-blue-300" />
-              <span>ログイン後、権限に応じた画面へ自動的に進みます。</span>
             </div>
 
-            <span className="text-slate-400">
-              Admin / Staff supported
-            </span>
-          </div>
-        </section>
+            <div className="mx-auto grid max-w-2xl gap-3 pt-2 text-sm text-slate-700 md:grid-cols-3">
+              <div className="rounded-xl border border-orange-100 bg-white/90 px-4 py-3 shadow-sm backdrop-blur">
+                <div className="flex items-center justify-center gap-2">
+                  <ClipboardList className="h-4 w-4 text-orange-500" />
+                  <span className="font-medium">案件管理</span>
+                </div>
+              </div>
+
+              <div className="rounded-xl border border-emerald-100 bg-white/90 px-4 py-3 shadow-sm backdrop-blur">
+                <div className="flex items-center justify-center gap-2">
+                  <Users className="h-4 w-4 text-emerald-600" />
+                  <span className="font-medium">スタッフ割り振り</span>
+                </div>
+              </div>
+
+              <div className="rounded-xl border border-amber-100 bg-white/90 px-4 py-3 shadow-sm backdrop-blur">
+                <div className="flex items-center justify-center gap-2">
+                  <BarChart3 className="h-4 w-4 text-amber-500" />
+                  <span className="font-medium">月次集計</span>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section className="mt-10 grid gap-5 md:grid-cols-2">
+            <Card className="group rounded-2xl border-orange-100 bg-white/95 text-slate-900 shadow-lg shadow-orange-100/50 backdrop-blur transition hover:-translate-y-1 hover:border-orange-200 hover:shadow-xl">
+              <CardHeader className="space-y-4">
+                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-orange-50 text-orange-600 ring-1 ring-orange-200">
+                  <LayoutDashboard className="h-6 w-6" />
+                </div>
+
+                <div>
+                  <CardTitle className="text-xl text-slate-900">
+                    管理者ログイン
+                  </CardTitle>
+                  <p className="mt-2 text-sm text-slate-600">
+                    案件・スタッフ・集計を管理する方はこちら
+                  </p>
+                </div>
+              </CardHeader>
+
+              <CardContent className="space-y-5">
+                <p className="text-sm leading-6 text-slate-600">
+                  案件作成、勤務枠作成、スタッフ割り振り、就労報告の確認、月次集計、メッセージ生成を行えます。
+                </p>
+
+                <Button
+                  asChild
+                  className="w-full rounded-xl bg-gradient-to-r from-orange-500 to-amber-500 text-white shadow-lg shadow-orange-500/20 hover:from-orange-400 hover:to-amber-400 hover:text-white"
+                >
+                  <Link href={session ? "/admin" : "/login"}>
+                    管理者として進む
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Link>
+                </Button>
+              </CardContent>
+            </Card>
+
+            <Card className="group rounded-2xl border-emerald-100 bg-white/95 text-slate-900 shadow-lg shadow-emerald-100/50 backdrop-blur transition hover:-translate-y-1 hover:border-emerald-200 hover:shadow-xl">
+              <CardHeader className="space-y-4">
+                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-600 ring-1 ring-emerald-200">
+                  <Users className="h-6 w-6" />
+                </div>
+
+                <div>
+                  <CardTitle className="text-xl text-slate-900">
+                    スタッフログイン
+                  </CardTitle>
+                  <p className="mt-2 text-sm text-slate-600">
+                    シフト確認・勤務報告を行う方はこちら
+                  </p>
+                </div>
+              </CardHeader>
+
+              <CardContent className="space-y-5">
+                <p className="text-sm leading-6 text-slate-600">
+                  確定シフトの確認、勤務不可情報の登録、就労報告の提出を行えます。
+                </p>
+
+                <Button
+                  asChild
+                  className="w-full rounded-xl bg-gradient-to-r from-emerald-600 to-green-500 text-white shadow-lg shadow-emerald-500/20 hover:from-emerald-500 hover:to-green-400 hover:text-white"
+                >
+                  <Link href={session ? "/staff" : "/login"}>
+                    スタッフとして進む
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Link>
+                </Button>
+              </CardContent>
+            </Card>
+          </section>
+
+          <section className="mt-8 rounded-2xl border border-orange-100 bg-orange-50/70 p-4 backdrop-blur">
+            <div className="flex flex-col gap-3 text-sm text-slate-700 md:flex-row md:items-center md:justify-between">
+              <div className="flex items-center gap-2">
+                <CalendarCheck className="h-4 w-4 text-emerald-600" />
+                <span>
+                  ログイン後、権限に応じた画面へ自動的に進みます。
+                </span>
+              </div>
+
+              <div className="flex items-center gap-2 text-emerald-700">
+                <ShieldCheck className="h-4 w-4" />
+                <span>Admin / Staff supported</span>
+              </div>
+            </div>
+          </section>
+        </div>
       </div>
     </div>
   );
