@@ -22,56 +22,53 @@ const HomePage = async () => {
   const session = await auth();
 
   return (
-    <div className="relative mx-auto flex min-h-[75vh] max-w-6xl flex-col justify-center overflow-hidden px-4 py-10">
-      <div className="absolute inset-0 -z-10 rounded-[2rem] bg-[radial-gradient(circle_at_top_left,_rgba(251,146,60,0.22),_transparent_32%),radial-gradient(circle_at_top_right,_rgba(34,197,94,0.18),_transparent_30%),linear-gradient(135deg,_#fff7ed,_#ffffff_48%,_#ecfdf5)]" />
+    <div className="relative left-1/2 min-h-screen w-screen -translate-x-1/2 overflow-hidden bg-white">
+      <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top_left,_rgba(251,146,60,0.2),_transparent_32%),radial-gradient(circle_at_top_right,_rgba(34,197,94,0.16),_transparent_30%),linear-gradient(135deg,_#fff7ed,_#ffffff_48%,_#ecfdf5)]" />
 
-      <div className="pointer-events-none absolute left-8 top-10 -z-10 h-40 w-40 rounded-full bg-orange-200/30 blur-3xl" />
-      <div className="pointer-events-none absolute bottom-10 right-8 -z-10 h-48 w-48 rounded-full bg-emerald-200/30 blur-3xl" />
-
-      <div className="relative overflow-hidden rounded-[2rem] border border-orange-100/80 bg-white px-6 py-10 shadow-xl shadow-orange-100/60 md:px-10 md:py-14">
+      <div className="relative min-h-screen overflow-hidden bg-white px-4 py-8 md:px-8 md:py-10">
         <div
-          className="pointer-events-none absolute left-0 top-0 hidden h-80 w-[36%] rounded-tl-[2rem] bg-cover bg-left opacity-35 md:block"
+          className="pointer-events-none absolute left-0 top-0 h-[500px] w-[52%] bg-cover bg-left opacity-100 md:w-[46%]"
           style={{
             backgroundImage: "url('/images/catering-table.png')",
           }}
         />
 
         <div
-          className="pointer-events-none absolute right-0 top-0 hidden h-80 w-[36%] rounded-tr-[2rem] bg-cover bg-right opacity-35 md:block"
+          className="pointer-events-none absolute right-0 top-0 h-[500px] w-[52%] bg-cover bg-right opacity-100 md:w-[46%]"
           style={{
             backgroundImage: "url('/images/catering-food.png')",
           }}
         />
 
-        <div className="pointer-events-none absolute inset-x-0 top-0 h-96 bg-[linear-gradient(90deg,_rgba(255,255,255,0.82),_rgba(255,255,255,0.97)_28%,_rgba(255,255,255,0.97)_72%,_rgba(255,255,255,0.82))]" />
-        <div className="pointer-events-none absolute inset-x-0 top-0 h-96 bg-gradient-to-b from-white/30 via-white/80 to-white" />
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-[520px] bg-[linear-gradient(90deg,_rgba(255,255,255,0.08),_rgba(255,255,255,0.78)_34%,_rgba(255,255,255,0.78)_66%,_rgba(255,255,255,0.08))]" />
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-[520px] bg-gradient-to-b from-white/0 via-white/20 to-white" />
 
         <div className="pointer-events-none absolute -left-10 bottom-20 h-40 w-40 rounded-full bg-orange-100/60 blur-3xl" />
         <div className="pointer-events-none absolute -right-10 bottom-16 h-48 w-48 rounded-full bg-emerald-100/70 blur-3xl" />
 
         <div className="relative z-10">
-          <section className="mx-auto max-w-3xl space-y-6 text-center">
+          <section className="mx-auto max-w-4xl space-y-6 pt-10 text-center md:pt-12">
             <div className="mx-auto inline-flex items-center gap-2 rounded-full border border-orange-200 bg-orange-50/90 px-4 py-2 text-sm font-medium text-orange-700 shadow-sm backdrop-blur">
               <Utensils className="h-4 w-4 text-orange-500" />
               Catering Shift Management
             </div>
 
             <div className="space-y-4">
-              <h1 className="bg-gradient-to-r from-orange-600 via-amber-600 to-emerald-700 bg-clip-text text-4xl font-bold tracking-tight text-transparent md:text-6xl">
+              <h1 className="bg-gradient-to-r from-orange-600 via-amber-600 to-emerald-700 bg-clip-text text-5xl font-bold tracking-tight text-transparent md:text-7xl">
                 Shift Manager
               </h1>
 
-              <p className="text-lg font-semibold text-slate-800 md:text-xl">
+              <p className="text-lg font-semibold text-slate-900 md:text-2xl">
                 現場のシフト管理を、もっとスマートに。
               </p>
 
-              <p className="mx-auto max-w-2xl leading-7 text-slate-600">
+              <p className="mx-auto max-w-3xl leading-8 text-slate-700">
                 案件管理、勤務枠、スタッフ割り振り、勤務不可情報、就労報告、月次集計までを一元管理。
                 ケータリング現場の複雑なシフト運用を、シンプルに整理します。
               </p>
             </div>
 
-            <div className="mx-auto grid max-w-2xl gap-3 pt-2 text-sm text-slate-700 md:grid-cols-3">
+            <div className="mx-auto grid max-w-3xl gap-3 pt-4 text-sm text-slate-700 md:grid-cols-3">
               <div className="rounded-xl border border-orange-100 bg-white/90 px-4 py-3 shadow-sm backdrop-blur">
                 <div className="flex items-center justify-center gap-2">
                   <ClipboardList className="h-4 w-4 text-orange-500" />
@@ -95,7 +92,7 @@ const HomePage = async () => {
             </div>
           </section>
 
-          <section className="mt-10 grid gap-5 md:grid-cols-2">
+          <section className="mx-auto mt-12 grid max-w-7xl gap-6 md:grid-cols-2">
             <Card className="group rounded-2xl border-orange-100 bg-white/95 text-slate-900 shadow-lg shadow-orange-100/50 backdrop-blur transition hover:-translate-y-1 hover:border-orange-200 hover:shadow-xl">
               <CardHeader className="space-y-4">
                 <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-orange-50 text-orange-600 ring-1 ring-orange-200">
@@ -163,7 +160,7 @@ const HomePage = async () => {
             </Card>
           </section>
 
-          <section className="mt-8 rounded-2xl border border-orange-100 bg-orange-50/70 p-4 backdrop-blur">
+          <section className="mx-auto mt-8 max-w-7xl rounded-2xl border border-orange-100 bg-orange-50/80 p-4 backdrop-blur">
             <div className="flex flex-col gap-3 text-sm text-slate-700 md:flex-row md:items-center md:justify-between">
               <div className="flex items-center gap-2">
                 <CalendarCheck className="h-4 w-4 text-emerald-600" />
