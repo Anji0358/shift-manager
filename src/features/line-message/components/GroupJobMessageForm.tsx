@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { Copy, MessageSquareText } from "lucide-react";
+import { MessageSquareText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { generateGroupJobMessage } from "../message-generators";
 import type {
@@ -9,6 +9,7 @@ import type {
     GroupMessageOptions,
     GroupMessageType,
 } from "../types";
+import { GeneratedMessagePanel } from "./GeneratedMessagePanel";
 
 type GroupJobMessageFormProps = {
     selectedMonth: string;
@@ -17,9 +18,6 @@ type GroupJobMessageFormProps = {
 
 const inputClassName =
     "w-full rounded-xl border bg-white px-3 py-2 text-sm shadow-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100";
-
-const textareaClassName =
-    "mt-4 min-h-96 w-full rounded-xl border bg-slate-50 p-4 text-sm leading-7 shadow-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100";
 
 export const GroupJobMessageForm = ({
     jobs,
@@ -321,38 +319,15 @@ export const GroupJobMessageForm = ({
                 </div>
             </div>
 
-            <div className="rounded-2xl border bg-white p-6 shadow-sm">
-                <div className="flex items-center justify-between gap-3">
-                    <div>
-                        <h3 className="font-semibold text-slate-900">
-                            生成結果
-                        </h3>
-                        <p className="mt-1 text-sm text-slate-500">
-                            必要に応じて編集してからコピーできます。
-                        </p>
-                    </div>
-
-                    <Button
-                        type="button"
-                        variant="outline"
-                        onClick={handleCopy}
-                        disabled={!message}
-                    >
-                        <Copy className="mr-2 h-4 w-4" />
-                        {copied ? "コピー済み" : "コピー"}
-                    </Button>
-                </div>
-
-                <textarea
-                    value={message}
-                    onChange={(event) => {
-                        setMessage(event.target.value);
-                        setCopied(false);
-                    }}
-                    placeholder="ここに生成されたメッセージが表示されます。"
-                    className={textareaClassName}
-                />
-            </div>
+            <GeneratedMessagePanel
+                message={message}
+                copied={copied}
+                onMessageChange={(value) => {
+                    setMessage(value);
+                    setCopied(false);
+                }}
+                onCopy={handleCopy}
+            />
         </div>
     );
 };

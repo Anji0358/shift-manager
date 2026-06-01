@@ -1,6 +1,6 @@
 "use client";
 
-import { Copy, MessageSquareText } from "lucide-react";
+import { MessageSquareText } from "lucide-react";
 import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import type {
@@ -14,6 +14,7 @@ import { generatePersonalRequestMessage } from "../message-generators/personal-m
 import { PersonalSummaryCards } from "./personal/PersonalSummaryCards";
 import { PersonalMessageTextFields } from "./personal/PersonalMessageTextFields";
 import { PersonalSlotList } from "./personal/PersonalSlotList";
+import { GeneratedMessagePanel } from "./GeneratedMessagePanel";
 
 type PersonalLineMessageFormProps = {
     selectedMonth: string;
@@ -235,38 +236,16 @@ export const PersonalLineMessageForm = ({
                 </div>
             </div>
 
-            <div className="rounded-2xl border bg-white p-6 shadow-sm">
-                <div className="flex items-center justify-between gap-3">
-                    <div>
-                        <h3 className="font-semibold text-slate-900">
-                            生成結果
-                        </h3>
-                        <p className="mt-1 text-sm text-slate-500">
-                            必要に応じて編集してからコピーできます。
-                        </p>
-                    </div>
-
-                    <Button
-                        type="button"
-                        variant="outline"
-                        onClick={handleCopy}
-                        disabled={!message}
-                    >
-                        <Copy className="mr-2 h-4 w-4" />
-                        {copied ? "コピー済み" : "コピー"}
-                    </Button>
-                </div>
-
-                <textarea
-                    value={message}
-                    onChange={(event) => {
-                        setMessage(event.target.value);
-                        setCopied(false);
-                    }}
-                    placeholder="ここに個人依頼文が表示されます。"
-                    className={resultTextareaClassName}
-                />
-            </div>
+            <GeneratedMessagePanel
+                message={message}
+                copied={copied}
+                placeholder="ここに個人依頼文が表示されます。"
+                onMessageChange={(value) => {
+                    setMessage(value);
+                    setCopied(false);
+                }}
+                onCopy={handleCopy}
+            />
         </div>
     );
 };
