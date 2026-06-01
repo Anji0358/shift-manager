@@ -1,4 +1,5 @@
 import { Card } from "@/components/ui/card";
+import { bridalStyles } from "@/components/shared/design-tokens";
 
 type BridalCardProps = {
     children: React.ReactNode;
@@ -8,10 +9,7 @@ type BridalCardProps = {
 export const BridalCard = ({ children, className }: BridalCardProps) => {
     return (
         <Card
-            className={[
-                "rounded-2xl border-[#eadcc1] bg-white/88 text-slate-900 shadow-lg shadow-yellow-900/5 backdrop-blur",
-                className,
-            ]
+            className={[bridalStyles.card.base, className]
                 .filter(Boolean)
                 .join(" ")}
         >
