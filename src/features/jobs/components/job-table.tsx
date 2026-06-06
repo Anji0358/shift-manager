@@ -1,6 +1,7 @@
 import type { Job, JobShiftSlot } from "@prisma/client";
 import { Badge } from "@/components/ui/badge";
 import { LinkButton } from "@/components/shared/link-button";
+import { bridalStyles } from "@/components/shared/design-tokens";
 import {
     Table,
     TableBody,
@@ -26,16 +27,33 @@ type JobTableProps = {
 
 export const JobTable = ({ jobs }: JobTableProps) => {
     return (
-        <div className="rounded-xl border bg-white">
+        <div className={bridalStyles.table.wrapper}>
             <Table>
                 <TableHeader>
-                    <TableRow>
-                        <TableHead>勤務日</TableHead>
-                        <TableHead>案件名</TableHead>
-                        <TableHead>勤務枠</TableHead>
-                        <TableHead>勤務場所</TableHead>
-                        <TableHead>充足状況</TableHead>
-                        <TableHead className="text-right">操作</TableHead>
+                    <TableRow className={bridalStyles.table.headerRow}>
+                        <TableHead className={bridalStyles.table.head}>
+                            勤務日
+                        </TableHead>
+                        <TableHead className={bridalStyles.table.head}>
+                            案件名
+                        </TableHead>
+                        <TableHead className={bridalStyles.table.head}>
+                            勤務枠
+                        </TableHead>
+                        <TableHead className={bridalStyles.table.head}>
+                            勤務場所
+                        </TableHead>
+                        <TableHead className={bridalStyles.table.head}>
+                            充足状況
+                        </TableHead>
+                        <TableHead
+                            className={[
+                                bridalStyles.table.head,
+                                "text-right",
+                            ].join(" ")}
+                        >
+                            操作
+                        </TableHead>
                     </TableRow>
                 </TableHeader>
 
@@ -45,23 +63,49 @@ export const JobTable = ({ jobs }: JobTableProps) => {
                         const isFulfilled = job.fulfillmentRate >= 100;
 
                         return (
-                            <TableRow key={job.id}>
-                                <TableCell>{formatDate(job.workDate)}</TableCell>
+                            <TableRow
+                                key={job.id}
+                                className={bridalStyles.table.row}
+                            >
+                                <TableCell className="whitespace-nowrap text-sm text-slate-700">
+                                    {formatDate(job.workDate)}
+                                </TableCell>
 
-                                <TableCell className="font-medium">{job.title}</TableCell>
+                                <TableCell className="min-w-[180px]">
+                                    <p
+                                        className={[
+                                            bridalStyles.text.title,
+                                            "text-base",
+                                        ].join(" ")}
+                                    >
+                                        {job.title}
+                                    </p>
+                                </TableCell>
 
-                                <TableCell>{shiftSlotSummary}</TableCell>
+                                <TableCell className="whitespace-nowrap text-sm text-slate-600">
+                                    {shiftSlotSummary}
+                                </TableCell>
 
-                                <TableCell>{job.location}</TableCell>
+                                <TableCell className="max-w-[220px] text-sm text-slate-600">
+                                    <span className="line-clamp-2">
+                                        {job.location}
+                                    </span>
+                                </TableCell>
 
                                 <TableCell>
-                                    <div className="space-y-1">
+                                    <div className="space-y-1.5">
                                         <div className="flex items-center gap-2">
-                                            <Badge variant={isFulfilled ? "default" : "secondary"}>
+                                            <Badge
+                                                className={
+                                                    isFulfilled
+                                                        ? bridalStyles.badge.fulfilled
+                                                        : bridalStyles.badge.pending
+                                                }
+                                            >
                                                 {isFulfilled ? "充足" : "未充足"}
                                             </Badge>
 
-                                            <span className="text-sm text-slate-600">
+                                            <span className="text-sm font-medium text-slate-700">
                                                 {job.assignedPeople}/{job.requiredPeople}人
                                             </span>
                                         </div>
@@ -79,6 +123,7 @@ export const JobTable = ({ jobs }: JobTableProps) => {
                                             href={`/admin/jobs/${job.id}`}
                                             size="sm"
                                             variant="outline"
+                                            className={bridalStyles.button.secondary}
                                         >
                                             詳細
                                         </LinkButton>
@@ -86,6 +131,7 @@ export const JobTable = ({ jobs }: JobTableProps) => {
                                         <LinkButton
                                             href={`/admin/jobs/${job.id}/assignments`}
                                             size="sm"
+                                            className={bridalStyles.button.primary}
                                         >
                                             スタッフ割り振り
                                         </LinkButton>
@@ -99,7 +145,7 @@ export const JobTable = ({ jobs }: JobTableProps) => {
                         <TableRow>
                             <TableCell
                                 colSpan={6}
-                                className="py-8 text-center text-slate-500"
+                                className="py-10 text-center text-sm text-slate-500"
                             >
                                 案件がありません。
                             </TableCell>
