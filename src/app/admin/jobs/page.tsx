@@ -9,6 +9,7 @@ import { getCurrentYearMonth, getMonthRange } from "@/lib/month";
 import { PageShell } from "@/components/shared/page-shell";
 import { PageHeader } from "@/components/shared/page-header";
 import { BridalCard } from "@/components/shared/bridal-card";
+import { bridalStyles } from "@/components/shared/design-tokens";
 import { CalendarDays, ClipboardList, Plus } from "lucide-react";
 
 type AdminJobsPageProps = {
@@ -33,7 +34,7 @@ const AdminJobsPage = async ({ searchParams }: AdminJobsPageProps) => {
                 action={
                     <LinkButton
                         href="/admin/jobs/new"
-                        className="rounded-xl bg-[#b8872d] px-5 text-white shadow-md shadow-yellow-900/10 hover:bg-[#a77925] hover:text-white"
+                        className={[bridalStyles.button.primary, "px-5"].join(" ")}
                     >
                         <Plus className="mr-2 h-4 w-4" />
                         案件を追加
@@ -43,7 +44,7 @@ const AdminJobsPage = async ({ searchParams }: AdminJobsPageProps) => {
 
             <div className="space-y-6">
                 {message ? (
-                    <div className="rounded-2xl border border-[#eadcc1] bg-white/82 px-5 py-4 shadow-md shadow-yellow-900/5 backdrop-blur">
+                    <div className={[bridalStyles.card.base, "px-5 py-4"].join(" ")}>
                         <SuccessMessage message={message} />
                     </div>
                 ) : null}
@@ -51,12 +52,17 @@ const AdminJobsPage = async ({ searchParams }: AdminJobsPageProps) => {
                 <BridalCard>
                     <div className="flex flex-col gap-4 p-5 md:flex-row md:items-end md:justify-between">
                         <div className="flex items-start gap-3">
-                            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-[#ead9b5] bg-[#fffaf0] text-[#b8872d]">
+                            <div className={bridalStyles.icon.circle}>
                                 <CalendarDays className="h-5 w-5" />
                             </div>
 
                             <div>
-                                <h2 className="font-serif text-xl font-medium text-slate-900">
+                                <h2
+                                    className={[
+                                        bridalStyles.text.title,
+                                        "text-xl",
+                                    ].join(" ")}
+                                >
                                     表示月の選択
                                 </h2>
                                 <p className="mt-1 text-sm text-slate-500">
@@ -72,22 +78,29 @@ const AdminJobsPage = async ({ searchParams }: AdminJobsPageProps) => {
                             <div className="space-y-2">
                                 <label
                                     htmlFor="month"
-                                    className="text-sm font-medium text-slate-700"
+                                    className={bridalStyles.form.label}
                                 >
                                     対象月
                                 </label>
+
                                 <Input
                                     id="month"
                                     name="month"
                                     type="month"
                                     defaultValue={targetMonth}
-                                    className="h-11 rounded-xl border-[#eadcc1] bg-white/90 shadow-sm focus-visible:ring-[#b8872d]"
+                                    className={[
+                                        bridalStyles.form.input,
+                                        "h-11",
+                                    ].join(" ")}
                                 />
                             </div>
 
                             <SubmitButton
                                 pendingText="表示中..."
-                                className="h-11 rounded-xl bg-slate-900 px-5 text-white shadow-md shadow-slate-900/10 hover:bg-slate-700 hover:text-white"
+                                className={[
+                                    bridalStyles.button.dark,
+                                    "h-11 px-5",
+                                ].join(" ")}
                             >
                                 表示
                             </SubmitButton>
@@ -97,12 +110,17 @@ const AdminJobsPage = async ({ searchParams }: AdminJobsPageProps) => {
 
                 <section className="space-y-4">
                     <div className="flex items-start gap-3">
-                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[#ead9b5] bg-[#fffaf0] text-[#b8872d]">
+                        <div className={bridalStyles.icon.smallCircle}>
                             <ClipboardList className="h-5 w-5" />
                         </div>
 
                         <div>
-                            <h2 className="font-serif text-2xl font-medium tracking-tight text-slate-900">
+                            <h2
+                                className={[
+                                    bridalStyles.text.title,
+                                    "text-2xl tracking-tight",
+                                ].join(" ")}
+                            >
                                 案件一覧
                             </h2>
                             <p className="mt-1 text-sm text-slate-500">
