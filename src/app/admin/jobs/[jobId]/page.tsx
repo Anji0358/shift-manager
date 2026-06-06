@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { PageShell } from "@/components/shared/page-shell";
 import { getActiveStaffCandidates, getJobDetail } from "@/features/jobs/queries";
 import { JobAssignedStaffTable } from "@/features/jobs/components/job-assigned-staff-table";
 import { JobBasicInfoCards } from "@/features/jobs/components/job-basic-info-cards";
@@ -52,37 +53,39 @@ const AdminJobDetailPage = async ({ params }: AdminJobDetailPageProps) => {
     });
 
     return (
-        <div className="space-y-8">
-            <JobDetailHeader
-                jobId={job.id}
-                title={job.title}
-                isFulfilled={isFulfilled}
-            />
+        <PageShell>
+            <div className="space-y-6">
+                <JobDetailHeader
+                    jobId={job.id}
+                    title={job.title}
+                    isFulfilled={isFulfilled}
+                />
 
-            <JobSummaryCards
-                totalRequiredPeople={totalRequiredPeople}
-                assignedPeople={assignedPeople}
-                shortagePeople={shortagePeople}
-                fulfillmentRate={fulfillmentRate}
-            />
+                <JobSummaryCards
+                    totalRequiredPeople={totalRequiredPeople}
+                    assignedPeople={assignedPeople}
+                    shortagePeople={shortagePeople}
+                    fulfillmentRate={fulfillmentRate}
+                />
 
-            <JobBasicInfoCards job={job} />
+                <JobBasicInfoCards job={job} />
 
-            <JobShiftSlotTable jobId={job.id} shiftSlots={job.shiftSlots} />
+                <JobShiftSlotTable jobId={job.id} shiftSlots={job.shiftSlots} />
 
-            <ExternalShiftAssignmentTable
-                jobId={job.id}
-                externalAssignments={externalAssignments}
-            />
+                <ExternalShiftAssignmentTable
+                    jobId={job.id}
+                    externalAssignments={externalAssignments}
+                />
 
-            <JobAssignedStaffTable assignments={assignedAssignments} />
+                <JobAssignedStaffTable assignments={assignedAssignments} />
 
-            <JobWorkReportTable reports={job.workReports} />
+                <JobWorkReportTable reports={job.workReports} />
 
-            <JobCandidateTable candidates={candidates} />
+                <JobCandidateTable candidates={candidates} />
 
-            <JobDangerZone jobId={job.id} />
-        </div>
+                <JobDangerZone jobId={job.id} />
+            </div>
+        </PageShell>
     );
 };
 
