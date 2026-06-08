@@ -3,11 +3,14 @@ import { getJobTemplates } from "@/features/job-templates/queries";
 import { TemplateSelector } from "@/features/job-templates/components/template-selector";
 import { SubmitButton } from "@/components/shared/submit-button";
 import { LinkButton } from "@/components/shared/link-button";
+import { PageShell } from "@/components/shared/page-shell";
+import { PageHeader } from "@/components/shared/page-header";
+import { BridalCard } from "@/components/shared/bridal-card";
+import { bridalStyles } from "@/components/shared/design-tokens";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import {
-    Card,
     CardContent,
     CardHeader,
     CardTitle,
@@ -19,6 +22,14 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
+import {
+    Banknote,
+    BriefcaseBusiness,
+    CalendarPlus,
+    ClipboardList,
+    Clock,
+    Shirt,
+} from "lucide-react";
 
 type NewJobPageProps = {
     searchParams: Promise<{
@@ -38,113 +49,145 @@ const NewJobPage = async ({ searchParams }: NewJobPageProps) => {
     const selectedTemplateSlot = selectedTemplate?.shiftSlots[0];
 
     return (
-        <div className="space-y-6">
-            <section>
-                <h1 className="text-3xl font-bold">案件追加</h1>
-                <p className="mt-2 text-slate-600">
-                    案件の基本情報、勤務枠、勤務条件、時給設定を登録します。
-                </p>
-            </section>
+        <PageShell>
+            <PageHeader
+                title="案件追加"
+                description="案件の基本情報、勤務枠、勤務条件、時給設定を登録します。"
+                action={
+                    <LinkButton
+                        href="/admin/jobs"
+                        variant="outline"
+                        className={bridalStyles.button.secondary}
+                    >
+                        案件一覧へ戻る
+                    </LinkButton>
+                }
+            />
 
-            <Card>
-                <CardHeader>
-                    <CardTitle>案件情報</CardTitle>
+            <BridalCard>
+                <CardHeader className="p-5 pb-3">
+                    <div className="flex items-start gap-3">
+                        <div className={bridalStyles.icon.circle}>
+                            <CalendarPlus className="h-5 w-5" />
+                        </div>
+
+                        <div>
+                            <CardTitle
+                                className={[
+                                    bridalStyles.text.title,
+                                    "text-xl",
+                                ].join(" ")}
+                            >
+                                案件情報
+                            </CardTitle>
+                            <p className="mt-1 text-sm text-slate-500">
+                                テンプレートを使う場合は、先にテンプレートを選択してください。
+                            </p>
+                        </div>
+                    </div>
                 </CardHeader>
 
-                <CardContent>
+                <CardContent className="p-5 pt-2">
                     <form action={createJob} className="space-y-8">
-                        <TemplateSelector
-                            templates={templates}
-                            selectedTemplateId={templateId}
-                        />
+                        <section className="rounded-2xl border border-[#f0e5d0] bg-[#fffdf8]/70 p-5">
+                            <TemplateSelector
+                                templates={templates}
+                                selectedTemplateId={templateId}
+                            />
+                        </section>
 
-                        <section className="space-y-4">
-                            <h2 className="text-lg font-semibold">基本情報</h2>
-
+                        <FormSection
+                            title="基本情報"
+                            description="案件名、日付、場所、集合場所を登録します。"
+                            icon={<BriefcaseBusiness className="h-5 w-5" />}
+                        >
                             <div className="grid gap-4 md:grid-cols-2">
-                                <div className="space-y-2">
-                                    <Label htmlFor="title">案件名</Label>
+                                <FormField label="案件名" htmlFor="title">
                                     <Input
                                         id="title"
                                         name="title"
                                         placeholder="例：横浜ホテル宴会"
                                         defaultValue={selectedTemplate?.title ?? ""}
                                         required
+                                        className={bridalStyles.form.input}
                                     />
-                                </div>
+                                </FormField>
 
-                                <div className="space-y-2">
-                                    <Label htmlFor="workDate">日付</Label>
+                                <FormField label="日付" htmlFor="workDate">
                                     <Input
                                         id="workDate"
                                         name="workDate"
                                         type="date"
                                         required
+                                        className={bridalStyles.form.input}
                                     />
-                                </div>
+                                </FormField>
 
-                                <div className="space-y-2">
-                                    <Label htmlFor="location">場所</Label>
+                                <FormField label="場所" htmlFor="location">
                                     <Input
                                         id="location"
                                         name="location"
                                         placeholder="例：横浜ホテル"
                                         defaultValue={selectedTemplate?.location ?? ""}
                                         required
+                                        className={bridalStyles.form.input}
                                     />
-                                </div>
+                                </FormField>
 
-                                <div className="space-y-2">
-                                    <Label htmlFor="meetingPlace">集合場所</Label>
+                                <FormField label="集合場所" htmlFor="meetingPlace">
                                     <Input
                                         id="meetingPlace"
                                         name="meetingPlace"
                                         placeholder="例：横浜駅中央改札"
                                         defaultValue={selectedTemplate?.meetingPlace ?? ""}
+                                        className={bridalStyles.form.input}
                                     />
-                                </div>
+                                </FormField>
                             </div>
-                        </section>
+                        </FormSection>
 
-                        <section className="space-y-4">
-                            <h2 className="text-lg font-semibold">勤務枠</h2>
-
+                        <FormSection
+                            title="勤務枠"
+                            description="最初に作成する勤務時間帯と必要人数を登録します。"
+                            icon={<Clock className="h-5 w-5" />}
+                        >
                             <div className="grid gap-4 md:grid-cols-4">
-                                <div className="space-y-2">
-                                    <Label htmlFor="slotName">勤務枠名</Label>
+                                <FormField label="勤務枠名" htmlFor="slotName">
                                     <Input
                                         id="slotName"
                                         name="slotName"
                                         placeholder="例：通し勤務"
-                                        defaultValue={selectedTemplateSlot?.name ?? "基本勤務枠"}
+                                        defaultValue={
+                                            selectedTemplateSlot?.name ?? "基本勤務枠"
+                                        }
                                         required
+                                        className={bridalStyles.form.input}
                                     />
-                                </div>
+                                </FormField>
 
-                                <div className="space-y-2">
-                                    <Label htmlFor="startTime">開始時間</Label>
+                                <FormField label="開始時間" htmlFor="startTime">
                                     <Input
                                         id="startTime"
                                         name="startTime"
                                         type="time"
                                         defaultValue={selectedTemplateSlot?.startTime ?? ""}
                                         required
+                                        className={bridalStyles.form.input}
                                     />
-                                </div>
+                                </FormField>
 
-                                <div className="space-y-2">
-                                    <Label htmlFor="endTime">終了時間</Label>
+                                <FormField label="終了時間" htmlFor="endTime">
                                     <Input
                                         id="endTime"
                                         name="endTime"
                                         type="time"
                                         defaultValue={selectedTemplateSlot?.endTime ?? ""}
                                         required
+                                        className={bridalStyles.form.input}
                                     />
-                                </div>
+                                </FormField>
 
-                                <div className="space-y-2">
-                                    <Label htmlFor="requiredPeople">必要人数</Label>
+                                <FormField label="必要人数" htmlFor="requiredPeople">
                                     <Input
                                         id="requiredPeople"
                                         name="requiredPeople"
@@ -152,19 +195,23 @@ const NewJobPage = async ({ searchParams }: NewJobPageProps) => {
                                         min={1}
                                         step={1}
                                         placeholder="例：5"
-                                        defaultValue={selectedTemplateSlot?.requiredPeople ?? ""}
+                                        defaultValue={
+                                            selectedTemplateSlot?.requiredPeople ?? ""
+                                        }
                                         required
+                                        className={bridalStyles.form.input}
                                     />
-                                </div>
+                                </FormField>
                             </div>
-                        </section>
+                        </FormSection>
 
-                        <section className="space-y-4">
-                            <h2 className="text-lg font-semibold">勤務条件</h2>
-
+                        <FormSection
+                            title="勤務条件"
+                            description="休憩、食事、交通費、服装、持ち物、備考を登録します。"
+                            icon={<Shirt className="h-5 w-5" />}
+                        >
                             <div className="grid gap-4 md:grid-cols-3">
-                                <div className="space-y-2">
-                                    <Label htmlFor="breakMinutes">休憩時間</Label>
+                                <FormField label="休憩時間" htmlFor="breakMinutes">
                                     <Input
                                         id="breakMinutes"
                                         name="breakMinutes"
@@ -173,18 +220,21 @@ const NewJobPage = async ({ searchParams }: NewJobPageProps) => {
                                         placeholder="例：30"
                                         defaultValue={selectedTemplate?.breakMinutes ?? 0}
                                         required
+                                        className={bridalStyles.form.input}
                                     />
-                                </div>
+                                </FormField>
 
-                                <div className="space-y-2">
-                                    <Label htmlFor="hasMeal">食事の有無</Label>
+                                <FormField label="食事の有無" htmlFor="hasMeal">
                                     <Select
                                         name="hasMeal"
                                         defaultValue={
                                             selectedTemplate?.hasMeal ? "true" : "false"
                                         }
                                     >
-                                        <SelectTrigger id="hasMeal">
+                                        <SelectTrigger
+                                            id="hasMeal"
+                                            className={bridalStyles.form.input}
+                                        >
                                             <SelectValue placeholder="食事の有無を選択" />
                                         </SelectTrigger>
                                         <SelectContent>
@@ -192,64 +242,75 @@ const NewJobPage = async ({ searchParams }: NewJobPageProps) => {
                                             <SelectItem value="false">なし</SelectItem>
                                         </SelectContent>
                                     </Select>
-                                </div>
+                                </FormField>
 
-                                <div className="space-y-2">
-                                    <Label htmlFor="transportationFee">交通費</Label>
+                                <FormField label="交通費" htmlFor="transportationFee">
                                     <Input
                                         id="transportationFee"
                                         name="transportationFee"
                                         type="number"
                                         min={0}
                                         placeholder="例：800"
-                                        defaultValue={selectedTemplate?.transportationFee ?? 0}
+                                        defaultValue={
+                                            selectedTemplate?.transportationFee ?? 0
+                                        }
                                         required
+                                        className={bridalStyles.form.input}
                                     />
-                                </div>
+                                </FormField>
 
-                                <div className="space-y-2">
-                                    <Label htmlFor="dressCode">服装</Label>
+                                <FormField label="服装" htmlFor="dressCode">
                                     <Input
                                         id="dressCode"
                                         name="dressCode"
                                         placeholder="例：黒スラックス・白シャツ"
                                         defaultValue={selectedTemplate?.dressCode ?? ""}
+                                        className={bridalStyles.form.input}
                                     />
-                                </div>
+                                </FormField>
                             </div>
 
-                            <div className="space-y-2">
-                                <Label htmlFor="belongings">持ち物</Label>
+                            <FormField label="持ち物" htmlFor="belongings">
                                 <Input
                                     id="belongings"
                                     name="belongings"
                                     placeholder="例：メモ帳、黒靴"
                                     defaultValue={selectedTemplate?.belongings ?? ""}
+                                    className={bridalStyles.form.input}
                                 />
-                            </div>
+                            </FormField>
 
-                            <div className="space-y-2">
-                                <Label htmlFor="note">備考</Label>
+                            <FormField label="備考" htmlFor="note">
                                 <Textarea
                                     id="note"
                                     name="note"
                                     placeholder="注意事項や補足情報を入力してください"
                                     defaultValue={selectedTemplate?.note ?? ""}
+                                    className={[
+                                        bridalStyles.form.input,
+                                        "min-h-28",
+                                    ].join(" ")}
                                 />
-                            </div>
-                        </section>
+                            </FormField>
+                        </FormSection>
 
-                        <section className="space-y-4">
-                            <h2 className="text-lg font-semibold">時給設定</h2>
-
+                        <FormSection
+                            title="時給設定"
+                            description="スタッフごとの時給を使うか、案件一律の時給を使うかを設定します。"
+                            icon={<Banknote className="h-5 w-5" />}
+                        >
                             <div className="grid gap-4 md:grid-cols-2">
-                                <div className="space-y-2">
-                                    <Label htmlFor="wageType">時給タイプ</Label>
+                                <FormField label="時給タイプ" htmlFor="wageType">
                                     <Select
                                         name="wageType"
-                                        defaultValue={selectedTemplate?.wageType ?? "EMPLOYEE"}
+                                        defaultValue={
+                                            selectedTemplate?.wageType ?? "EMPLOYEE"
+                                        }
                                     >
-                                        <SelectTrigger id="wageType">
+                                        <SelectTrigger
+                                            id="wageType"
+                                            className={bridalStyles.form.input}
+                                        >
                                             <SelectValue placeholder="時給タイプを選択" />
                                         </SelectTrigger>
                                         <SelectContent>
@@ -261,37 +322,108 @@ const NewJobPage = async ({ searchParams }: NewJobPageProps) => {
                                             </SelectItem>
                                         </SelectContent>
                                     </Select>
-                                </div>
+                                </FormField>
 
-                                <div className="space-y-2">
-                                    <Label htmlFor="fixedHourlyWage">案件一律時給</Label>
+                                <FormField
+                                    label="案件一律時給"
+                                    htmlFor="fixedHourlyWage"
+                                >
                                     <Input
                                         id="fixedHourlyWage"
                                         name="fixedHourlyWage"
                                         type="number"
                                         min={0}
                                         placeholder="例：1400"
-                                        defaultValue={selectedTemplate?.fixedHourlyWage ?? ""}
+                                        defaultValue={
+                                            selectedTemplate?.fixedHourlyWage ?? ""
+                                        }
+                                        className={bridalStyles.form.input}
                                     />
                                     <p className="text-xs text-slate-500">
                                         スタッフごとの時給を使う場合は空欄で問題ありません。
                                     </p>
-                                </div>
+                                </FormField>
                             </div>
-                        </section>
+                        </FormSection>
 
-                        <div className="flex justify-end gap-3">
-                            <LinkButton href="/admin/jobs" variant="outline">
+                        <div className="flex flex-col-reverse gap-3 border-t border-[#f0e5d0] pt-5 sm:flex-row sm:justify-end">
+                            <LinkButton
+                                href="/admin/jobs"
+                                variant="outline"
+                                className={bridalStyles.button.secondary}
+                            >
                                 キャンセル
                             </LinkButton>
 
-                            <SubmitButton pendingText="作成中...">
+                            <SubmitButton
+                                pendingText="作成中..."
+                                className={[
+                                    bridalStyles.button.primary,
+                                    "px-6",
+                                ].join(" ")}
+                            >
+                                <ClipboardList className="mr-2 h-4 w-4" />
                                 案件を作成
                             </SubmitButton>
                         </div>
                     </form>
                 </CardContent>
-            </Card>
+            </BridalCard>
+        </PageShell>
+    );
+};
+
+type FormSectionProps = {
+    title: string;
+    description: string;
+    icon: React.ReactNode;
+    children: React.ReactNode;
+};
+
+const FormSection = ({
+    title,
+    description,
+    icon,
+    children,
+}: FormSectionProps) => {
+    return (
+        <section className="space-y-4 rounded-2xl border border-[#f0e5d0] bg-white/70 p-5">
+            <div className="flex items-start gap-3">
+                <div className={bridalStyles.icon.smallCircle}>{icon}</div>
+
+                <div>
+                    <h2
+                        className={[
+                            bridalStyles.text.title,
+                            "text-lg",
+                        ].join(" ")}
+                    >
+                        {title}
+                    </h2>
+                    <p className="mt-1 text-sm text-slate-500">
+                        {description}
+                    </p>
+                </div>
+            </div>
+
+            <div className="space-y-4">{children}</div>
+        </section>
+    );
+};
+
+type FormFieldProps = {
+    label: string;
+    htmlFor: string;
+    children: React.ReactNode;
+};
+
+const FormField = ({ label, htmlFor, children }: FormFieldProps) => {
+    return (
+        <div className="space-y-2">
+            <Label htmlFor={htmlFor} className={bridalStyles.form.label}>
+                {label}
+            </Label>
+            {children}
         </div>
     );
 };
