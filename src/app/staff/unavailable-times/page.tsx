@@ -1,6 +1,5 @@
 import { Badge } from "@/components/ui/badge";
 import {
-    Card,
     CardContent,
     CardHeader,
     CardTitle,
@@ -16,6 +15,10 @@ import {
 import { ConfirmSubmitButton } from "@/components/shared/confirm-submit-button";
 import { LinkButton } from "@/components/shared/link-button";
 import { SuccessMessage } from "@/components/shared/success-message";
+import { PageShell } from "@/components/shared/page-shell";
+import { PageHeader } from "@/components/shared/page-header";
+import { BridalCard } from "@/components/shared/bridal-card";
+import { bridalStyles } from "@/components/shared/design-tokens";
 import { UnavailableTimeCardList } from "@/features/unavailable-times/components/unavailable-time-card-list";
 import { deleteUnavailableTime } from "@/features/unavailable-times/actions";
 import { getUnavailableTimesByEmployeeId } from "@/features/unavailable-times/queries";
@@ -26,6 +29,11 @@ import {
 import { getCurrentEmployeeId } from "@/lib/auth/current-user";
 import { formatDate } from "@/lib/format";
 import type { UnavailableTime } from "@prisma/client";
+import {
+    CalendarX2,
+    Plus,
+    Trash2,
+} from "lucide-react";
 
 type StaffUnavailableTimesPageProps = {
     searchParams: Promise<{
@@ -71,112 +79,170 @@ const StaffUnavailableTimesPage = async ({
         await getUnavailableTimesByEmployeeId(currentEmployeeId);
 
     return (
-        <div className="space-y-6">
-            <section className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
-                <div>
-                    <h1 className="text-3xl font-bold">NGの日時</h1>
+        <PageShell>
+            <PageHeader
+                title="NGの日時"
+                description="登録した内容は、管理者がスタッフを割り振るときの候補者判定に使われます。授業・予定・試験などでNGの日時を管理できます。"
+                action={
+                    <LinkButton
+                        href="/staff/unavailable-times/new"
+                        className={bridalStyles.button.primary}
+                    >
+                        <Plus className="mr-2 h-4 w-4" />
+                        NGの日時を追加
+                    </LinkButton>
+                }
+            />
 
-                    <p className="mt-2 text-slate-600">
-                        登録した内容は、管理者がスタッフを割り振るときの候補者判定に使われます。
-                        授業・予定・試験などでNGの日時を管理できます。
-                    </p>
-                </div>
-
-                <div className="space-y-3 md:text-right">
-                    <SuccessMessage message={message} />
-
-                    <div className="flex flex-col gap-3 sm:flex-row md:justify-end">
-                        <LinkButton href="/staff/unavailable-times/new">
-                            NGの日時を追加
-                        </LinkButton>
+            <div className="space-y-6">
+                {message ? (
+                    <div className={[bridalStyles.card.base, "px-5 py-4"].join(" ")}>
+                        <SuccessMessage message={message} />
                     </div>
-                </div>
-            </section>
+                ) : null}
 
-            <Card>
-                <CardHeader>
-                    <CardTitle>登録済みのNGの日時</CardTitle>
-                </CardHeader>
+                <BridalCard className="overflow-hidden">
+                    <CardHeader className="p-5 pb-3">
+                        <div className="flex items-start gap-3">
+                            <div className={bridalStyles.icon.circle}>
+                                <CalendarX2 className="h-5 w-5" />
+                            </div>
 
-                <CardContent>
-                    <div className="hidden md:block">
-                        <Table>
-                            <TableHeader>
-                                <TableRow>
-                                    <TableHead>種類</TableHead>
-                                    <TableHead>日付</TableHead>
-                                    <TableHead>曜日</TableHead>
-                                    <TableHead>時間</TableHead>
-                                    <TableHead>理由・メモ</TableHead>
-                                    <TableHead className="text-right">操作</TableHead>
-                                </TableRow>
-                            </TableHeader>
+                            <div>
+                                <CardTitle
+                                    className={[
+                                        bridalStyles.text.title,
+                                        "text-xl",
+                                    ].join(" ")}
+                                >
+                                    登録済みのNGの日時
+                                </CardTitle>
+                                <p className="mt-1 text-sm text-slate-500">
+                                    自分が勤務できない日時や毎週固定の予定を確認・削除できます。
+                                </p>
+                            </div>
+                        </div>
+                    </CardHeader>
 
-                            <TableBody>
-                                {myUnavailableTimes.map((unavailableTime) => (
-                                    <TableRow key={unavailableTime.id}>
-                                        <TableCell>
-                                            <Badge variant="secondary">
-                                                {unavailableTypeLabel[unavailableTime.type]}
-                                            </Badge>
-                                        </TableCell>
+                    <CardContent className="p-5 pt-2">
+                        <div className="hidden md:block">
+                            <div className={bridalStyles.table.wrapper}>
+                                <Table>
+                                    <TableHeader>
+                                        <TableRow className={bridalStyles.table.headerRow}>
+                                            <TableHead className={bridalStyles.table.head}>
+                                                種類
+                                            </TableHead>
 
-                                        <TableCell>
-                                            {getUnavailableDateText(unavailableTime)}
-                                        </TableCell>
+                                            <TableHead className={bridalStyles.table.head}>
+                                                日付
+                                            </TableHead>
 
-                                        <TableCell>
-                                            {getUnavailableDayOfWeekText(unavailableTime)}
-                                        </TableCell>
+                                            <TableHead className={bridalStyles.table.head}>
+                                                曜日
+                                            </TableHead>
 
-                                        <TableCell>
-                                            {getUnavailableTimeText(unavailableTime)}
-                                        </TableCell>
+                                            <TableHead className={bridalStyles.table.head}>
+                                                時間
+                                            </TableHead>
 
-                                        <TableCell>
-                                            {unavailableTime.reason || "-"}
-                                        </TableCell>
+                                            <TableHead className={bridalStyles.table.head}>
+                                                理由・メモ
+                                            </TableHead>
 
-                                        <TableCell className="text-right">
-                                            <form action={deleteUnavailableTime}>
-                                                <input
-                                                    type="hidden"
-                                                    name="unavailableTimeId"
-                                                    value={unavailableTime.id}
-                                                />
+                                            <TableHead
+                                                className={[
+                                                    bridalStyles.table.head,
+                                                    "text-right",
+                                                ].join(" ")}
+                                            >
+                                                操作
+                                            </TableHead>
+                                        </TableRow>
+                                    </TableHeader>
 
-                                                <ConfirmSubmitButton
-                                                    size="sm"
-                                                    variant="outline"
-                                                    message="このNGの日時を削除します。よろしいですか？"
+                                    <TableBody>
+                                        {myUnavailableTimes.map((unavailableTime) => (
+                                            <TableRow
+                                                key={unavailableTime.id}
+                                                className={bridalStyles.table.row}
+                                            >
+                                                <TableCell>
+                                                    <Badge className={bridalStyles.badge.neutral}>
+                                                        {
+                                                            unavailableTypeLabel[
+                                                            unavailableTime.type
+                                                            ]
+                                                        }
+                                                    </Badge>
+                                                </TableCell>
+
+                                                <TableCell className="whitespace-nowrap text-sm text-slate-600">
+                                                    {getUnavailableDateText(unavailableTime)}
+                                                </TableCell>
+
+                                                <TableCell className="whitespace-nowrap text-sm text-slate-600">
+                                                    {getUnavailableDayOfWeekText(
+                                                        unavailableTime,
+                                                    )}
+                                                </TableCell>
+
+                                                <TableCell className="whitespace-nowrap text-sm text-slate-600">
+                                                    {getUnavailableTimeText(unavailableTime)}
+                                                </TableCell>
+
+                                                <TableCell>
+                                                    <p className="max-w-sm text-sm leading-6 text-slate-600">
+                                                        {unavailableTime.reason || "-"}
+                                                    </p>
+                                                </TableCell>
+
+                                                <TableCell className="text-right">
+                                                    <form action={deleteUnavailableTime}>
+                                                        <input
+                                                            type="hidden"
+                                                            name="unavailableTimeId"
+                                                            value={unavailableTime.id}
+                                                        />
+
+                                                        <ConfirmSubmitButton
+                                                            size="sm"
+                                                            variant="outline"
+                                                            className={bridalStyles.button.danger}
+                                                            message="このNGの日時を削除します。よろしいですか？"
+                                                        >
+                                                            <Trash2 className="mr-2 h-4 w-4" />
+                                                            削除
+                                                        </ConfirmSubmitButton>
+                                                    </form>
+                                                </TableCell>
+                                            </TableRow>
+                                        ))}
+
+                                        {myUnavailableTimes.length === 0 && (
+                                            <TableRow>
+                                                <TableCell
+                                                    colSpan={6}
+                                                    className="py-10 text-center text-sm text-slate-500"
                                                 >
-                                                    削除
-                                                </ConfirmSubmitButton>
-                                            </form>
-                                        </TableCell>
-                                    </TableRow>
-                                ))}
+                                                    NGの日時はまだ登録されていません。
+                                                </TableCell>
+                                            </TableRow>
+                                        )}
+                                    </TableBody>
+                                </Table>
+                            </div>
+                        </div>
 
-                                {myUnavailableTimes.length === 0 && (
-                                    <TableRow>
-                                        <TableCell
-                                            colSpan={6}
-                                            className="py-8 text-center text-slate-500"
-                                        >
-                                            NGの日時はまだ登録されていません。
-                                        </TableCell>
-                                    </TableRow>
-                                )}
-                            </TableBody>
-                        </Table>
-                    </div>
-
-                    <div className="md:hidden">
-                        <UnavailableTimeCardList unavailableTimes={myUnavailableTimes} />
-                    </div>
-                </CardContent>
-            </Card>
-        </div>
+                        <div className="md:hidden">
+                            <UnavailableTimeCardList
+                                unavailableTimes={myUnavailableTimes}
+                            />
+                        </div>
+                    </CardContent>
+                </BridalCard>
+            </div>
+        </PageShell>
     );
 };
 
