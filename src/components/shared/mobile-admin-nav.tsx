@@ -10,6 +10,7 @@ import {
     Users,
     WalletCards,
 } from "lucide-react";
+import { appStyles } from "@/components/shared/design-tokens";
 
 const navItems = [
     {
@@ -54,8 +55,8 @@ export const MobileAdminNav = () => {
     const pathname = usePathname();
 
     return (
-        <nav className="fixed inset-x-0 bottom-0 z-50 border-t bg-white md:hidden">
-            <div className="grid grid-cols-6">
+        <nav className={appStyles.nav.mobileWrapper}>
+            <div className="grid grid-cols-6 px-1 py-1">
                 {navItems.map((item) => {
                     const Icon = item.icon;
 
@@ -68,14 +69,18 @@ export const MobileAdminNav = () => {
                             key={item.href}
                             href={item.href}
                             className={[
-                                "flex flex-col items-center gap-1 px-1 py-2 text-[11px] transition active:scale-95",
-                                isActive ? "text-slate-950" : "text-slate-500",
+                                appStyles.nav.mobileLinkBase,
+                                isActive
+                                    ? appStyles.nav.mobileLinkActive
+                                    : appStyles.nav.mobileLinkInactive,
                             ].join(" ")}
                         >
                             <Icon
                                 className={[
                                     "h-5 w-5",
-                                    isActive ? "stroke-[2.5]" : "stroke-2",
+                                    isActive
+                                        ? appStyles.nav.mobileIconActive
+                                        : appStyles.nav.mobileIconInactive,
                                 ].join(" ")}
                             />
                             <span>{item.label}</span>
