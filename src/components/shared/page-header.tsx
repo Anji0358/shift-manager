@@ -1,10 +1,11 @@
-import { bridalStyles } from "@/components/shared/design-tokens";
+import type { ReactNode } from "react";
+import { appStyles } from "@/components/shared/design-tokens";
 
 type PageHeaderProps = {
     title: string;
     description?: string;
     label?: string;
-    action?: React.ReactNode;
+    action?: ReactNode;
 };
 
 export const PageHeader = ({
@@ -14,14 +15,16 @@ export const PageHeader = ({
     action,
 }: PageHeaderProps) => {
     return (
-        <section className={bridalStyles.header.wrapper}>
+        <section className={appStyles.header.wrapper}>
             <div>
-                <p className={bridalStyles.header.label}>{label}</p>
+                <p className={appStyles.header.label}>{label}</p>
 
-                <h1 className={bridalStyles.header.title}>{title}</h1>
+                <h1 className={appStyles.header.title}>{title}</h1>
 
                 {description ? (
-                    <p className={bridalStyles.header.description}>{description}</p>
+                    <p className={appStyles.header.description}>
+                        {description}
+                    </p>
                 ) : null}
             </div>
 
