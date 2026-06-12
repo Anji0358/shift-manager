@@ -1,15 +1,16 @@
-import { bridalStyles } from "@/components/shared/design-tokens";
+import type { ReactNode } from "react";
+import { appStyles } from "@/components/shared/design-tokens";
 
 type PageShellProps = {
-    children: React.ReactNode;
+    children: ReactNode;
     className?: string;
 };
 
 export const PageShell = ({ children, className }: PageShellProps) => {
     return (
-        <div className={bridalStyles.page.shell}>
+        <div className={appStyles.page.shell}>
             <div
-                className={[bridalStyles.page.container, className]
+                className={[appStyles.page.container, className]
                     .filter(Boolean)
                     .join(" ")}
             >
