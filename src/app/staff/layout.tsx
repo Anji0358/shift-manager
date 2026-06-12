@@ -13,7 +13,7 @@ import { CurrentUserBadge } from "@/components/shared/current-user-badge";
 import { NavLink } from "@/components/shared/nav-link";
 import { requireLogin } from "@/lib/auth/guards";
 import { MobileWorkerNav } from "@/components/shared/mobile-worker-nav";
-import { bridalStyles } from "@/components/shared/design-tokens";
+import { appStyles } from "@/components/shared/design-tokens";
 
 type StaffLayoutProps = {
     children: ReactNode;
@@ -23,34 +23,39 @@ const StaffLayout = async ({ children }: StaffLayoutProps) => {
     await requireLogin();
 
     return (
-        <div
-            className={[
-                bridalStyles.page.shell,
-                "min-h-screen pb-20 md:pb-0",
-            ].join(" ")}
-        >
-            <header className="sticky top-0 z-40 border-b border-[#eadcc1] bg-white/90 shadow-sm shadow-yellow-900/5 backdrop-blur">
-                <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 md:px-8">
+        <div className={appStyles.layout.appShell}>
+            <header className={appStyles.layout.stickyHeader}>
+                <div className={appStyles.layout.headerInner}>
                     <Link
                         href="/staff"
                         className="group flex items-center gap-3"
                     >
-                        <div className="flex h-10 w-10 items-center justify-center rounded-2xl border border-[#ead9b5] bg-[#fffaf0] text-[#b8872d] shadow-sm shadow-yellow-900/5 transition group-hover:bg-[#fff8e8]">
+                        <div className={appStyles.layout.brandIcon}>
                             <Home className="h-5 w-5" />
                         </div>
 
                         <div>
-                            <p className="font-serif text-lg font-semibold tracking-tight text-slate-900">
+                            <p
+                                className={[
+                                    appStyles.text.title,
+                                    "text-lg font-semibold tracking-tight",
+                                ].join(" ")}
+                            >
                                 Shift Manager
                             </p>
-                            <p className="text-xs font-medium uppercase tracking-[0.22em] text-[#b8872d]">
+                            <p
+                                className={[
+                                    "text-xs font-medium uppercase tracking-[0.22em]",
+                                    appStyles.text.accent,
+                                ].join(" ")}
+                            >
                                 Staff
                             </p>
                         </div>
                     </Link>
 
                     <div className="hidden items-center gap-5 md:flex">
-                        <nav className="flex items-center gap-1 rounded-2xl border border-[#eadcc1] bg-white/80 p-1 shadow-sm shadow-yellow-900/5">
+                        <nav className={appStyles.nav.desktopWrapper}>
                             <NavLink href="/staff" exact>
                                 <Home className="h-4 w-4" />
                                 ホーム
