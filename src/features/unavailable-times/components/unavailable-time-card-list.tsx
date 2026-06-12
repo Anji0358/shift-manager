@@ -1,7 +1,10 @@
+import type { ReactNode } from "react";
 import type { UnavailableTime } from "@prisma/client";
 import { CalendarDays, Clock, Repeat, Trash2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { ConfirmSubmitButton } from "@/components/shared/confirm-submit-button";
+import { BridalCard } from "@/components/shared/bridal-card";
+import { bridalStyles } from "@/components/shared/design-tokens";
 import { deleteUnavailableTime } from "@/features/unavailable-times/actions";
 import { formatDate } from "@/lib/format";
 import {
@@ -58,26 +61,23 @@ export const UnavailableTimeCardList = ({
 }: UnavailableTimeCardListProps) => {
     if (unavailableTimes.length === 0) {
         return (
-            <div className="rounded-xl border bg-white p-6 text-center text-sm text-slate-500">
+            <BridalCard className="p-6 text-center text-sm text-slate-500">
                 NGの日時はまだ登録されていません。
-            </div>
+            </BridalCard>
         );
     }
 
     return (
         <div className="space-y-4">
             {unavailableTimes.map((unavailableTime) => (
-                <article
-                    key={unavailableTime.id}
-                    className="rounded-xl border bg-white p-4 shadow-sm"
-                >
+                <BridalCard key={unavailableTime.id} className="p-4">
                     <div className="flex items-start justify-between gap-3">
                         <div>
-                            <Badge variant="secondary">
+                            <Badge className={bridalStyles.badge.neutral}>
                                 {unavailableTypeLabel[unavailableTime.type]}
                             </Badge>
 
-                            <p className="mt-2 text-sm text-slate-500">
+                            <p className="mt-2 text-sm leading-6 text-slate-500">
                                 {getUnavailableDescription(unavailableTime)}
                             </p>
                         </div>
@@ -92,6 +92,7 @@ export const UnavailableTimeCardList = ({
                             <ConfirmSubmitButton
                                 size="sm"
                                 variant="outline"
+                                className={bridalStyles.button.danger}
                                 message="このNGの日時を削除します。よろしいですか？"
                             >
                                 <Trash2 className="mr-1 h-4 w-4" />
@@ -100,30 +101,45 @@ export const UnavailableTimeCardList = ({
                         </form>
                     </div>
 
-                    <div className="mt-4 space-y-2 text-sm text-slate-700">
-                        <div className="flex items-center gap-2">
-                            {unavailableTime.type === "WEEKLY_FIXED" ? (
-                                <Repeat className="h-4 w-4 text-slate-400" />
-                            ) : (
-                                <CalendarDays className="h-4 w-4 text-slate-400" />
-                            )}
+                    <div className="mt-4 space-y-3 text-sm text-slate-700">
+                        <InfoRow
+                            icon={
+                                unavailableTime.type === "WEEKLY_FIXED" ? (
+                                    <Repeat className="h-4 w-4" />
+                                ) : (
+                                    <CalendarDays className="h-4 w-4" />
+                                )
+                            }
+                            value={getUnavailableDateLabel(unavailableTime)}
+                        />
 
-                            <span>{getUnavailableDateLabel(unavailableTime)}</span>
-                        </div>
+                        <InfoRow
+                            icon={<Clock className="h-4 w-4" />}
+                            value={getUnavailableTimeLabel(unavailableTime)}
+                        />
 
-                        <div className="flex items-center gap-2">
-                            <Clock className="h-4 w-4 text-slate-400" />
-                            <span>{getUnavailableTimeLabel(unavailableTime)}</span>
-                        </div>
-
-                        {unavailableTime.reason && (
-                            <div className="rounded-lg bg-slate-50 p-3 text-sm text-slate-600">
+                        {unavailableTime.reason ? (
+                            <div className="rounded-2xl border border-[#f0e5d0] bg-[#fffdf8]/80 p-4 text-sm leading-6 text-slate-600">
                                 {unavailableTime.reason}
                             </div>
-                        )}
+                        ) : null}
                     </div>
-                </article>
+                </BridalCard>
             ))}
+        </div>
+    );
+};
+
+type InfoRowProps = {
+    icon: ReactNode;
+    value: string;
+};
+
+const InfoRow = ({ icon, value }: InfoRowProps) => {
+    return (
+        <div className="flex items-center gap-2">
+            <span className="text-[#b8872d]">{icon}</span>
+            <span className="font-medium text-slate-800">{value}</span>
         </div>
     );
 };
