@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { ReactNode } from "react";
 import {
     BriefcaseBusiness,
     CalendarCheck,
@@ -14,24 +15,49 @@ import { CurrentUserBadge } from "@/components/shared/current-user-badge";
 import { NavLink } from "@/components/shared/nav-link";
 import { MobileAdminNav } from "@/components/shared/mobile-admin-nav";
 import { requireAdmin } from "@/lib/auth/guards";
+import { appStyles } from "@/components/shared/design-tokens";
 
 type AdminLayoutProps = {
-    children: React.ReactNode;
+    children: ReactNode;
 };
 
 const AdminLayout = async ({ children }: AdminLayoutProps) => {
     await requireAdmin();
 
     return (
-        <div className="min-h-screen bg-slate-50 pb-20 md:pb-0">
-            <header className="sticky top-0 z-40 border-b bg-white/95 backdrop-blur">
-                <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 md:px-6">
-                    <Link href="/admin" className="text-lg font-bold">
-                        Shift Manager Admin
+        <div className={appStyles.layout.appShell}>
+            <header className={appStyles.layout.stickyHeader}>
+                <div className={appStyles.layout.headerInner}>
+                    <Link
+                        href="/admin"
+                        className="group flex items-center gap-3"
+                    >
+                        <div className={appStyles.layout.brandIcon}>
+                            <Home className="h-5 w-5" />
+                        </div>
+
+                        <div>
+                            <p
+                                className={[
+                                    appStyles.text.title,
+                                    "text-lg font-semibold tracking-tight",
+                                ].join(" ")}
+                            >
+                                Shift Manager
+                            </p>
+                            <p
+                                className={[
+                                    "text-xs font-medium uppercase tracking-[0.22em]",
+                                    appStyles.text.accent,
+                                ].join(" ")}
+                            >
+                                Admin
+                            </p>
+                        </div>
                     </Link>
 
-                    <div className="hidden items-center gap-6 md:flex">
-                        <nav className="flex items-center gap-2">
+                    <div className="hidden items-center gap-5 md:flex">
+                        <nav className={appStyles.nav.desktopWrapper}>
                             <NavLink href="/admin" exact>
                                 <Home className="h-4 w-4" />
                                 ホーム
@@ -73,8 +99,10 @@ const AdminLayout = async ({ children }: AdminLayoutProps) => {
                             </NavLink>
                         </nav>
 
-                        <CurrentUserBadge />
-                        <LogoutButton />
+                        <div className="flex items-center gap-3">
+                            <CurrentUserBadge />
+                            <LogoutButton />
+                        </div>
                     </div>
 
                     <div className="md:hidden">
@@ -83,9 +111,7 @@ const AdminLayout = async ({ children }: AdminLayoutProps) => {
                 </div>
             </header>
 
-            <main className="mx-auto max-w-7xl px-4 py-6 md:px-6 md:py-8">
-                {children}
-            </main>
+            <main>{children}</main>
 
             <MobileAdminNav />
         </div>
