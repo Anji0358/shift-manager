@@ -1,6 +1,16 @@
 import { notFound, redirect } from "next/navigation";
+import type { ReactNode } from "react";
 import {
-    Card,
+    ArrowLeft,
+    BriefcaseBusiness,
+    CheckCircle2,
+    Clock,
+    MapPin,
+    ReceiptText,
+    Utensils,
+    User,
+} from "lucide-react";
+import {
     CardContent,
     CardHeader,
     CardTitle,
@@ -16,6 +26,10 @@ import {
 } from "@/components/ui/select";
 import { LinkButton } from "@/components/shared/link-button";
 import { SubmitButton } from "@/components/shared/submit-button";
+import { PageShell } from "@/components/shared/page-shell";
+import { PageHeader } from "@/components/shared/page-header";
+import { BridalCard } from "@/components/shared/bridal-card";
+import { bridalStyles } from "@/components/shared/design-tokens";
 import { getAssignmentById } from "@/features/shift-assignments/queries";
 import { createWorkReport } from "@/features/work-reports/actions";
 import { getWorkReportByEmployeeIdAndJobId } from "@/features/work-reports/queries";
@@ -63,144 +77,266 @@ const StaffNewWorkReportPage = async ({
     }
 
     return (
-        <div className="space-y-6">
-            <section className="flex items-start justify-between gap-4">
-                <div>
-                    <h1 className="text-3xl font-bold">就労報告提出</h1>
-                    <p className="mt-2 text-slate-600">
-                        実際の勤務時間、休憩時間、交通費などを報告します。
-                    </p>
-                </div>
+        <PageShell>
+            <PageHeader
+                title="就労報告提出"
+                description="実際の勤務時間、休憩時間、交通費などを報告します。"
+                action={
+                    <LinkButton
+                        href="/staff/shifts"
+                        variant="outline"
+                        className={bridalStyles.button.secondary}
+                    >
+                        <ArrowLeft className="mr-2 h-4 w-4" />
+                        確定シフトへ戻る
+                    </LinkButton>
+                }
+            />
 
-                <LinkButton href="/staff/shifts" variant="outline">
-                    確定シフトへ戻る
-                </LinkButton>
-            </section>
-
-            <Card>
-                <CardHeader>
-                    <CardTitle>報告対象の案件</CardTitle>
-                </CardHeader>
-
-                <CardContent className="grid gap-3 text-sm md:grid-cols-2">
-                    <p>スタッフ：{employee.name}</p>
-                    <p>案件名：{job.title}</p>
-                    <p>勤務日：{formatDate(job.workDate)}</p>
-                    <p>勤務枠：{slot.name}</p>
-                    <p>
-                        勤務時間：{slot.startTime}〜{slot.endTime}
-                    </p>
-                    <p>場所：{job.location}</p>
-                    <p>集合場所：{job.meetingPlace || "未設定"}</p>
-                </CardContent>
-            </Card>
-
-            <Card>
-                <CardHeader>
-                    <CardTitle>就労報告内容</CardTitle>
-                </CardHeader>
-
-                <CardContent>
-                    <form action={createWorkReport} className="space-y-6">
-                        <input type="hidden" name="jobId" value={job.id} />
-
-                        <div className="grid gap-4 md:grid-cols-2">
-                            <div className="space-y-2">
-                                <Label htmlFor="actualStartTime">
-                                    実勤務開始時間
-                                </Label>
-                                <Input
-                                    id="actualStartTime"
-                                    name="actualStartTime"
-                                    type="time"
-                                    defaultValue={slot.startTime}
-                                    required
-                                />
+            <div className="space-y-6">
+                <BridalCard>
+                    <CardHeader className="p-5 pb-3">
+                        <div className="flex items-start gap-3">
+                            <div className={bridalStyles.icon.circle}>
+                                <BriefcaseBusiness className="h-5 w-5" />
                             </div>
 
-                            <div className="space-y-2">
-                                <Label htmlFor="actualEndTime">
-                                    実勤務終了時間
-                                </Label>
-                                <Input
-                                    id="actualEndTime"
-                                    name="actualEndTime"
-                                    type="time"
-                                    defaultValue={slot.endTime}
-                                    required
-                                />
-                            </div>
-
-                            <div className="space-y-2">
-                                <Label htmlFor="actualBreakMinutes">
-                                    実休憩時間
-                                </Label>
-                                <Input
-                                    id="actualBreakMinutes"
-                                    name="actualBreakMinutes"
-                                    type="number"
-                                    min={0}
-                                    defaultValue={job.breakMinutes}
-                                    required
-                                />
-                            </div>
-
-                            <div className="space-y-2">
-                                <Label htmlFor="transportationFee">
-                                    交通費
-                                </Label>
-                                <Input
-                                    id="transportationFee"
-                                    name="transportationFee"
-                                    type="number"
-                                    min={0}
-                                    defaultValue={job.transportationFee}
-                                    required
-                                />
-                            </div>
-
-                            <div className="space-y-2">
-                                <Label htmlFor="hasMeal">
-                                    食事の有無
-                                </Label>
-
-                                <Select
-                                    name="hasMeal"
-                                    defaultValue={
-                                        job.hasMeal ? "true" : "false"
-                                    }
+                            <div>
+                                <CardTitle
+                                    className={[
+                                        bridalStyles.text.title,
+                                        "text-xl",
+                                    ].join(" ")}
                                 >
-                                    <SelectTrigger id="hasMeal">
-                                        <SelectValue placeholder="食事の有無を選択" />
-                                    </SelectTrigger>
-
-                                    <SelectContent>
-                                        <SelectItem value="true">
-                                            あり
-                                        </SelectItem>
-                                        <SelectItem value="false">
-                                            なし
-                                        </SelectItem>
-                                    </SelectContent>
-                                </Select>
+                                    報告対象の案件
+                                </CardTitle>
+                                <p className="mt-1 text-sm text-slate-500">
+                                    提出する就労報告の対象案件を確認してください。
+                                </p>
                             </div>
                         </div>
+                    </CardHeader>
 
-                        <div className="flex justify-end gap-3">
-                            <LinkButton
-                                href="/staff/shifts"
-                                variant="outline"
-                            >
-                                キャンセル
-                            </LinkButton>
+                    <CardContent className="p-5 pt-2">
+                        <div className="grid gap-4 rounded-2xl border border-[#f0e5d0] bg-[#fffdf8]/80 p-5 text-sm md:grid-cols-2">
+                            <InfoRow
+                                label="スタッフ"
+                                value={employee.name}
+                                icon={<User className="h-4 w-4" />}
+                            />
 
-                            <SubmitButton pendingText="提出中...">
-                                提出する
-                            </SubmitButton>
+                            <InfoRow
+                                label="案件名"
+                                value={job.title}
+                                icon={<BriefcaseBusiness className="h-4 w-4" />}
+                            />
+
+                            <InfoRow
+                                label="勤務日"
+                                value={formatDate(job.workDate)}
+                                icon={<ReceiptText className="h-4 w-4" />}
+                            />
+
+                            <InfoRow
+                                label="勤務枠"
+                                value={slot.name}
+                                icon={<Clock className="h-4 w-4" />}
+                            />
+
+                            <InfoRow
+                                label="勤務時間"
+                                value={`${slot.startTime}〜${slot.endTime}`}
+                                icon={<Clock className="h-4 w-4" />}
+                            />
+
+                            <InfoRow
+                                label="場所"
+                                value={job.location}
+                                icon={<MapPin className="h-4 w-4" />}
+                            />
+
+                            <InfoRow
+                                label="集合場所"
+                                value={job.meetingPlace || "未設定"}
+                                icon={<MapPin className="h-4 w-4" />}
+                            />
                         </div>
-                    </form>
-                </CardContent>
-            </Card>
+                    </CardContent>
+                </BridalCard>
+
+                <BridalCard>
+                    <CardHeader className="p-5 pb-3">
+                        <div className="flex items-start gap-3">
+                            <div className={bridalStyles.icon.circle}>
+                                <ReceiptText className="h-5 w-5" />
+                            </div>
+
+                            <div>
+                                <CardTitle
+                                    className={[
+                                        bridalStyles.text.title,
+                                        "text-xl",
+                                    ].join(" ")}
+                                >
+                                    就労報告内容
+                                </CardTitle>
+                                <p className="mt-1 text-sm text-slate-500">
+                                    実際の勤務内容に合わせて、勤務時間・休憩・交通費・食事の有無を入力します。
+                                </p>
+                            </div>
+                        </div>
+                    </CardHeader>
+
+                    <CardContent className="p-5 pt-2">
+                        <form action={createWorkReport} className="space-y-6">
+                            <input type="hidden" name="jobId" value={job.id} />
+
+                            <section className="rounded-2xl border border-[#f0e5d0] bg-white/70 p-5">
+                                <div className="grid gap-4 md:grid-cols-2">
+                                    <FormField
+                                        label="実勤務開始時間"
+                                        htmlFor="actualStartTime"
+                                    >
+                                        <Input
+                                            id="actualStartTime"
+                                            name="actualStartTime"
+                                            type="time"
+                                            defaultValue={slot.startTime}
+                                            required
+                                            className={bridalStyles.form.input}
+                                        />
+                                    </FormField>
+
+                                    <FormField
+                                        label="実勤務終了時間"
+                                        htmlFor="actualEndTime"
+                                    >
+                                        <Input
+                                            id="actualEndTime"
+                                            name="actualEndTime"
+                                            type="time"
+                                            defaultValue={slot.endTime}
+                                            required
+                                            className={bridalStyles.form.input}
+                                        />
+                                    </FormField>
+
+                                    <FormField
+                                        label="実休憩時間"
+                                        htmlFor="actualBreakMinutes"
+                                    >
+                                        <Input
+                                            id="actualBreakMinutes"
+                                            name="actualBreakMinutes"
+                                            type="number"
+                                            min={0}
+                                            defaultValue={job.breakMinutes}
+                                            required
+                                            className={bridalStyles.form.input}
+                                        />
+                                    </FormField>
+
+                                    <FormField
+                                        label="交通費"
+                                        htmlFor="transportationFee"
+                                    >
+                                        <Input
+                                            id="transportationFee"
+                                            name="transportationFee"
+                                            type="number"
+                                            min={0}
+                                            defaultValue={job.transportationFee}
+                                            required
+                                            className={bridalStyles.form.input}
+                                        />
+                                    </FormField>
+
+                                    <FormField label="食事の有無" htmlFor="hasMeal">
+                                        <Select
+                                            name="hasMeal"
+                                            defaultValue={
+                                                job.hasMeal ? "true" : "false"
+                                            }
+                                        >
+                                            <SelectTrigger
+                                                id="hasMeal"
+                                                className={bridalStyles.form.input}
+                                            >
+                                                <SelectValue placeholder="食事の有無を選択" />
+                                            </SelectTrigger>
+
+                                            <SelectContent>
+                                                <SelectItem value="true">
+                                                    あり
+                                                </SelectItem>
+                                                <SelectItem value="false">
+                                                    なし
+                                                </SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                    </FormField>
+                                </div>
+                            </section>
+
+                            <div className="flex flex-col-reverse gap-3 border-t border-[#f0e5d0] pt-5 sm:flex-row sm:justify-end">
+                                <LinkButton
+                                    href="/staff/shifts"
+                                    variant="outline"
+                                    className={bridalStyles.button.secondary}
+                                >
+                                    キャンセル
+                                </LinkButton>
+
+                                <SubmitButton
+                                    pendingText="提出中..."
+                                    className={[
+                                        bridalStyles.button.primary,
+                                        "px-6",
+                                    ].join(" ")}
+                                >
+                                    <CheckCircle2 className="mr-2 h-4 w-4" />
+                                    提出する
+                                </SubmitButton>
+                            </div>
+                        </form>
+                    </CardContent>
+                </BridalCard>
+            </div>
+        </PageShell>
+    );
+};
+
+type InfoRowProps = {
+    label: string;
+    value: string;
+    icon: ReactNode;
+};
+
+const InfoRow = ({ label, value, icon }: InfoRowProps) => {
+    return (
+        <div className="flex items-start gap-2">
+            <span className="mt-0.5 text-[#b8872d]">{icon}</span>
+            <p>
+                <span className="text-slate-500">{label}：</span>
+                <span className="font-medium text-slate-900">{value}</span>
+            </p>
+        </div>
+    );
+};
+
+type FormFieldProps = {
+    label: string;
+    htmlFor: string;
+    children: ReactNode;
+};
+
+const FormField = ({ label, htmlFor, children }: FormFieldProps) => {
+    return (
+        <div className="space-y-2">
+            <Label htmlFor={htmlFor} className={bridalStyles.form.label}>
+                {label}
+            </Label>
+            {children}
         </div>
     );
 };
