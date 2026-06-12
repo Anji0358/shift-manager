@@ -8,8 +8,8 @@ import { getJobs } from "@/features/jobs/queries";
 import { getCurrentYearMonth, getMonthRange } from "@/lib/month";
 import { PageShell } from "@/components/shared/page-shell";
 import { PageHeader } from "@/components/shared/page-header";
-import { BridalCard } from "@/components/shared/bridal-card";
-import { bridalStyles } from "@/components/shared/design-tokens";
+import { AppCard } from "@/components/shared/bridal-card";
+import { appStyles } from "@/components/shared/design-tokens";
 import { CalendarDays, ClipboardList, Plus } from "lucide-react";
 
 type AdminJobsPageProps = {
@@ -34,7 +34,7 @@ const AdminJobsPage = async ({ searchParams }: AdminJobsPageProps) => {
                 action={
                     <LinkButton
                         href="/admin/jobs/new"
-                        className={[bridalStyles.button.primary, "px-5"].join(" ")}
+                        className={[appStyles.button.primary, "px-5"].join(" ")}
                     >
                         <Plus className="mr-2 h-4 w-4" />
                         案件を追加
@@ -44,28 +44,28 @@ const AdminJobsPage = async ({ searchParams }: AdminJobsPageProps) => {
 
             <div className="space-y-6">
                 {message ? (
-                    <div className={[bridalStyles.card.base, "px-5 py-4"].join(" ")}>
+                    <div className={appStyles.section.message}>
                         <SuccessMessage message={message} />
                     </div>
                 ) : null}
 
-                <BridalCard>
+                <AppCard>
                     <div className="flex flex-col gap-4 p-5 md:flex-row md:items-end md:justify-between">
                         <div className="flex items-start gap-3">
-                            <div className={bridalStyles.icon.circle}>
+                            <div className={appStyles.icon.circle}>
                                 <CalendarDays className="h-5 w-5" />
                             </div>
 
                             <div>
                                 <h2
                                     className={[
-                                        bridalStyles.text.title,
+                                        appStyles.text.title,
                                         "text-xl",
                                     ].join(" ")}
                                 >
                                     表示月の選択
                                 </h2>
-                                <p className="mt-1 text-sm text-slate-500">
+                                <p className={["mt-1", appStyles.text.muted].join(" ")}>
                                     対象月を選ぶと、その月に登録されている案件を表示します。
                                 </p>
                             </div>
@@ -78,7 +78,7 @@ const AdminJobsPage = async ({ searchParams }: AdminJobsPageProps) => {
                             <div className="space-y-2">
                                 <label
                                     htmlFor="month"
-                                    className={bridalStyles.form.label}
+                                    className={appStyles.form.label}
                                 >
                                     対象月
                                 </label>
@@ -89,7 +89,7 @@ const AdminJobsPage = async ({ searchParams }: AdminJobsPageProps) => {
                                     type="month"
                                     defaultValue={targetMonth}
                                     className={[
-                                        bridalStyles.form.input,
+                                        appStyles.form.input,
                                         "h-11",
                                     ].join(" ")}
                                 />
@@ -98,7 +98,7 @@ const AdminJobsPage = async ({ searchParams }: AdminJobsPageProps) => {
                             <SubmitButton
                                 pendingText="表示中..."
                                 className={[
-                                    bridalStyles.button.dark,
+                                    appStyles.button.dark,
                                     "h-11 px-5",
                                 ].join(" ")}
                             >
@@ -106,30 +106,30 @@ const AdminJobsPage = async ({ searchParams }: AdminJobsPageProps) => {
                             </SubmitButton>
                         </form>
                     </div>
-                </BridalCard>
+                </AppCard>
 
                 <section className="space-y-4">
                     <div className="flex items-start gap-3">
-                        <div className={bridalStyles.icon.smallCircle}>
+                        <div className={appStyles.icon.smallCircle}>
                             <ClipboardList className="h-5 w-5" />
                         </div>
 
                         <div>
                             <h2
                                 className={[
-                                    bridalStyles.text.title,
+                                    appStyles.text.title,
                                     "text-2xl tracking-tight",
                                 ].join(" ")}
                             >
                                 案件一覧
                             </h2>
-                            <p className="mt-1 text-sm text-slate-500">
+                            <p className={["mt-1", appStyles.text.muted].join(" ")}>
                                 PCではテーブル、スマホではカード形式で表示します。
                             </p>
                         </div>
                     </div>
 
-                    <BridalCard className="overflow-hidden">
+                    <AppCard className="overflow-hidden">
                         <div className="hidden md:block">
                             <JobTable jobs={jobs} />
                         </div>
@@ -137,7 +137,7 @@ const AdminJobsPage = async ({ searchParams }: AdminJobsPageProps) => {
                         <div className="md:hidden">
                             <JobCardList jobs={jobs} />
                         </div>
-                    </BridalCard>
+                    </AppCard>
                 </section>
             </div>
         </PageShell>
