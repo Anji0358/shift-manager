@@ -1,15 +1,16 @@
+import type { ReactNode } from "react";
 import { Card } from "@/components/ui/card";
-import { bridalStyles } from "@/components/shared/design-tokens";
+import { appStyles } from "@/components/shared/design-tokens";
 
-type BridalCardProps = {
-    children: React.ReactNode;
+type AppCardProps = {
+    children: ReactNode;
     className?: string;
 };
 
-export const BridalCard = ({ children, className }: BridalCardProps) => {
+export const AppCard = ({ children, className }: AppCardProps) => {
     return (
         <Card
-            className={[bridalStyles.card.base, className]
+            className={[appStyles.card.base, className]
                 .filter(Boolean)
                 .join(" ")}
         >
@@ -17,3 +18,5 @@ export const BridalCard = ({ children, className }: BridalCardProps) => {
         </Card>
     );
 };
+
+export const BridalCard = AppCard;
