@@ -1,5 +1,6 @@
 import { getCurrentUser } from "@/lib/auth/current-user";
 import { Badge } from "@/components/ui/badge";
+import { appStyles } from "@/components/shared/design-tokens";
 
 export const CurrentUserBadge = async () => {
     const user = await getCurrentUser();
@@ -10,8 +11,15 @@ export const CurrentUserBadge = async () => {
 
     return (
         <div className="flex items-center gap-2 text-sm">
-            <span className="text-slate-500">{user.name}</span>
-            <Badge variant={user.role === "ADMIN" ? "default" : "secondary"}>
+            <span className={appStyles.textColor.muted}>{user.name}</span>
+
+            <Badge
+                className={
+                    user.role === "ADMIN"
+                        ? appStyles.badge.fulfilled
+                        : appStyles.badge.neutral
+                }
+            >
                 {user.role === "ADMIN" ? "ADMIN" : "STAFF"}
             </Badge>
         </div>
