@@ -1,7 +1,7 @@
 import type { Job, JobShiftSlot } from "@prisma/client";
 import { Badge } from "@/components/ui/badge";
 import { LinkButton } from "@/components/shared/link-button";
-import { bridalStyles } from "@/components/shared/design-tokens";
+import { appStyles } from "@/components/shared/design-tokens";
 import {
     Table,
     TableBody,
@@ -27,28 +27,28 @@ type JobTableProps = {
 
 export const JobTable = ({ jobs }: JobTableProps) => {
     return (
-        <div className={bridalStyles.table.wrapper}>
+        <div className={appStyles.table.wrapper}>
             <Table>
                 <TableHeader>
-                    <TableRow className={bridalStyles.table.headerRow}>
-                        <TableHead className={bridalStyles.table.head}>
+                    <TableRow className={appStyles.table.headerRow}>
+                        <TableHead className={appStyles.table.head}>
                             勤務日
                         </TableHead>
-                        <TableHead className={bridalStyles.table.head}>
+                        <TableHead className={appStyles.table.head}>
                             案件名
                         </TableHead>
-                        <TableHead className={bridalStyles.table.head}>
+                        <TableHead className={appStyles.table.head}>
                             勤務枠
                         </TableHead>
-                        <TableHead className={bridalStyles.table.head}>
+                        <TableHead className={appStyles.table.head}>
                             勤務場所
                         </TableHead>
-                        <TableHead className={bridalStyles.table.head}>
+                        <TableHead className={appStyles.table.head}>
                             充足状況
                         </TableHead>
                         <TableHead
                             className={[
-                                bridalStyles.table.head,
+                                appStyles.table.head,
                                 "text-right",
                             ].join(" ")}
                         >
@@ -65,16 +65,21 @@ export const JobTable = ({ jobs }: JobTableProps) => {
                         return (
                             <TableRow
                                 key={job.id}
-                                className={bridalStyles.table.row}
+                                className={appStyles.table.row}
                             >
-                                <TableCell className="whitespace-nowrap text-sm text-slate-700">
+                                <TableCell
+                                    className={[
+                                        "whitespace-nowrap",
+                                        appStyles.table.cellMuted,
+                                    ].join(" ")}
+                                >
                                     {formatDate(job.workDate)}
                                 </TableCell>
 
                                 <TableCell className="min-w-[180px]">
                                     <p
                                         className={[
-                                            bridalStyles.text.title,
+                                            appStyles.text.title,
                                             "text-base",
                                         ].join(" ")}
                                     >
@@ -82,11 +87,21 @@ export const JobTable = ({ jobs }: JobTableProps) => {
                                     </p>
                                 </TableCell>
 
-                                <TableCell className="whitespace-nowrap text-sm text-slate-600">
+                                <TableCell
+                                    className={[
+                                        "whitespace-nowrap",
+                                        appStyles.table.cellMuted,
+                                    ].join(" ")}
+                                >
                                     {shiftSlotSummary}
                                 </TableCell>
 
-                                <TableCell className="max-w-[220px] text-sm text-slate-600">
+                                <TableCell
+                                    className={[
+                                        "max-w-[220px]",
+                                        appStyles.table.cellMuted,
+                                    ].join(" ")}
+                                >
                                     <span className="line-clamp-2">
                                         {job.location}
                                     </span>
@@ -98,19 +113,25 @@ export const JobTable = ({ jobs }: JobTableProps) => {
                                             <Badge
                                                 className={
                                                     isFulfilled
-                                                        ? bridalStyles.badge.fulfilled
-                                                        : bridalStyles.badge.pending
+                                                        ? appStyles.badge.fulfilled
+                                                        : appStyles.badge.pending
                                                 }
                                             >
                                                 {isFulfilled ? "充足" : "未充足"}
                                             </Badge>
 
-                                            <span className="text-sm font-medium text-slate-700">
+                                            <span
+                                                className={[
+                                                    "text-sm font-medium",
+                                                    appStyles.textColor.tableHead ??
+                                                    appStyles.textColor.body,
+                                                ].join(" ")}
+                                            >
                                                 {job.assignedPeople}/{job.requiredPeople}人
                                             </span>
                                         </div>
 
-                                        <p className="text-xs text-slate-500">
+                                        <p className={appStyles.text.muted}>
                                             登録スタッフ {job.assignedInternalPeople}人 / 外部人員{" "}
                                             {job.assignedExternalPeople}人
                                         </p>
@@ -123,7 +144,7 @@ export const JobTable = ({ jobs }: JobTableProps) => {
                                             href={`/admin/jobs/${job.id}`}
                                             size="sm"
                                             variant="outline"
-                                            className={bridalStyles.button.secondary}
+                                            className={appStyles.button.secondary}
                                         >
                                             詳細
                                         </LinkButton>
@@ -131,7 +152,7 @@ export const JobTable = ({ jobs }: JobTableProps) => {
                                         <LinkButton
                                             href={`/admin/jobs/${job.id}/assignments`}
                                             size="sm"
-                                            className={bridalStyles.button.primary}
+                                            className={appStyles.button.primary}
                                         >
                                             スタッフ割り振り
                                         </LinkButton>
@@ -145,7 +166,7 @@ export const JobTable = ({ jobs }: JobTableProps) => {
                         <TableRow>
                             <TableCell
                                 colSpan={6}
-                                className="py-10 text-center text-sm text-slate-500"
+                                className={appStyles.table.empty}
                             >
                                 案件がありません。
                             </TableCell>
