@@ -1,6 +1,6 @@
 import { Badge } from "@/components/ui/badge";
-import { BridalCard } from "@/components/shared/bridal-card";
-import { bridalStyles } from "@/components/shared/design-tokens";
+import { AppCard } from "@/components/shared/bridal-card";
+import { appStyles } from "@/components/shared/design-tokens";
 import {
     CardContent,
     CardHeader,
@@ -27,23 +27,23 @@ type JobWorkReportTableProps = {
 
 export const JobWorkReportTable = ({ reports }: JobWorkReportTableProps) => {
     return (
-        <BridalCard className="overflow-hidden">
+        <AppCard className="overflow-hidden">
             <CardHeader className="p-5 pb-3">
                 <div className="flex items-start gap-3">
-                    <div className={bridalStyles.icon.circle}>
+                    <div className={appStyles.icon.circle}>
                         <ClipboardCheck className="h-5 w-5" />
                     </div>
 
                     <div>
                         <CardTitle
                             className={[
-                                bridalStyles.text.title,
+                                appStyles.text.title,
                                 "text-xl",
                             ].join(" ")}
                         >
                             就労報告一覧
                         </CardTitle>
-                        <p className="mt-1 text-sm text-slate-500">
+                        <p className={["mt-1", appStyles.text.muted].join(" ")}>
                             スタッフから提出された勤務実績を確認します。
                         </p>
                     </div>
@@ -51,35 +51,35 @@ export const JobWorkReportTable = ({ reports }: JobWorkReportTableProps) => {
             </CardHeader>
 
             <CardContent className="p-5 pt-2">
-                <div className={bridalStyles.table.wrapper}>
+                <div className={appStyles.table.wrapper}>
                     <Table>
                         <TableHeader>
-                            <TableRow className={bridalStyles.table.headerRow}>
-                                <TableHead className={bridalStyles.table.head}>
+                            <TableRow className={appStyles.table.headerRow}>
+                                <TableHead className={appStyles.table.head}>
                                     氏名
                                 </TableHead>
 
-                                <TableHead className={bridalStyles.table.head}>
+                                <TableHead className={appStyles.table.head}>
                                     ステータス
                                 </TableHead>
 
-                                <TableHead className={bridalStyles.table.head}>
+                                <TableHead className={appStyles.table.head}>
                                     実働時間
                                 </TableHead>
 
-                                <TableHead className={bridalStyles.table.head}>
+                                <TableHead className={appStyles.table.head}>
                                     休憩
                                 </TableHead>
 
-                                <TableHead className={bridalStyles.table.head}>
+                                <TableHead className={appStyles.table.head}>
                                     交通費
                                 </TableHead>
 
-                                <TableHead className={bridalStyles.table.head}>
+                                <TableHead className={appStyles.table.head}>
                                     食事
                                 </TableHead>
 
-                                <TableHead className={bridalStyles.table.head}>
+                                <TableHead className={appStyles.table.head}>
                                     提出日時
                                 </TableHead>
                             </TableRow>
@@ -89,12 +89,12 @@ export const JobWorkReportTable = ({ reports }: JobWorkReportTableProps) => {
                             {reports.map((report) => (
                                 <TableRow
                                     key={report.id}
-                                    className={bridalStyles.table.row}
+                                    className={appStyles.table.row}
                                 >
                                     <TableCell>
                                         <p
                                             className={[
-                                                bridalStyles.text.title,
+                                                appStyles.text.title,
                                                 "text-base",
                                             ].join(" ")}
                                         >
@@ -103,29 +103,54 @@ export const JobWorkReportTable = ({ reports }: JobWorkReportTableProps) => {
                                     </TableCell>
 
                                     <TableCell>
-                                        <Badge className={bridalStyles.badge.neutral}>
+                                        <Badge className={appStyles.badge.neutral}>
                                             {workReportStatusLabel[report.status]}
                                         </Badge>
                                     </TableCell>
 
-                                    <TableCell className="whitespace-nowrap text-sm text-slate-600">
+                                    <TableCell
+                                        className={[
+                                            "whitespace-nowrap",
+                                            appStyles.table.cellMuted,
+                                        ].join(" ")}
+                                    >
                                         {report.actualStartTime}〜
                                         {report.actualEndTime}
                                     </TableCell>
 
-                                    <TableCell className="whitespace-nowrap text-sm text-slate-600">
+                                    <TableCell
+                                        className={[
+                                            "whitespace-nowrap",
+                                            appStyles.table.cellMuted,
+                                        ].join(" ")}
+                                    >
                                         {report.actualBreakMinutes}分
                                     </TableCell>
 
-                                    <TableCell className="whitespace-nowrap text-sm font-medium text-slate-700">
+                                    <TableCell
+                                        className={[
+                                            "whitespace-nowrap text-sm font-medium",
+                                            appStyles.textColor.tableHead,
+                                        ].join(" ")}
+                                    >
                                         {formatYen(report.transportationFee)}
                                     </TableCell>
 
-                                    <TableCell className="whitespace-nowrap text-sm text-slate-600">
+                                    <TableCell
+                                        className={[
+                                            "whitespace-nowrap",
+                                            appStyles.table.cellMuted,
+                                        ].join(" ")}
+                                    >
                                         {report.hasMeal ? "あり" : "なし"}
                                     </TableCell>
 
-                                    <TableCell className="whitespace-nowrap text-sm text-slate-600">
+                                    <TableCell
+                                        className={[
+                                            "whitespace-nowrap",
+                                            appStyles.table.cellMuted,
+                                        ].join(" ")}
+                                    >
                                         {formatDate(report.createdAt)}
                                     </TableCell>
                                 </TableRow>
@@ -135,7 +160,7 @@ export const JobWorkReportTable = ({ reports }: JobWorkReportTableProps) => {
                                 <TableRow>
                                     <TableCell
                                         colSpan={7}
-                                        className="py-10 text-center text-sm text-slate-500"
+                                        className={appStyles.table.empty}
                                     >
                                         就労報告はまだありません。
                                     </TableCell>
@@ -145,6 +170,6 @@ export const JobWorkReportTable = ({ reports }: JobWorkReportTableProps) => {
                     </Table>
                 </div>
             </CardContent>
-        </BridalCard>
+        </AppCard>
     );
 };
