@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { createJob } from "@/features/jobs/actions";
 import { getJobTemplates } from "@/features/job-templates/queries";
 import { TemplateSelector } from "@/features/job-templates/components/template-selector";
@@ -5,8 +6,8 @@ import { SubmitButton } from "@/components/shared/submit-button";
 import { LinkButton } from "@/components/shared/link-button";
 import { PageShell } from "@/components/shared/page-shell";
 import { PageHeader } from "@/components/shared/page-header";
-import { BridalCard } from "@/components/shared/bridal-card";
-import { bridalStyles } from "@/components/shared/design-tokens";
+import { AppCard } from "@/components/shared/bridal-card";
+import { appStyles } from "@/components/shared/design-tokens";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -57,30 +58,30 @@ const NewJobPage = async ({ searchParams }: NewJobPageProps) => {
                     <LinkButton
                         href="/admin/jobs"
                         variant="outline"
-                        className={bridalStyles.button.secondary}
+                        className={appStyles.button.secondary}
                     >
                         案件一覧へ戻る
                     </LinkButton>
                 }
             />
 
-            <BridalCard>
+            <AppCard>
                 <CardHeader className="p-5 pb-3">
                     <div className="flex items-start gap-3">
-                        <div className={bridalStyles.icon.circle}>
+                        <div className={appStyles.icon.circle}>
                             <CalendarPlus className="h-5 w-5" />
                         </div>
 
                         <div>
                             <CardTitle
                                 className={[
-                                    bridalStyles.text.title,
+                                    appStyles.text.title,
                                     "text-xl",
                                 ].join(" ")}
                             >
                                 案件情報
                             </CardTitle>
-                            <p className="mt-1 text-sm text-slate-500">
+                            <p className={["mt-1", appStyles.text.muted].join(" ")}>
                                 テンプレートを使う場合は、先にテンプレートを選択してください。
                             </p>
                         </div>
@@ -89,7 +90,7 @@ const NewJobPage = async ({ searchParams }: NewJobPageProps) => {
 
                 <CardContent className="p-5 pt-2">
                     <form action={createJob} className="space-y-8">
-                        <section className="rounded-2xl border border-[#f0e5d0] bg-[#fffdf8]/70 p-5">
+                        <section className={appStyles.section.soft}>
                             <TemplateSelector
                                 templates={templates}
                                 selectedTemplateId={templateId}
@@ -109,7 +110,7 @@ const NewJobPage = async ({ searchParams }: NewJobPageProps) => {
                                         placeholder="例：横浜ホテル宴会"
                                         defaultValue={selectedTemplate?.title ?? ""}
                                         required
-                                        className={bridalStyles.form.input}
+                                        className={appStyles.form.input}
                                     />
                                 </FormField>
 
@@ -119,7 +120,7 @@ const NewJobPage = async ({ searchParams }: NewJobPageProps) => {
                                         name="workDate"
                                         type="date"
                                         required
-                                        className={bridalStyles.form.input}
+                                        className={appStyles.form.input}
                                     />
                                 </FormField>
 
@@ -130,7 +131,7 @@ const NewJobPage = async ({ searchParams }: NewJobPageProps) => {
                                         placeholder="例：横浜ホテル"
                                         defaultValue={selectedTemplate?.location ?? ""}
                                         required
-                                        className={bridalStyles.form.input}
+                                        className={appStyles.form.input}
                                     />
                                 </FormField>
 
@@ -140,7 +141,7 @@ const NewJobPage = async ({ searchParams }: NewJobPageProps) => {
                                         name="meetingPlace"
                                         placeholder="例：横浜駅中央改札"
                                         defaultValue={selectedTemplate?.meetingPlace ?? ""}
-                                        className={bridalStyles.form.input}
+                                        className={appStyles.form.input}
                                     />
                                 </FormField>
                             </div>
@@ -161,7 +162,7 @@ const NewJobPage = async ({ searchParams }: NewJobPageProps) => {
                                             selectedTemplateSlot?.name ?? "基本勤務枠"
                                         }
                                         required
-                                        className={bridalStyles.form.input}
+                                        className={appStyles.form.input}
                                     />
                                 </FormField>
 
@@ -172,7 +173,7 @@ const NewJobPage = async ({ searchParams }: NewJobPageProps) => {
                                         type="time"
                                         defaultValue={selectedTemplateSlot?.startTime ?? ""}
                                         required
-                                        className={bridalStyles.form.input}
+                                        className={appStyles.form.input}
                                     />
                                 </FormField>
 
@@ -183,7 +184,7 @@ const NewJobPage = async ({ searchParams }: NewJobPageProps) => {
                                         type="time"
                                         defaultValue={selectedTemplateSlot?.endTime ?? ""}
                                         required
-                                        className={bridalStyles.form.input}
+                                        className={appStyles.form.input}
                                     />
                                 </FormField>
 
@@ -199,7 +200,7 @@ const NewJobPage = async ({ searchParams }: NewJobPageProps) => {
                                             selectedTemplateSlot?.requiredPeople ?? ""
                                         }
                                         required
-                                        className={bridalStyles.form.input}
+                                        className={appStyles.form.input}
                                     />
                                 </FormField>
                             </div>
@@ -220,7 +221,7 @@ const NewJobPage = async ({ searchParams }: NewJobPageProps) => {
                                         placeholder="例：30"
                                         defaultValue={selectedTemplate?.breakMinutes ?? 0}
                                         required
-                                        className={bridalStyles.form.input}
+                                        className={appStyles.form.input}
                                     />
                                 </FormField>
 
@@ -233,7 +234,7 @@ const NewJobPage = async ({ searchParams }: NewJobPageProps) => {
                                     >
                                         <SelectTrigger
                                             id="hasMeal"
-                                            className={bridalStyles.form.input}
+                                            className={appStyles.form.input}
                                         >
                                             <SelectValue placeholder="食事の有無を選択" />
                                         </SelectTrigger>
@@ -255,7 +256,7 @@ const NewJobPage = async ({ searchParams }: NewJobPageProps) => {
                                             selectedTemplate?.transportationFee ?? 0
                                         }
                                         required
-                                        className={bridalStyles.form.input}
+                                        className={appStyles.form.input}
                                     />
                                 </FormField>
 
@@ -265,7 +266,7 @@ const NewJobPage = async ({ searchParams }: NewJobPageProps) => {
                                         name="dressCode"
                                         placeholder="例：黒スラックス・白シャツ"
                                         defaultValue={selectedTemplate?.dressCode ?? ""}
-                                        className={bridalStyles.form.input}
+                                        className={appStyles.form.input}
                                     />
                                 </FormField>
                             </div>
@@ -276,7 +277,7 @@ const NewJobPage = async ({ searchParams }: NewJobPageProps) => {
                                     name="belongings"
                                     placeholder="例：メモ帳、黒靴"
                                     defaultValue={selectedTemplate?.belongings ?? ""}
-                                    className={bridalStyles.form.input}
+                                    className={appStyles.form.input}
                                 />
                             </FormField>
 
@@ -286,10 +287,7 @@ const NewJobPage = async ({ searchParams }: NewJobPageProps) => {
                                     name="note"
                                     placeholder="注意事項や補足情報を入力してください"
                                     defaultValue={selectedTemplate?.note ?? ""}
-                                    className={[
-                                        bridalStyles.form.input,
-                                        "min-h-28",
-                                    ].join(" ")}
+                                    className={appStyles.form.textarea}
                                 />
                             </FormField>
                         </FormSection>
@@ -309,7 +307,7 @@ const NewJobPage = async ({ searchParams }: NewJobPageProps) => {
                                     >
                                         <SelectTrigger
                                             id="wageType"
-                                            className={bridalStyles.form.input}
+                                            className={appStyles.form.input}
                                         >
                                             <SelectValue placeholder="時給タイプを選択" />
                                         </SelectTrigger>
@@ -337,20 +335,25 @@ const NewJobPage = async ({ searchParams }: NewJobPageProps) => {
                                         defaultValue={
                                             selectedTemplate?.fixedHourlyWage ?? ""
                                         }
-                                        className={bridalStyles.form.input}
+                                        className={appStyles.form.input}
                                     />
-                                    <p className="text-xs text-slate-500">
+                                    <p className={["text-xs", appStyles.textColor.muted].join(" ")}>
                                         スタッフごとの時給を使う場合は空欄で問題ありません。
                                     </p>
                                 </FormField>
                             </div>
                         </FormSection>
 
-                        <div className="flex flex-col-reverse gap-3 border-t border-[#f0e5d0] pt-5 sm:flex-row sm:justify-end">
+                        <div
+                            className={[
+                                "flex flex-col-reverse gap-3 border-t pt-5 sm:flex-row sm:justify-end",
+                                appStyles.border.soft,
+                            ].join(" ")}
+                        >
                             <LinkButton
                                 href="/admin/jobs"
                                 variant="outline"
-                                className={bridalStyles.button.secondary}
+                                className={appStyles.button.secondary}
                             >
                                 キャンセル
                             </LinkButton>
@@ -358,7 +361,7 @@ const NewJobPage = async ({ searchParams }: NewJobPageProps) => {
                             <SubmitButton
                                 pendingText="作成中..."
                                 className={[
-                                    bridalStyles.button.primary,
+                                    appStyles.button.primary,
                                     "px-6",
                                 ].join(" ")}
                             >
@@ -368,7 +371,7 @@ const NewJobPage = async ({ searchParams }: NewJobPageProps) => {
                         </div>
                     </form>
                 </CardContent>
-            </BridalCard>
+            </AppCard>
         </PageShell>
     );
 };
@@ -376,8 +379,8 @@ const NewJobPage = async ({ searchParams }: NewJobPageProps) => {
 type FormSectionProps = {
     title: string;
     description: string;
-    icon: React.ReactNode;
-    children: React.ReactNode;
+    icon: ReactNode;
+    children: ReactNode;
 };
 
 const FormSection = ({
@@ -387,20 +390,20 @@ const FormSection = ({
     children,
 }: FormSectionProps) => {
     return (
-        <section className="space-y-4 rounded-2xl border border-[#f0e5d0] bg-white/70 p-5">
+        <section className={["space-y-4", appStyles.section.base].join(" ")}>
             <div className="flex items-start gap-3">
-                <div className={bridalStyles.icon.smallCircle}>{icon}</div>
+                <div className={appStyles.icon.smallCircle}>{icon}</div>
 
                 <div>
                     <h2
                         className={[
-                            bridalStyles.text.title,
+                            appStyles.text.title,
                             "text-lg",
                         ].join(" ")}
                     >
                         {title}
                     </h2>
-                    <p className="mt-1 text-sm text-slate-500">
+                    <p className={["mt-1", appStyles.text.muted].join(" ")}>
                         {description}
                     </p>
                 </div>
@@ -414,13 +417,13 @@ const FormSection = ({
 type FormFieldProps = {
     label: string;
     htmlFor: string;
-    children: React.ReactNode;
+    children: ReactNode;
 };
 
 const FormField = ({ label, htmlFor, children }: FormFieldProps) => {
     return (
         <div className="space-y-2">
-            <Label htmlFor={htmlFor} className={bridalStyles.form.label}>
+            <Label htmlFor={htmlFor} className={appStyles.form.label}>
                 {label}
             </Label>
             {children}
