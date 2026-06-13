@@ -1,5 +1,5 @@
-import { BridalCard } from "@/components/shared/bridal-card";
-import { bridalStyles } from "@/components/shared/design-tokens";
+import { AppCard } from "@/components/shared/bridal-card";
+import { appStyles } from "@/components/shared/design-tokens";
 import {
     CardContent,
     CardHeader,
@@ -23,23 +23,23 @@ type JobCandidateTableProps = {
 
 export const JobCandidateTable = ({ candidates }: JobCandidateTableProps) => {
     return (
-        <BridalCard className="overflow-hidden">
+        <AppCard className="overflow-hidden">
             <CardHeader className="p-5 pb-3">
                 <div className="flex items-start gap-3">
-                    <div className={bridalStyles.icon.circle}>
+                    <div className={appStyles.icon.circle}>
                         <UsersRound className="h-5 w-5" />
                     </div>
 
                     <div>
                         <CardTitle
                             className={[
-                                bridalStyles.text.title,
+                                appStyles.text.title,
                                 "text-xl",
                             ].join(" ")}
                         >
                             候補スタッフ一覧
                         </CardTitle>
-                        <p className="mt-1 text-sm text-slate-500">
+                        <p className={["mt-1", appStyles.text.muted].join(" ")}>
                             現在登録されているスタッフ候補を確認します。
                         </p>
                     </div>
@@ -47,25 +47,25 @@ export const JobCandidateTable = ({ candidates }: JobCandidateTableProps) => {
             </CardHeader>
 
             <CardContent className="p-5 pt-2">
-                <div className={bridalStyles.table.wrapper}>
+                <div className={appStyles.table.wrapper}>
                     <Table>
                         <TableHeader>
-                            <TableRow className={bridalStyles.table.headerRow}>
-                                <TableHead className={bridalStyles.table.head}>
+                            <TableRow className={appStyles.table.headerRow}>
+                                <TableHead className={appStyles.table.head}>
                                     名前
                                 </TableHead>
 
-                                <TableHead className={bridalStyles.table.head}>
+                                <TableHead className={appStyles.table.head}>
                                     メールアドレス
                                 </TableHead>
 
-                                <TableHead className={bridalStyles.table.head}>
+                                <TableHead className={appStyles.table.head}>
                                     勤め始めた年月
                                 </TableHead>
 
                                 <TableHead
                                     className={[
-                                        bridalStyles.table.head,
+                                        appStyles.table.head,
                                         "text-right",
                                     ].join(" ")}
                                 >
@@ -78,12 +78,12 @@ export const JobCandidateTable = ({ candidates }: JobCandidateTableProps) => {
                             {candidates.map((candidate) => (
                                 <TableRow
                                     key={candidate.id}
-                                    className={bridalStyles.table.row}
+                                    className={appStyles.table.row}
                                 >
                                     <TableCell>
                                         <p
                                             className={[
-                                                bridalStyles.text.title,
+                                                appStyles.text.title,
                                                 "text-base",
                                             ].join(" ")}
                                         >
@@ -91,15 +91,25 @@ export const JobCandidateTable = ({ candidates }: JobCandidateTableProps) => {
                                         </p>
                                     </TableCell>
 
-                                    <TableCell className="text-sm text-slate-600">
+                                    <TableCell className={appStyles.table.cellMuted}>
                                         {candidate.email}
                                     </TableCell>
 
-                                    <TableCell className="whitespace-nowrap text-sm text-slate-600">
+                                    <TableCell
+                                        className={[
+                                            "whitespace-nowrap",
+                                            appStyles.table.cellMuted,
+                                        ].join(" ")}
+                                    >
                                         {formatMonth(candidate.startedWorkingAt)}
                                     </TableCell>
 
-                                    <TableCell className="whitespace-nowrap text-right text-sm font-medium text-slate-900">
+                                    <TableCell
+                                        className={[
+                                            "whitespace-nowrap text-right text-sm font-medium",
+                                            appStyles.textColor.default,
+                                        ].join(" ")}
+                                    >
                                         {formatYen(candidate.hourlyWage)}
                                     </TableCell>
                                 </TableRow>
@@ -109,7 +119,7 @@ export const JobCandidateTable = ({ candidates }: JobCandidateTableProps) => {
                                 <TableRow>
                                     <TableCell
                                         colSpan={4}
-                                        className="py-10 text-center text-sm text-slate-500"
+                                        className={appStyles.table.empty}
                                     >
                                         候補スタッフがいません。
                                     </TableCell>
@@ -119,6 +129,6 @@ export const JobCandidateTable = ({ candidates }: JobCandidateTableProps) => {
                     </Table>
                 </div>
             </CardContent>
-        </BridalCard>
+        </AppCard>
     );
 };
