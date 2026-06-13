@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { Badge } from "@/components/ui/badge";
 import {
     CardContent,
@@ -5,8 +6,8 @@ import {
     CardTitle,
 } from "@/components/ui/card";
 import { GoogleMapsLink } from "@/components/shared/google-maps-link";
-import { BridalCard } from "@/components/shared/bridal-card";
-import { bridalStyles } from "@/components/shared/design-tokens";
+import { AppCard } from "@/components/shared/bridal-card";
+import { appStyles } from "@/components/shared/design-tokens";
 import { formatDate, formatYen } from "@/lib/format";
 import { wageTypeLabel } from "@/features/jobs/labels";
 import type { JobDetail } from "@/features/jobs/types";
@@ -25,23 +26,23 @@ export const JobBasicInfoCards = ({ job }: JobBasicInfoCardsProps) => {
 
     return (
         <section className="grid gap-4 md:grid-cols-2">
-            <BridalCard>
+            <AppCard>
                 <CardHeader className="p-5 pb-3">
                     <div className="flex items-start gap-3">
-                        <div className={bridalStyles.icon.circle}>
+                        <div className={appStyles.icon.circle}>
                             <MapPin className="h-5 w-5" />
                         </div>
 
                         <div>
                             <CardTitle
                                 className={[
-                                    bridalStyles.text.title,
+                                    appStyles.text.title,
                                     "text-xl",
                                 ].join(" ")}
                             >
                                 案件基本情報
                             </CardTitle>
-                            <p className="mt-1 text-sm text-slate-500">
+                            <p className={["mt-1", appStyles.text.muted].join(" ")}>
                                 日付、場所、集合場所、勤務枠を確認します。
                             </p>
                         </div>
@@ -51,7 +52,7 @@ export const JobBasicInfoCards = ({ job }: JobBasicInfoCardsProps) => {
                 <CardContent className="space-y-4 p-5 pt-2 text-sm">
                     <InfoRow label="日付" value={formatDate(job.workDate)} />
 
-                    <div className="space-y-2 rounded-2xl border border-[#f0e5d0] bg-[#fffdf8]/70 p-4">
+                    <div className={["space-y-2", appStyles.section.soft].join(" ")}>
                         <InfoRow label="場所" value={job.location} />
 
                         <div className="flex justify-end">
@@ -59,7 +60,7 @@ export const JobBasicInfoCards = ({ job }: JobBasicInfoCardsProps) => {
                         </div>
                     </div>
 
-                    <div className="space-y-2 rounded-2xl border border-[#f0e5d0] bg-[#fffdf8]/70 p-4">
+                    <div className={["space-y-2", appStyles.section.soft].join(" ")}>
                         <InfoRow
                             label="集合場所"
                             value={job.meetingPlace || "未設定"}
@@ -82,25 +83,25 @@ export const JobBasicInfoCards = ({ job }: JobBasicInfoCardsProps) => {
                         value={formatYen(job.transportationFee)}
                     />
                 </CardContent>
-            </BridalCard>
+            </AppCard>
 
-            <BridalCard>
+            <AppCard>
                 <CardHeader className="p-5 pb-3">
                     <div className="flex items-start gap-3">
-                        <div className={bridalStyles.icon.circle}>
+                        <div className={appStyles.icon.circle}>
                             <BriefcaseBusiness className="h-5 w-5" />
                         </div>
 
                         <div>
                             <CardTitle
                                 className={[
-                                    bridalStyles.text.title,
+                                    appStyles.text.title,
                                     "text-xl",
                                 ].join(" ")}
                             >
                                 勤務条件・時給設定
                             </CardTitle>
-                            <p className="mt-1 text-sm text-slate-500">
+                            <p className={["mt-1", appStyles.text.muted].join(" ")}>
                                 時給、服装、持ち物、備考を確認します。
                             </p>
                         </div>
@@ -108,9 +109,16 @@ export const JobBasicInfoCards = ({ job }: JobBasicInfoCardsProps) => {
                 </CardHeader>
 
                 <CardContent className="space-y-4 p-5 pt-2 text-sm">
-                    <div className="flex items-center justify-between gap-4 border-b border-[#f0e5d0] pb-3">
-                        <span className="text-slate-500">時給タイプ</span>
-                        <Badge className={bridalStyles.badge.neutral}>
+                    <div
+                        className={[
+                            "flex items-center justify-between gap-4 border-b pb-3",
+                            appStyles.border.soft,
+                        ].join(" ")}
+                    >
+                        <span className={appStyles.textColor.muted}>
+                            時給タイプ
+                        </span>
+                        <Badge className={appStyles.badge.neutral}>
                             {wageTypeLabel[job.wageType]}
                         </Badge>
                     </div>
@@ -127,18 +135,30 @@ export const JobBasicInfoCards = ({ job }: JobBasicInfoCardsProps) => {
                     <InfoRow label="服装" value={job.dressCode || "未設定"} />
                     <InfoRow label="持ち物" value={job.belongings || "未設定"} />
 
-                    <div className="space-y-2 rounded-2xl border border-[#f0e5d0] bg-[#fffdf8]/70 p-4">
+                    <div className={["space-y-2", appStyles.section.soft].join(" ")}>
                         <div className="flex items-center gap-2">
-                            <ClipboardList className="h-4 w-4 text-[#b8872d]" />
-                            <span className="text-slate-500">備考</span>
+                            <ClipboardList
+                                className={[
+                                    "h-4 w-4",
+                                    appStyles.icon.accent,
+                                ].join(" ")}
+                            />
+                            <span className={appStyles.textColor.muted}>
+                                備考
+                            </span>
                         </div>
 
-                        <p className="whitespace-pre-wrap leading-6 font-medium text-slate-900">
+                        <p
+                            className={[
+                                "whitespace-pre-wrap font-medium leading-6",
+                                appStyles.textColor.default,
+                            ].join(" ")}
+                        >
                             {job.note || "未設定"}
                         </p>
                     </div>
                 </CardContent>
-            </BridalCard>
+            </AppCard>
         </section>
     );
 };
@@ -179,9 +199,21 @@ type InfoRowProps = {
 
 const InfoRow = ({ label, value }: InfoRowProps) => {
     return (
-        <div className="flex justify-between gap-4 border-b border-[#f0e5d0] pb-3 last:border-b-0 last:pb-0">
-            <span className="shrink-0 text-slate-500">{label}</span>
-            <span className="text-right font-medium text-slate-900">
+        <div
+            className={[
+                "flex justify-between gap-4 border-b pb-3 last:border-b-0 last:pb-0",
+                appStyles.border.soft,
+            ].join(" ")}
+        >
+            <span className={["shrink-0", appStyles.textColor.muted].join(" ")}>
+                {label}
+            </span>
+            <span
+                className={[
+                    "text-right font-medium",
+                    appStyles.textColor.default,
+                ].join(" ")}
+            >
                 {value}
             </span>
         </div>
