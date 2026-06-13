@@ -1,10 +1,11 @@
+import type { ReactNode } from "react";
 import {
     CardContent,
     CardHeader,
     CardTitle,
 } from "@/components/ui/card";
-import { BridalCard } from "@/components/shared/bridal-card";
-import { bridalStyles } from "@/components/shared/design-tokens";
+import { AppCard } from "@/components/shared/bridal-card";
+import { appStyles } from "@/components/shared/design-tokens";
 import {
     CircleGauge,
     TriangleAlert,
@@ -43,18 +44,14 @@ export const JobSummaryCards = ({
                 title="不足人数"
                 value={`${shortagePeople}人`}
                 icon={<TriangleAlert className="h-5 w-5" />}
-                valueClassName={
-                    shortagePeople > 0 ? "text-amber-700" : "text-slate-900"
-                }
+                valueTone={shortagePeople > 0 ? "warning" : "default"}
             />
 
             <SummaryCard
                 title="充足率"
                 value={`${fulfillmentRate}%`}
                 icon={<CircleGauge className="h-5 w-5" />}
-                valueClassName={
-                    fulfillmentRate >= 100 ? "text-[#8a641f]" : "text-slate-900"
-                }
+                valueTone={fulfillmentRate >= 100 ? "accent" : "default"}
             />
         </section>
     );
@@ -63,25 +60,30 @@ export const JobSummaryCards = ({
 type SummaryCardProps = {
     title: string;
     value: string;
-    icon: React.ReactNode;
-    valueClassName?: string;
+    icon: ReactNode;
+    valueTone?: "default" | "accent" | "warning";
 };
 
 const SummaryCard = ({
     title,
     value,
     icon,
-    valueClassName,
+    valueTone = "default",
 }: SummaryCardProps) => {
     return (
-        <BridalCard>
+        <AppCard>
             <CardHeader className="space-y-0 p-5 pb-3">
                 <div className="flex items-center justify-between gap-3">
-                    <CardTitle className="text-sm font-medium text-slate-500">
+                    <CardTitle
+                        className={[
+                            "text-sm font-medium",
+                            appStyles.textColor.muted,
+                        ].join(" ")}
+                    >
                         {title}
                     </CardTitle>
 
-                    <div className={bridalStyles.icon.smallCircle}>
+                    <div className={appStyles.icon.smallCircle}>
                         {icon}
                     </div>
                 </div>
@@ -91,12 +93,26 @@ const SummaryCard = ({
                 <p
                     className={[
                         "text-3xl font-semibold tracking-tight",
-                        valueClassName ?? "text-slate-900",
+                        getValueToneClassName(valueTone),
                     ].join(" ")}
                 >
                     {value}
                 </p>
             </CardContent>
-        </BridalCard>
+        </AppCard>
     );
+};
+
+const getValueToneClassName = (
+    valueTone: SummaryCardProps["valueTone"],
+) => {
+    if (valueTone === "accent") {
+        return appStyles.textColor.accentDark;
+    }
+
+    if (valueTone === "warning") {
+        return appStyles.textColor.pending;
+    }
+
+    return appStyles.textColor.default;
 };
