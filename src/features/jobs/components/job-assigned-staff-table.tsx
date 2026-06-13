@@ -1,6 +1,6 @@
 import { Badge } from "@/components/ui/badge";
-import { BridalCard } from "@/components/shared/bridal-card";
-import { bridalStyles } from "@/components/shared/design-tokens";
+import { AppCard } from "@/components/shared/bridal-card";
+import { appStyles } from "@/components/shared/design-tokens";
 import {
     CardContent,
     CardHeader,
@@ -32,23 +32,23 @@ export const JobAssignedStaffTable = ({
     assignments,
 }: JobAssignedStaffTableProps) => {
     return (
-        <BridalCard className="overflow-hidden">
+        <AppCard className="overflow-hidden">
             <CardHeader className="p-5 pb-3">
                 <div className="flex items-start gap-3">
-                    <div className={bridalStyles.icon.circle}>
+                    <div className={appStyles.icon.circle}>
                         <UserCheck className="h-5 w-5" />
                     </div>
 
                     <div>
                         <CardTitle
                             className={[
-                                bridalStyles.text.title,
+                                appStyles.text.title,
                                 "text-xl",
                             ].join(" ")}
                         >
                             参加スタッフ一覧
                         </CardTitle>
-                        <p className="mt-1 text-sm text-slate-500">
+                        <p className={["mt-1", appStyles.text.muted].join(" ")}>
                             この案件に確定している登録スタッフを確認します。
                         </p>
                     </div>
@@ -56,23 +56,23 @@ export const JobAssignedStaffTable = ({
             </CardHeader>
 
             <CardContent className="p-5 pt-2">
-                <div className={bridalStyles.table.wrapper}>
+                <div className={appStyles.table.wrapper}>
                     <Table>
                         <TableHeader>
-                            <TableRow className={bridalStyles.table.headerRow}>
-                                <TableHead className={bridalStyles.table.head}>
+                            <TableRow className={appStyles.table.headerRow}>
+                                <TableHead className={appStyles.table.head}>
                                     氏名
                                 </TableHead>
 
-                                <TableHead className={bridalStyles.table.head}>
+                                <TableHead className={appStyles.table.head}>
                                     勤務枠
                                 </TableHead>
 
-                                <TableHead className={bridalStyles.table.head}>
+                                <TableHead className={appStyles.table.head}>
                                     メールアドレス
                                 </TableHead>
 
-                                <TableHead className={bridalStyles.table.head}>
+                                <TableHead className={appStyles.table.head}>
                                     ステータス
                                 </TableHead>
                             </TableRow>
@@ -82,12 +82,12 @@ export const JobAssignedStaffTable = ({
                             {assignments.map((assignment) => (
                                 <TableRow
                                     key={assignment.id}
-                                    className={bridalStyles.table.row}
+                                    className={appStyles.table.row}
                                 >
                                     <TableCell>
                                         <p
                                             className={[
-                                                bridalStyles.text.title,
+                                                appStyles.text.title,
                                                 "text-base",
                                             ].join(" ")}
                                         >
@@ -95,16 +95,16 @@ export const JobAssignedStaffTable = ({
                                         </p>
                                     </TableCell>
 
-                                    <TableCell className="text-sm text-slate-600">
+                                    <TableCell className={appStyles.table.cellMuted}>
                                         {assignment.slot.name}
                                     </TableCell>
 
-                                    <TableCell className="text-sm text-slate-600">
+                                    <TableCell className={appStyles.table.cellMuted}>
                                         {assignment.employee.email}
                                     </TableCell>
 
                                     <TableCell>
-                                        <Badge className={bridalStyles.badge.fulfilled}>
+                                        <Badge className={appStyles.badge.fulfilled}>
                                             確定
                                         </Badge>
                                     </TableCell>
@@ -115,7 +115,7 @@ export const JobAssignedStaffTable = ({
                                 <TableRow>
                                     <TableCell
                                         colSpan={4}
-                                        className="py-10 text-center text-sm text-slate-500"
+                                        className={appStyles.table.empty}
                                     >
                                         参加スタッフがまだ確定していません。
                                     </TableCell>
@@ -125,6 +125,6 @@ export const JobAssignedStaffTable = ({
                     </Table>
                 </div>
             </CardContent>
-        </BridalCard>
+        </AppCard>
     );
 };
