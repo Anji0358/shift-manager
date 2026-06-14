@@ -15,8 +15,8 @@ import {
 } from "@/components/ui/table";
 import { PageShell } from "@/components/shared/page-shell";
 import { PageHeader } from "@/components/shared/page-header";
-import { BridalCard } from "@/components/shared/bridal-card";
-import { bridalStyles } from "@/components/shared/design-tokens";
+import { AppCard } from "@/components/shared/bridal-card";
+import { appStyles } from "@/components/shared/design-tokens";
 import {
     approveWorkReport,
     rejectWorkReport,
@@ -44,18 +44,25 @@ const workReportStatusLabel: Record<WorkReportStatus, string> = {
 
 const getWorkReportStatusBadgeClassName = (status: WorkReportStatus) => {
     if (status === "APPROVED") {
-        return bridalStyles.badge.fulfilled;
+        return appStyles.badge.fulfilled;
     }
 
     if (status === "SUBMITTED") {
-        return bridalStyles.badge.pending;
+        return appStyles.badge.pending;
     }
 
     if (status === "REJECTED") {
-        return "rounded-full border border-red-200 bg-red-50 px-3 py-1 text-xs font-medium text-red-700 shadow-none hover:bg-red-50";
+        return [
+            appStyles.radius.full,
+            "border px-3 py-1 text-xs font-medium shadow-none",
+            appStyles.border.danger,
+            appStyles.tokens.color.background.danger,
+            appStyles.textColor.danger,
+            appStyles.tokens.color.background.hoverDanger,
+        ].join(" ");
     }
 
-    return bridalStyles.badge.neutral;
+    return appStyles.badge.neutral;
 };
 
 const AdminWorkReportsPage = async () => {
@@ -69,23 +76,23 @@ const AdminWorkReportsPage = async () => {
             />
 
             <div className="hidden md:block">
-                <BridalCard className="overflow-hidden">
+                <AppCard className="overflow-hidden">
                     <CardHeader className="p-5 pb-3">
                         <div className="flex items-start gap-3">
-                            <div className={bridalStyles.icon.circle}>
+                            <div className={appStyles.icon.circle}>
                                 <ClipboardCheck className="h-5 w-5" />
                             </div>
 
                             <div>
                                 <CardTitle
                                     className={[
-                                        bridalStyles.text.title,
+                                        appStyles.text.title,
                                         "text-xl",
                                     ].join(" ")}
                                 >
                                     就労報告一覧
                                 </CardTitle>
-                                <p className="mt-1 text-sm text-slate-500">
+                                <p className={["mt-1", appStyles.text.muted].join(" ")}>
                                     提出された勤務実績、給与見込み、承認状態を確認します。
                                 </p>
                             </div>
@@ -93,29 +100,29 @@ const AdminWorkReportsPage = async () => {
                     </CardHeader>
 
                     <CardContent className="p-5 pt-2">
-                        <div className={bridalStyles.table.wrapper}>
+                        <div className={appStyles.table.wrapper}>
                             <Table>
                                 <TableHeader>
-                                    <TableRow className={bridalStyles.table.headerRow}>
-                                        <TableHead className={bridalStyles.table.head}>
+                                    <TableRow className={appStyles.table.headerRow}>
+                                        <TableHead className={appStyles.table.head}>
                                             勤務日
                                         </TableHead>
 
-                                        <TableHead className={bridalStyles.table.head}>
+                                        <TableHead className={appStyles.table.head}>
                                             案件名
                                         </TableHead>
 
-                                        <TableHead className={bridalStyles.table.head}>
+                                        <TableHead className={appStyles.table.head}>
                                             スタッフ
                                         </TableHead>
 
-                                        <TableHead className={bridalStyles.table.head}>
+                                        <TableHead className={appStyles.table.head}>
                                             実勤務時間
                                         </TableHead>
 
                                         <TableHead
                                             className={[
-                                                bridalStyles.table.head,
+                                                appStyles.table.head,
                                                 "text-right",
                                             ].join(" ")}
                                         >
@@ -124,20 +131,20 @@ const AdminWorkReportsPage = async () => {
 
                                         <TableHead
                                             className={[
-                                                bridalStyles.table.head,
+                                                appStyles.table.head,
                                                 "text-right",
                                             ].join(" ")}
                                         >
                                             給与見込み
                                         </TableHead>
 
-                                        <TableHead className={bridalStyles.table.head}>
+                                        <TableHead className={appStyles.table.head}>
                                             状態
                                         </TableHead>
 
                                         <TableHead
                                             className={[
-                                                bridalStyles.table.head,
+                                                appStyles.table.head,
                                                 "text-right",
                                             ].join(" ")}
                                         >
@@ -165,16 +172,21 @@ const AdminWorkReportsPage = async () => {
                                         return (
                                             <TableRow
                                                 key={report.id}
-                                                className={bridalStyles.table.row}
+                                                className={appStyles.table.row}
                                             >
-                                                <TableCell className="whitespace-nowrap text-sm text-slate-600">
+                                                <TableCell
+                                                    className={[
+                                                        "whitespace-nowrap",
+                                                        appStyles.table.cellMuted,
+                                                    ].join(" ")}
+                                                >
                                                     {formatDate(report.job.workDate)}
                                                 </TableCell>
 
                                                 <TableCell>
                                                     <p
                                                         className={[
-                                                            bridalStyles.text.title,
+                                                            appStyles.text.title,
                                                             "text-base",
                                                         ].join(" ")}
                                                     >
@@ -182,20 +194,35 @@ const AdminWorkReportsPage = async () => {
                                                     </p>
                                                 </TableCell>
 
-                                                <TableCell className="text-sm text-slate-600">
+                                                <TableCell className={appStyles.table.cellMuted}>
                                                     {report.employee.name}
                                                 </TableCell>
 
-                                                <TableCell className="whitespace-nowrap text-sm text-slate-600">
+                                                <TableCell
+                                                    className={[
+                                                        "whitespace-nowrap",
+                                                        appStyles.table.cellMuted,
+                                                    ].join(" ")}
+                                                >
                                                     {report.actualStartTime}〜
                                                     {report.actualEndTime}
                                                 </TableCell>
 
-                                                <TableCell className="whitespace-nowrap text-right text-sm text-slate-600">
+                                                <TableCell
+                                                    className={[
+                                                        "whitespace-nowrap text-right",
+                                                        appStyles.table.cellMuted,
+                                                    ].join(" ")}
+                                                >
                                                     {workHours}時間
                                                 </TableCell>
 
-                                                <TableCell className="whitespace-nowrap text-right text-sm font-medium text-slate-900">
+                                                <TableCell
+                                                    className={[
+                                                        "whitespace-nowrap text-right text-sm font-medium",
+                                                        appStyles.textColor.default,
+                                                    ].join(" ")}
+                                                >
                                                     {formatYen(estimatedSalary)}
                                                 </TableCell>
 
@@ -222,7 +249,7 @@ const AdminWorkReportsPage = async () => {
                                                                 <Button
                                                                     size="sm"
                                                                     type="submit"
-                                                                    className={bridalStyles.button.primary}
+                                                                    className={appStyles.button.primary}
                                                                 >
                                                                     <CheckCircle2 className="mr-2 h-4 w-4" />
                                                                     承認
@@ -240,7 +267,7 @@ const AdminWorkReportsPage = async () => {
                                                                     size="sm"
                                                                     type="submit"
                                                                     variant="outline"
-                                                                    className={bridalStyles.button.danger}
+                                                                    className={appStyles.button.danger}
                                                                 >
                                                                     <RotateCcw className="mr-2 h-4 w-4" />
                                                                     差し戻し
@@ -248,7 +275,12 @@ const AdminWorkReportsPage = async () => {
                                                             </form>
                                                         </div>
                                                     ) : (
-                                                        <span className="text-sm text-slate-400">
+                                                        <span
+                                                            className={[
+                                                                "text-sm",
+                                                                appStyles.textColor.muted,
+                                                            ].join(" ")}
+                                                        >
                                                             -
                                                         </span>
                                                     )}
@@ -261,7 +293,7 @@ const AdminWorkReportsPage = async () => {
                                         <TableRow>
                                             <TableCell
                                                 colSpan={8}
-                                                className="py-10 text-center text-sm text-slate-500"
+                                                className={appStyles.table.empty}
                                             >
                                                 まだ就労報告がありません。
                                             </TableCell>
@@ -271,7 +303,7 @@ const AdminWorkReportsPage = async () => {
                             </Table>
                         </div>
                     </CardContent>
-                </BridalCard>
+                </AppCard>
             </div>
 
             <div className="md:hidden">
