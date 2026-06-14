@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import type { ReactNode } from "react";
 import type {
     Employee,
     JobShiftSlot,
@@ -15,7 +16,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
-import { bridalStyles } from "@/components/shared/design-tokens";
+import { appStyles } from "@/components/shared/design-tokens";
 import { createShiftAssignment } from "@/features/shift-assignments/actions";
 import { isUnavailableForSlot } from "@/features/unavailable-times/services";
 import { CheckCircle2, Info, TriangleAlert } from "lucide-react";
@@ -89,18 +90,14 @@ export const StaffAssignmentForm = ({
             >
                 <input type="hidden" name="jobId" value={jobId} />
 
-                <div className="space-y-2">
-                    <label className={bridalStyles.form.label}>
-                        勤務枠
-                    </label>
-
+                <FormField label="勤務枠">
                     <Select
                         name="slotId"
                         value={slotId}
                         onValueChange={handleSlotChange}
                         required
                     >
-                        <SelectTrigger className={bridalStyles.form.input}>
+                        <SelectTrigger className={appStyles.form.input}>
                             <SelectValue placeholder="勤務枠を選択" />
                         </SelectTrigger>
 
@@ -112,13 +109,9 @@ export const StaffAssignmentForm = ({
                             ))}
                         </SelectContent>
                     </Select>
-                </div>
+                </FormField>
 
-                <div className="space-y-2">
-                    <label className={bridalStyles.form.label}>
-                        スタッフ
-                    </label>
-
+                <FormField label="スタッフ">
                     <Select
                         name="employeeId"
                         value={employeeId}
@@ -126,7 +119,7 @@ export const StaffAssignmentForm = ({
                         disabled={!selectedSlot || filteredCandidates.length === 0}
                         required
                     >
-                        <SelectTrigger className={bridalStyles.form.input}>
+                        <SelectTrigger className={appStyles.form.input}>
                             <SelectValue
                                 placeholder={
                                     !selectedSlot
@@ -146,14 +139,14 @@ export const StaffAssignmentForm = ({
                             ))}
                         </SelectContent>
                     </Select>
-                </div>
+                </FormField>
 
                 <div className="flex items-end">
                     <Button
                         type="submit"
                         disabled={cannotAssign}
                         className={[
-                            bridalStyles.button.primary,
+                            appStyles.button.primary,
                             "h-11 w-full px-6 md:w-auto",
                         ].join(" ")}
                     >
@@ -164,22 +157,75 @@ export const StaffAssignmentForm = ({
             </form>
 
             {selectedSlot ? (
-                <div className="flex items-start gap-2 rounded-2xl border border-[#f0e5d0] bg-[#fffdf8]/70 p-4 text-sm text-slate-600">
-                    <Info className="mt-0.5 h-4 w-4 shrink-0 text-[#b8872d]" />
-                    <p>
-                        選択した勤務枠に対して、勤務不可のスタッフと、すでに割り振り済みのスタッフを除外しています。
-                    </p>
-                </div>
+                <MessageBox
+                    tone="info"
+                    icon={<Info className="h-4 w-4" />}
+                >
+                    選択した勤務枠に対して、勤務不可のスタッフと、すでに割り振り済みのスタッフを除外しています。
+                </MessageBox>
             ) : null}
 
             {selectedSlot && filteredCandidates.length === 0 ? (
-                <div className="flex items-start gap-2 rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
-                    <TriangleAlert className="mt-0.5 h-4 w-4 shrink-0" />
-                    <p>
-                        この勤務枠に割り振れるスタッフがいません。勤務不可設定、既存の割り振り、必要人数を確認してください。
-                    </p>
-                </div>
+                <MessageBox
+                    tone="danger"
+                    icon={<TriangleAlert className="h-4 w-4" />}
+                >
+                    この勤務枠に割り振れるスタッフがいません。勤務不可設定、既存の割り振り、必要人数を確認してください。
+                </MessageBox>
             ) : null}
+        </div>
+    );
+};
+
+type FormFieldProps = {
+    label: string;
+    children: ReactNode;
+};
+
+const FormField = ({ label, children }: FormFieldProps) => {
+    return (
+        <div className="space-y-2">
+            <label className={appStyles.form.label}>{label}</label>
+            {children}
+        </div>
+    );
+};
+
+type MessageBoxProps = {
+    tone: "info" | "danger";
+    icon: ReactNode;
+    children: ReactNode;
+};
+
+const MessageBox = ({ tone, icon, children }: MessageBoxProps) => {
+    const toneClassName =
+        tone === "danger"
+            ? [
+                appStyles.border.danger,
+                appStyles.tokens.color.background.danger,
+                appStyles.textColor.danger,
+            ].join(" ")
+            : [
+                appStyles.border.soft,
+                appStyles.background.warmSoft,
+                appStyles.textColor.body,
+            ].join(" ");
+
+    const iconClassName =
+        tone === "danger" ? appStyles.textColor.danger : appStyles.icon.accent;
+
+    return (
+        <div
+            className={[
+                "flex items-start gap-2 border p-4 text-sm",
+                appStyles.radius["2xl"],
+                toneClassName,
+            ].join(" ")}
+        >
+            <span className={["mt-0.5 shrink-0", iconClassName].join(" ")}>
+                {icon}
+            </span>
+            <p>{children}</p>
         </div>
     );
 };
