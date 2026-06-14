@@ -1,8 +1,9 @@
+import type { ReactNode } from "react";
 import { notFound } from "next/navigation";
 import { PageShell } from "@/components/shared/page-shell";
 import { PageHeader } from "@/components/shared/page-header";
-import { BridalCard } from "@/components/shared/bridal-card";
-import { bridalStyles } from "@/components/shared/design-tokens";
+import { AppCard } from "@/components/shared/bridal-card";
+import { appStyles } from "@/components/shared/design-tokens";
 import {
     CardContent,
     CardHeader,
@@ -47,7 +48,7 @@ const AdminNewJobSlotPage = async ({ params }: AdminNewJobSlotPageProps) => {
                         <LinkButton
                             href={`/admin/jobs/${job.id}/assignments`}
                             variant="outline"
-                            className={bridalStyles.button.secondary}
+                            className={appStyles.button.secondary}
                         >
                             <ArrowLeft className="mr-2 h-4 w-4" />
                             スタッフ割り振りへ戻る
@@ -56,7 +57,7 @@ const AdminNewJobSlotPage = async ({ params }: AdminNewJobSlotPageProps) => {
                         <LinkButton
                             href={`/admin/jobs/${job.id}`}
                             variant="outline"
-                            className={bridalStyles.button.secondary}
+                            className={appStyles.button.secondary}
                         >
                             案件詳細へ戻る
                         </LinkButton>
@@ -64,23 +65,23 @@ const AdminNewJobSlotPage = async ({ params }: AdminNewJobSlotPageProps) => {
                 }
             />
 
-            <BridalCard>
+            <AppCard>
                 <CardHeader className="p-5 pb-3">
                     <div className="flex items-start gap-3">
-                        <div className={bridalStyles.icon.circle}>
+                        <div className={appStyles.icon.circle}>
                             <CalendarPlus className="h-5 w-5" />
                         </div>
 
                         <div>
                             <CardTitle
                                 className={[
-                                    bridalStyles.text.title,
+                                    appStyles.text.title,
                                     "text-xl",
                                 ].join(" ")}
                             >
                                 勤務枠情報
                             </CardTitle>
-                            <p className="mt-1 text-sm text-slate-500">
+                            <p className={["mt-1", appStyles.text.muted].join(" ")}>
                                 勤務枠名、必要人数、開始時間、終了時間を登録します。
                             </p>
                         </div>
@@ -91,22 +92,22 @@ const AdminNewJobSlotPage = async ({ params }: AdminNewJobSlotPageProps) => {
                     <form action={createJobShiftSlot} className="space-y-6">
                         <input type="hidden" name="jobId" value={job.id} />
 
-                        <section className="rounded-2xl border border-[#f0e5d0] bg-white/70 p-5">
-                            <div className="mb-5 flex items-start gap-3">
-                                <div className={bridalStyles.icon.smallCircle}>
+                        <section className={["space-y-5", appStyles.section.base].join(" ")}>
+                            <div className="flex items-start gap-3">
+                                <div className={appStyles.icon.smallCircle}>
                                     <Clock className="h-5 w-5" />
                                 </div>
 
                                 <div>
                                     <h2
                                         className={[
-                                            bridalStyles.text.title,
+                                            appStyles.text.title,
                                             "text-lg",
                                         ].join(" ")}
                                     >
                                         勤務時間・必要人数
                                     </h2>
-                                    <p className="mt-1 text-sm text-slate-500">
+                                    <p className={["mt-1", appStyles.text.muted].join(" ")}>
                                         1つの案件に複数の勤務枠を追加できます。
                                     </p>
                                 </div>
@@ -119,7 +120,7 @@ const AdminNewJobSlotPage = async ({ params }: AdminNewJobSlotPageProps) => {
                                         name="name"
                                         placeholder="例：本番"
                                         required
-                                        className={bridalStyles.form.input}
+                                        className={appStyles.form.input}
                                     />
                                 </FormField>
 
@@ -136,7 +137,7 @@ const AdminNewJobSlotPage = async ({ params }: AdminNewJobSlotPageProps) => {
                                         step={1}
                                         placeholder="例：8"
                                         required
-                                        className={bridalStyles.form.input}
+                                        className={appStyles.form.input}
                                     />
                                 </FormField>
 
@@ -146,7 +147,7 @@ const AdminNewJobSlotPage = async ({ params }: AdminNewJobSlotPageProps) => {
                                         name="startTime"
                                         type="time"
                                         required
-                                        className={bridalStyles.form.input}
+                                        className={appStyles.form.input}
                                     />
                                 </FormField>
 
@@ -156,17 +157,22 @@ const AdminNewJobSlotPage = async ({ params }: AdminNewJobSlotPageProps) => {
                                         name="endTime"
                                         type="time"
                                         required
-                                        className={bridalStyles.form.input}
+                                        className={appStyles.form.input}
                                     />
                                 </FormField>
                             </div>
                         </section>
 
-                        <div className="flex flex-col-reverse gap-3 border-t border-[#f0e5d0] pt-5 sm:flex-row sm:justify-end">
+                        <div
+                            className={[
+                                "flex flex-col-reverse gap-3 border-t pt-5 sm:flex-row sm:justify-end",
+                                appStyles.border.soft,
+                            ].join(" ")}
+                        >
                             <LinkButton
                                 href={`/admin/jobs/${job.id}/assignments`}
                                 variant="outline"
-                                className={bridalStyles.button.secondary}
+                                className={appStyles.button.secondary}
                             >
                                 キャンセル
                             </LinkButton>
@@ -174,7 +180,7 @@ const AdminNewJobSlotPage = async ({ params }: AdminNewJobSlotPageProps) => {
                             <SubmitButton
                                 pendingText="追加中..."
                                 className={[
-                                    bridalStyles.button.primary,
+                                    appStyles.button.primary,
                                     "px-6",
                                 ].join(" ")}
                             >
@@ -184,7 +190,7 @@ const AdminNewJobSlotPage = async ({ params }: AdminNewJobSlotPageProps) => {
                         </div>
                     </form>
                 </CardContent>
-            </BridalCard>
+            </AppCard>
         </PageShell>
     );
 };
@@ -192,8 +198,8 @@ const AdminNewJobSlotPage = async ({ params }: AdminNewJobSlotPageProps) => {
 type FormFieldProps = {
     label: string;
     htmlFor: string;
-    children: React.ReactNode;
-    icon?: React.ReactNode;
+    children: ReactNode;
+    icon?: ReactNode;
 };
 
 const FormField = ({
@@ -207,7 +213,7 @@ const FormField = ({
             <Label
                 htmlFor={htmlFor}
                 className={[
-                    bridalStyles.form.label,
+                    appStyles.form.label,
                     "flex items-center gap-2",
                 ].join(" ")}
             >
