@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import type { Employee, Job, WorkReport, WorkReportStatus } from "@prisma/client";
 import {
     CalendarDays,
@@ -13,8 +14,8 @@ import {
 } from "@/features/work-reports/actions";
 import { SubmitButton } from "@/components/shared/submit-button";
 import { Badge } from "@/components/ui/badge";
-import { BridalCard } from "@/components/shared/bridal-card";
-import { bridalStyles } from "@/components/shared/design-tokens";
+import { AppCard } from "@/components/shared/bridal-card";
+import { appStyles } from "@/components/shared/design-tokens";
 
 type WorkReportWithRelations = WorkReport & {
     employee: Employee;
@@ -42,44 +43,53 @@ const getStatusLabel = (status: WorkReportStatus) => {
 
 const getStatusBadgeClassName = (status: WorkReportStatus) => {
     if (status === "APPROVED") {
-        return bridalStyles.badge.fulfilled;
+        return appStyles.badge.fulfilled;
     }
 
     if (status === "SUBMITTED") {
-        return bridalStyles.badge.pending;
+        return appStyles.badge.pending;
     }
 
     if (status === "REJECTED") {
-        return "rounded-full border border-red-200 bg-red-50 px-3 py-1 text-xs font-medium text-red-700 shadow-none hover:bg-red-50";
+        return [
+            appStyles.radius.full,
+            "border px-3 py-1 text-xs font-medium shadow-none",
+            appStyles.border.danger,
+            appStyles.tokens.color.background.danger,
+            appStyles.textColor.danger,
+            appStyles.tokens.color.background.hoverDanger,
+        ].join(" ");
     }
 
-    return bridalStyles.badge.neutral;
+    return appStyles.badge.neutral;
 };
 
 export const WorkReportCardList = ({ reports }: WorkReportCardListProps) => {
     if (reports.length === 0) {
         return (
-            <BridalCard className="p-6 text-center text-sm text-slate-500">
-                就労報告がありません。
-            </BridalCard>
+            <AppCard className="p-6 text-center">
+                <p className={appStyles.text.muted}>
+                    就労報告がありません。
+                </p>
+            </AppCard>
         );
     }
 
     return (
         <div className="space-y-4">
             {reports.map((report) => (
-                <BridalCard key={report.id} className="p-4">
+                <AppCard key={report.id} className="p-4">
                     <div className="flex items-start justify-between gap-3">
                         <div>
                             <h2
                                 className={[
-                                    bridalStyles.text.title,
+                                    appStyles.text.title,
                                     "text-lg",
                                 ].join(" ")}
                             >
                                 {report.job.title}
                             </h2>
-                            <p className="mt-1 text-sm text-slate-500">
+                            <p className={["mt-1", appStyles.text.muted].join(" ")}>
                                 {report.employee.name}
                             </p>
                         </div>
@@ -89,7 +99,12 @@ export const WorkReportCardList = ({ reports }: WorkReportCardListProps) => {
                         </Badge>
                     </div>
 
-                    <div className="mt-4 space-y-2 text-sm text-slate-600">
+                    <div
+                        className={[
+                            "mt-4 space-y-2 text-sm",
+                            appStyles.textColor.body,
+                        ].join(" ")}
+                    >
                         <InfoRow icon={<CalendarDays className="h-4 w-4" />}>
                             {formatDate(report.job.workDate)}
                         </InfoRow>
@@ -103,7 +118,12 @@ export const WorkReportCardList = ({ reports }: WorkReportCardListProps) => {
                         </InfoRow>
                     </div>
 
-                    <div className="mt-4 grid grid-cols-2 gap-3 rounded-2xl border border-[#f0e5d0] bg-[#fffdf8]/80 p-4 text-sm">
+                    <div
+                        className={[
+                            "mt-4 grid grid-cols-2 gap-3 p-4 text-sm",
+                            appStyles.section.soft,
+                        ].join(" ")}
+                    >
                         <SummaryItem
                             label="休憩"
                             value={`${report.actualBreakMinutes}分`}
@@ -126,7 +146,12 @@ export const WorkReportCardList = ({ reports }: WorkReportCardListProps) => {
                     </div>
 
                     {report.status === "SUBMITTED" && (
-                        <div className="mt-4 grid grid-cols-2 gap-2 border-t border-[#f0e5d0] pt-4">
+                        <div
+                            className={[
+                                "mt-4 grid grid-cols-2 gap-2 border-t pt-4",
+                                appStyles.border.soft,
+                            ].join(" ")}
+                        >
                             <form action={approveWorkReport}>
                                 <input
                                     type="hidden"
@@ -136,7 +161,7 @@ export const WorkReportCardList = ({ reports }: WorkReportCardListProps) => {
 
                                 <SubmitButton
                                     className={[
-                                        bridalStyles.button.primary,
+                                        appStyles.button.primary,
                                         "w-full",
                                     ].join(" ")}
                                     pendingText="承認中..."
@@ -155,7 +180,7 @@ export const WorkReportCardList = ({ reports }: WorkReportCardListProps) => {
 
                                 <SubmitButton
                                     className={[
-                                        bridalStyles.button.danger,
+                                        appStyles.button.danger,
                                         "w-full",
                                     ].join(" ")}
                                     variant="outline"
@@ -167,21 +192,21 @@ export const WorkReportCardList = ({ reports }: WorkReportCardListProps) => {
                             </form>
                         </div>
                     )}
-                </BridalCard>
+                </AppCard>
             ))}
         </div>
     );
 };
 
 type InfoRowProps = {
-    icon: React.ReactNode;
-    children: React.ReactNode;
+    icon: ReactNode;
+    children: ReactNode;
 };
 
 const InfoRow = ({ icon, children }: InfoRowProps) => {
     return (
         <div className="flex items-center gap-2">
-            <span className="text-[#b8872d]">{icon}</span>
+            <span className={appStyles.icon.accent}>{icon}</span>
             <span>{children}</span>
         </div>
     );
@@ -195,8 +220,17 @@ type SummaryItemProps = {
 const SummaryItem = ({ label, value }: SummaryItemProps) => {
     return (
         <div>
-            <p className="text-xs text-slate-500">{label}</p>
-            <p className="mt-1 font-medium text-slate-900">{value}</p>
+            <p className={["text-xs", appStyles.textColor.muted].join(" ")}>
+                {label}
+            </p>
+            <p
+                className={[
+                    "mt-1 font-medium",
+                    appStyles.textColor.default,
+                ].join(" ")}
+            >
+                {value}
+            </p>
         </div>
     );
 };
