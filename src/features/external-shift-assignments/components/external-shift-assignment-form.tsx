@@ -1,8 +1,9 @@
+import type { ReactNode } from "react";
 import type { JobShiftSlot } from "@prisma/client";
 import { createExternalShiftAssignment } from "@/features/external-shift-assignments/actions";
 import { SubmitButton } from "@/components/shared/submit-button";
-import { BridalCard } from "@/components/shared/bridal-card";
-import { bridalStyles } from "@/components/shared/design-tokens";
+import { AppCard } from "@/components/shared/bridal-card";
+import { appStyles } from "@/components/shared/design-tokens";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -26,50 +27,58 @@ export const ExternalShiftAssignmentForm = ({
 }: ExternalShiftAssignmentFormProps) => {
     if (shiftSlots.length === 0) {
         return (
-            <BridalCard>
+            <AppCard>
                 <CardHeader className="p-5 pb-3">
                     <div className="flex items-start gap-3">
-                        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-amber-200 bg-amber-50 text-amber-700">
+                        <div
+                            className={[
+                                "flex h-11 w-11 shrink-0 items-center justify-center border",
+                                appStyles.radius.full,
+                                appStyles.border.pending,
+                                appStyles.tokens.color.background.pending,
+                                appStyles.textColor.pending,
+                            ].join(" ")}
+                        >
                             <CircleAlert className="h-5 w-5" />
                         </div>
 
                         <div>
                             <CardTitle
                                 className={[
-                                    bridalStyles.text.title,
+                                    appStyles.text.title,
                                     "text-xl",
                                 ].join(" ")}
                             >
                                 外部人員を追加
                             </CardTitle>
-                            <p className="mt-1 text-sm text-slate-500">
+                            <p className={["mt-1", appStyles.text.muted].join(" ")}>
                                 外部人員を追加するには、先に勤務枠を作成してください。
                             </p>
                         </div>
                     </div>
                 </CardHeader>
-            </BridalCard>
+            </AppCard>
         );
     }
 
     return (
-        <BridalCard>
+        <AppCard>
             <CardHeader className="p-5 pb-3">
                 <div className="flex items-start gap-3">
-                    <div className={bridalStyles.icon.circle}>
+                    <div className={appStyles.icon.circle}>
                         <UserRoundPlus className="h-5 w-5" />
                     </div>
 
                     <div>
                         <CardTitle
                             className={[
-                                bridalStyles.text.title,
+                                appStyles.text.title,
                                 "text-xl",
                             ].join(" ")}
                         >
                             外部人員を追加
                         </CardTitle>
-                        <p className="mt-1 text-sm text-slate-500">
+                        <p className={["mt-1", appStyles.text.muted].join(" ")}>
                             登録スタッフ以外の人員や外部サービス枠を追加します。
                         </p>
                     </div>
@@ -87,7 +96,7 @@ export const ExternalShiftAssignmentForm = ({
                                 name="slotId"
                                 required
                                 className={[
-                                    bridalStyles.form.input,
+                                    appStyles.form.input,
                                     "h-11 w-full px-3 text-sm",
                                 ].join(" ")}
                             >
@@ -105,7 +114,7 @@ export const ExternalShiftAssignmentForm = ({
                                 name="name"
                                 placeholder="例：山田 太郎 / タイミー枠"
                                 required
-                                className={bridalStyles.form.input}
+                                className={appStyles.form.input}
                             />
                         </FormField>
 
@@ -118,7 +127,7 @@ export const ExternalShiftAssignmentForm = ({
                                 step={1}
                                 defaultValue={1}
                                 required
-                                className={bridalStyles.form.input}
+                                className={appStyles.form.input}
                             />
                         </FormField>
 
@@ -127,16 +136,21 @@ export const ExternalShiftAssignmentForm = ({
                                 id="note"
                                 name="note"
                                 placeholder="例：タイミー、紹介、単発など"
-                                className={bridalStyles.form.input}
+                                className={appStyles.form.input}
                             />
                         </FormField>
                     </div>
 
-                    <div className="flex justify-end border-t border-[#f0e5d0] pt-5">
+                    <div
+                        className={[
+                            "flex justify-end border-t pt-5",
+                            appStyles.border.soft,
+                        ].join(" ")}
+                    >
                         <SubmitButton
                             pendingText="追加中..."
                             className={[
-                                bridalStyles.button.primary,
+                                appStyles.button.primary,
                                 "px-6",
                             ].join(" ")}
                         >
@@ -146,20 +160,20 @@ export const ExternalShiftAssignmentForm = ({
                     </div>
                 </form>
             </CardContent>
-        </BridalCard>
+        </AppCard>
     );
 };
 
 type FormFieldProps = {
     label: string;
     htmlFor: string;
-    children: React.ReactNode;
+    children: ReactNode;
 };
 
 const FormField = ({ label, htmlFor, children }: FormFieldProps) => {
     return (
         <div className="space-y-2">
-            <Label htmlFor={htmlFor} className={bridalStyles.form.label}>
+            <Label htmlFor={htmlFor} className={appStyles.form.label}>
                 {label}
             </Label>
             {children}
