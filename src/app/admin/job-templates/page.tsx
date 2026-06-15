@@ -23,8 +23,8 @@ import {
 } from "@/components/ui/table";
 import { PageShell } from "@/components/shared/page-shell";
 import { PageHeader } from "@/components/shared/page-header";
-import { BridalCard } from "@/components/shared/bridal-card";
-import { bridalStyles } from "@/components/shared/design-tokens";
+import { AppCard } from "@/components/shared/bridal-card";
+import { appStyles } from "@/components/shared/design-tokens";
 import { formatYen } from "@/lib/format";
 
 const getTemplateShiftSlotText = (
@@ -58,7 +58,7 @@ const AdminJobTemplatesPage = async () => {
                     <LinkButton
                         href="/admin/job-templates/new"
                         pendingText="作成画面へ移動中..."
-                        className={bridalStyles.button.primary}
+                        className={appStyles.button.primary}
                     >
                         <FilePlus2 className="mr-2 h-4 w-4" />
                         テンプレートを作成
@@ -66,23 +66,23 @@ const AdminJobTemplatesPage = async () => {
                 }
             />
 
-            <BridalCard className="overflow-hidden">
+            <AppCard className="overflow-hidden">
                 <CardHeader className="p-5 pb-3">
                     <div className="flex items-start gap-3">
-                        <div className={bridalStyles.icon.circle}>
+                        <div className={appStyles.icon.circle}>
                             <ClipboardList className="h-5 w-5" />
                         </div>
 
                         <div>
                             <CardTitle
                                 className={[
-                                    bridalStyles.text.title,
+                                    appStyles.text.title,
                                     "text-xl",
                                 ].join(" ")}
                             >
                                 テンプレート一覧
                             </CardTitle>
-                            <p className="mt-1 text-sm text-slate-500">
+                            <p className={["mt-1", appStyles.text.muted].join(" ")}>
                                 案件名、勤務場所、勤務枠、食事、交通費を確認します。
                             </p>
                         </div>
@@ -90,37 +90,37 @@ const AdminJobTemplatesPage = async () => {
                 </CardHeader>
 
                 <CardContent className="p-5 pt-2">
-                    <div className={bridalStyles.table.wrapper}>
+                    <div className={appStyles.table.wrapper}>
                         <Table>
                             <TableHeader>
-                                <TableRow className={bridalStyles.table.headerRow}>
-                                    <TableHead className={bridalStyles.table.head}>
+                                <TableRow className={appStyles.table.headerRow}>
+                                    <TableHead className={appStyles.table.head}>
                                         テンプレート名
                                     </TableHead>
 
-                                    <TableHead className={bridalStyles.table.head}>
+                                    <TableHead className={appStyles.table.head}>
                                         案件名
                                     </TableHead>
 
-                                    <TableHead className={bridalStyles.table.head}>
+                                    <TableHead className={appStyles.table.head}>
                                         勤務場所
                                     </TableHead>
 
-                                    <TableHead className={bridalStyles.table.head}>
+                                    <TableHead className={appStyles.table.head}>
                                         勤務枠
                                     </TableHead>
 
-                                    <TableHead className={bridalStyles.table.head}>
+                                    <TableHead className={appStyles.table.head}>
                                         食事
                                     </TableHead>
 
-                                    <TableHead className={bridalStyles.table.head}>
+                                    <TableHead className={appStyles.table.head}>
                                         交通費
                                     </TableHead>
 
                                     <TableHead
                                         className={[
-                                            bridalStyles.table.head,
+                                            appStyles.table.head,
                                             "text-right",
                                         ].join(" ")}
                                     >
@@ -133,12 +133,12 @@ const AdminJobTemplatesPage = async () => {
                                 {templates.map((template) => (
                                     <TableRow
                                         key={template.id}
-                                        className={bridalStyles.table.row}
+                                        className={appStyles.table.row}
                                     >
                                         <TableCell>
                                             <p
                                                 className={[
-                                                    bridalStyles.text.title,
+                                                    appStyles.text.title,
                                                     "text-base",
                                                 ].join(" ")}
                                             >
@@ -146,25 +146,40 @@ const AdminJobTemplatesPage = async () => {
                                             </p>
                                         </TableCell>
 
-                                        <TableCell className="text-sm text-slate-600">
+                                        <TableCell className={appStyles.table.cellMuted}>
                                             {template.title}
                                         </TableCell>
 
-                                        <TableCell className="text-sm text-slate-600">
+                                        <TableCell className={appStyles.table.cellMuted}>
                                             {template.location}
                                         </TableCell>
 
-                                        <TableCell className="max-w-xs text-sm leading-6 text-slate-600">
+                                        <TableCell
+                                            className={[
+                                                "max-w-xs leading-6",
+                                                appStyles.table.cellMuted,
+                                            ].join(" ")}
+                                        >
                                             {getTemplateShiftSlotText(
                                                 template.shiftSlots,
                                             )}
                                         </TableCell>
 
-                                        <TableCell className="whitespace-nowrap text-sm text-slate-600">
+                                        <TableCell
+                                            className={[
+                                                "whitespace-nowrap",
+                                                appStyles.table.cellMuted,
+                                            ].join(" ")}
+                                        >
                                             {template.hasMeal ? "あり" : "なし"}
                                         </TableCell>
 
-                                        <TableCell className="whitespace-nowrap text-sm font-medium text-slate-900">
+                                        <TableCell
+                                            className={[
+                                                "whitespace-nowrap text-sm font-medium",
+                                                appStyles.textColor.default,
+                                            ].join(" ")}
+                                        >
                                             {formatYen(template.transportationFee)}
                                         </TableCell>
 
@@ -175,7 +190,7 @@ const AdminJobTemplatesPage = async () => {
                                                     size="sm"
                                                     variant="outline"
                                                     pendingText="編集画面へ移動中..."
-                                                    className={bridalStyles.button.secondary}
+                                                    className={appStyles.button.secondary}
                                                 >
                                                     <PenLine className="mr-2 h-4 w-4" />
                                                     編集
@@ -192,7 +207,7 @@ const AdminJobTemplatesPage = async () => {
                                                         size="sm"
                                                         variant="outline"
                                                         pendingText="削除中..."
-                                                        className={bridalStyles.button.danger}
+                                                        className={appStyles.button.danger}
                                                     >
                                                         <Trash2 className="mr-2 h-4 w-4" />
                                                         削除
@@ -207,7 +222,7 @@ const AdminJobTemplatesPage = async () => {
                                     <TableRow>
                                         <TableCell
                                             colSpan={7}
-                                            className="py-10 text-center text-sm text-slate-500"
+                                            className={appStyles.table.empty}
                                         >
                                             案件テンプレートがまだありません。
                                         </TableCell>
@@ -217,7 +232,7 @@ const AdminJobTemplatesPage = async () => {
                         </Table>
                     </div>
                 </CardContent>
-            </BridalCard>
+            </AppCard>
         </PageShell>
     );
 };
