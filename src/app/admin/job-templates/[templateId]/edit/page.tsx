@@ -5,8 +5,8 @@ import { LinkButton } from "@/components/shared/link-button";
 import { SubmitButton } from "@/components/shared/submit-button";
 import { PageShell } from "@/components/shared/page-shell";
 import { PageHeader } from "@/components/shared/page-header";
-import { BridalCard } from "@/components/shared/bridal-card";
-import { bridalStyles } from "@/components/shared/design-tokens";
+import { AppCard } from "@/components/shared/bridal-card";
+import { appStyles } from "@/components/shared/design-tokens";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -50,7 +50,7 @@ const EditJobTemplatePage = async ({ params }: EditJobTemplatePageProps) => {
                     <LinkButton
                         href="/admin/job-templates"
                         variant="outline"
-                        className={bridalStyles.button.secondary}
+                        className={appStyles.button.secondary}
                     >
                         <ArrowLeft className="mr-2 h-4 w-4" />
                         一覧へ戻る
@@ -58,23 +58,23 @@ const EditJobTemplatePage = async ({ params }: EditJobTemplatePageProps) => {
                 }
             />
 
-            <BridalCard>
+            <AppCard>
                 <CardHeader className="p-5 pb-3">
                     <div className="flex items-start gap-3">
-                        <div className={bridalStyles.icon.circle}>
+                        <div className={appStyles.icon.circle}>
                             <ClipboardList className="h-5 w-5" />
                         </div>
 
                         <div>
                             <CardTitle
                                 className={[
-                                    bridalStyles.text.title,
+                                    appStyles.text.title,
                                     "text-xl",
                                 ].join(" ")}
                             >
                                 テンプレート情報
                             </CardTitle>
-                            <p className="mt-1 text-sm text-slate-500">
+                            <p className={["mt-1", appStyles.text.muted].join(" ")}>
                                 案件作成時に再利用する基本情報、勤務枠、勤務条件を更新します。
                             </p>
                         </div>
@@ -97,7 +97,7 @@ const EditJobTemplatePage = async ({ params }: EditJobTemplatePageProps) => {
                                         name="name"
                                         defaultValue={template.name}
                                         required
-                                        className={bridalStyles.form.input}
+                                        className={appStyles.form.input}
                                     />
                                 </FormField>
 
@@ -107,7 +107,7 @@ const EditJobTemplatePage = async ({ params }: EditJobTemplatePageProps) => {
                                         name="title"
                                         defaultValue={template.title}
                                         required
-                                        className={bridalStyles.form.input}
+                                        className={appStyles.form.input}
                                     />
                                 </FormField>
 
@@ -117,7 +117,7 @@ const EditJobTemplatePage = async ({ params }: EditJobTemplatePageProps) => {
                                         name="location"
                                         defaultValue={template.location}
                                         required
-                                        className={bridalStyles.form.input}
+                                        className={appStyles.form.input}
                                     />
                                 </FormField>
 
@@ -126,7 +126,7 @@ const EditJobTemplatePage = async ({ params }: EditJobTemplatePageProps) => {
                                         id="meetingPlace"
                                         name="meetingPlace"
                                         defaultValue={template.meetingPlace ?? ""}
-                                        className={bridalStyles.form.input}
+                                        className={appStyles.form.input}
                                     />
                                 </FormField>
                             </div>
@@ -144,7 +144,7 @@ const EditJobTemplatePage = async ({ params }: EditJobTemplatePageProps) => {
                                         name="slotName"
                                         defaultValue={templateSlot?.name ?? "基本勤務枠"}
                                         required
-                                        className={bridalStyles.form.input}
+                                        className={appStyles.form.input}
                                     />
                                 </FormField>
 
@@ -155,7 +155,7 @@ const EditJobTemplatePage = async ({ params }: EditJobTemplatePageProps) => {
                                         type="time"
                                         defaultValue={templateSlot?.startTime ?? ""}
                                         required
-                                        className={bridalStyles.form.input}
+                                        className={appStyles.form.input}
                                     />
                                 </FormField>
 
@@ -166,7 +166,7 @@ const EditJobTemplatePage = async ({ params }: EditJobTemplatePageProps) => {
                                         type="time"
                                         defaultValue={templateSlot?.endTime ?? ""}
                                         required
-                                        className={bridalStyles.form.input}
+                                        className={appStyles.form.input}
                                     />
                                 </FormField>
 
@@ -179,7 +179,7 @@ const EditJobTemplatePage = async ({ params }: EditJobTemplatePageProps) => {
                                         step={1}
                                         defaultValue={templateSlot?.requiredPeople ?? 1}
                                         required
-                                        className={bridalStyles.form.input}
+                                        className={appStyles.form.input}
                                     />
                                 </FormField>
                             </div>
@@ -198,7 +198,7 @@ const EditJobTemplatePage = async ({ params }: EditJobTemplatePageProps) => {
                                         type="number"
                                         min={0}
                                         defaultValue={template.breakMinutes}
-                                        className={bridalStyles.form.input}
+                                        className={appStyles.form.input}
                                     />
                                 </FormField>
 
@@ -209,7 +209,7 @@ const EditJobTemplatePage = async ({ params }: EditJobTemplatePageProps) => {
                                         type="number"
                                         min={0}
                                         defaultValue={template.transportationFee}
-                                        className={bridalStyles.form.input}
+                                        className={appStyles.form.input}
                                     />
                                 </FormField>
 
@@ -222,7 +222,7 @@ const EditJobTemplatePage = async ({ params }: EditJobTemplatePageProps) => {
                                         id="dressCode"
                                         name="dressCode"
                                         defaultValue={template.dressCode ?? ""}
-                                        className={bridalStyles.form.input}
+                                        className={appStyles.form.input}
                                     />
                                 </FormField>
 
@@ -235,7 +235,7 @@ const EditJobTemplatePage = async ({ params }: EditJobTemplatePageProps) => {
                                         id="belongings"
                                         name="belongings"
                                         defaultValue={template.belongings ?? ""}
-                                        className={bridalStyles.form.input}
+                                        className={appStyles.form.input}
                                     />
                                 </FormField>
 
@@ -250,18 +250,30 @@ const EditJobTemplatePage = async ({ params }: EditJobTemplatePageProps) => {
                                         rows={4}
                                         defaultValue={template.note ?? ""}
                                         className={[
-                                            bridalStyles.form.input,
-                                            "min-h-28 w-full px-3 py-2 text-sm",
+                                            appStyles.form.textarea,
+                                            "w-full px-3 py-2 text-sm",
                                         ].join(" ")}
                                     />
                                 </FormField>
 
-                                <label className="flex items-center gap-3 rounded-2xl border border-[#f0e5d0] bg-[#fffdf8]/80 p-4 text-sm text-slate-700 md:col-span-2">
+                                <label
+                                    className={[
+                                        "flex items-center gap-3 border p-4 text-sm md:col-span-2",
+                                        appStyles.radius["2xl"],
+                                        appStyles.border.soft,
+                                        appStyles.background.warmSoft,
+                                        appStyles.textColor.tableHead,
+                                    ].join(" ")}
+                                >
                                     <input
                                         name="hasMeal"
                                         type="checkbox"
                                         defaultChecked={template.hasMeal}
-                                        className="h-4 w-4 rounded border-[#d6b56d] accent-[#b8872d]"
+                                        className={[
+                                            "h-4 w-4 rounded accent-current",
+                                            appStyles.border.accent,
+                                            appStyles.textColor.accent,
+                                        ].join(" ")}
                                     />
                                     食事あり
                                 </label>
@@ -280,7 +292,7 @@ const EditJobTemplatePage = async ({ params }: EditJobTemplatePageProps) => {
                                         name="wageType"
                                         defaultValue={template.wageType}
                                         className={[
-                                            bridalStyles.form.input,
+                                            appStyles.form.input,
                                             "h-11 w-full px-3 text-sm",
                                         ].join(" ")}
                                     >
@@ -303,20 +315,25 @@ const EditJobTemplatePage = async ({ params }: EditJobTemplatePageProps) => {
                                         type="number"
                                         min={0}
                                         defaultValue={template.fixedHourlyWage ?? ""}
-                                        className={bridalStyles.form.input}
+                                        className={appStyles.form.input}
                                     />
-                                    <p className="text-xs text-slate-500">
+                                    <p className={["text-xs", appStyles.textColor.muted].join(" ")}>
                                         スタッフごとの時給を使う場合は空欄で問題ありません。
                                     </p>
                                 </FormField>
                             </div>
                         </FormSection>
 
-                        <div className="flex flex-col-reverse gap-3 border-t border-[#f0e5d0] pt-5 sm:flex-row sm:justify-end">
+                        <div
+                            className={[
+                                "flex flex-col-reverse gap-3 border-t pt-5 sm:flex-row sm:justify-end",
+                                appStyles.border.soft,
+                            ].join(" ")}
+                        >
                             <LinkButton
                                 href="/admin/job-templates"
                                 variant="outline"
-                                className={bridalStyles.button.secondary}
+                                className={appStyles.button.secondary}
                             >
                                 キャンセル
                             </LinkButton>
@@ -324,7 +341,7 @@ const EditJobTemplatePage = async ({ params }: EditJobTemplatePageProps) => {
                             <SubmitButton
                                 pendingText="保存中..."
                                 className={[
-                                    bridalStyles.button.primary,
+                                    appStyles.button.primary,
                                     "px-6",
                                 ].join(" ")}
                             >
@@ -334,7 +351,7 @@ const EditJobTemplatePage = async ({ params }: EditJobTemplatePageProps) => {
                         </div>
                     </form>
                 </CardContent>
-            </BridalCard>
+            </AppCard>
         </PageShell>
     );
 };
@@ -353,20 +370,20 @@ const FormSection = ({
     children,
 }: FormSectionProps) => {
     return (
-        <section className="space-y-4 rounded-2xl border border-[#f0e5d0] bg-white/70 p-5">
+        <section className={["space-y-4", appStyles.section.base].join(" ")}>
             <div className="flex items-start gap-3">
-                <div className={bridalStyles.icon.smallCircle}>{icon}</div>
+                <div className={appStyles.icon.smallCircle}>{icon}</div>
 
                 <div>
                     <h2
                         className={[
-                            bridalStyles.text.title,
+                            appStyles.text.title,
                             "text-lg",
                         ].join(" ")}
                     >
                         {title}
                     </h2>
-                    <p className="mt-1 text-sm text-slate-500">
+                    <p className={["mt-1", appStyles.text.muted].join(" ")}>
                         {description}
                     </p>
                 </div>
@@ -392,7 +409,7 @@ const FormField = ({
 }: FormFieldProps) => {
     return (
         <div className={["space-y-2", className].filter(Boolean).join(" ")}>
-            <Label htmlFor={htmlFor} className={bridalStyles.form.label}>
+            <Label htmlFor={htmlFor} className={appStyles.form.label}>
                 {label}
             </Label>
             {children}
