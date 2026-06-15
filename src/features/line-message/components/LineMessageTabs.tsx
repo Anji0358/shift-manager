@@ -1,19 +1,21 @@
 "use client";
 
-import { MessageSquareText, Send } from "lucide-react";
+import type { ComponentProps, ReactNode } from "react";
 import { useState } from "react";
+import { MessageSquareText, Send } from "lucide-react";
+import { appStyles } from "@/components/shared/design-tokens";
 import { GroupJobMessageForm } from "./GroupJobMessageForm";
 import { PersonalLineMessageForm } from "./PersonalLineMessageForm";
 
 type LineMessageTabsProps = {
     selectedMonth: string;
-    jobs: React.ComponentProps<typeof GroupJobMessageForm>["jobs"];
+    jobs: ComponentProps<typeof GroupJobMessageForm>["jobs"];
     employees: {
         id: string;
         name: string;
     }[];
-    personalJobs: React.ComponentProps<typeof PersonalLineMessageForm>["jobs"];
-    unavailableTimes: React.ComponentProps<
+    personalJobs: ComponentProps<typeof PersonalLineMessageForm>["jobs"];
+    unavailableTimes: ComponentProps<
         typeof PersonalLineMessageForm
     >["unavailableTimes"];
 };
@@ -24,7 +26,7 @@ const tabItems: {
     value: ActiveTab;
     label: string;
     description: string;
-    icon: React.ReactNode;
+    icon: ReactNode;
 }[] = [
         {
             value: "group",
@@ -51,7 +53,7 @@ export const LineMessageTabs = ({
 
     return (
         <div className="space-y-6">
-            <div className="rounded-3xl border bg-white p-2 shadow-sm">
+            <div className={appStyles.surface.nav}>
                 <div className="grid gap-2 md:grid-cols-2">
                     {tabItems.map((tab) => {
                         const active = activeTab === tab.value;
@@ -62,18 +64,33 @@ export const LineMessageTabs = ({
                                 type="button"
                                 onClick={() => setActiveTab(tab.value)}
                                 className={[
-                                    "flex items-center justify-center gap-3 rounded-2xl px-4 py-4 text-left transition",
+                                    "flex items-center justify-center gap-3 px-4 py-4 text-left transition active:scale-[0.99]",
+                                    appStyles.radius["2xl"],
                                     active
-                                        ? "bg-gradient-to-r from-blue-500 to-indigo-500 text-white shadow-lg shadow-blue-200"
-                                        : "bg-slate-50 text-slate-600 hover:bg-blue-50 hover:text-blue-700",
+                                        ? [
+                                            appStyles.nav.linkActive,
+                                            appStyles.tokens.color.icon.childWhite,
+                                        ].join(" ")
+                                        : [
+                                            appStyles.nav.linkInactive,
+                                            appStyles.background.warmSubtle,
+                                        ].join(" "),
                                 ].join(" ")}
                             >
                                 <span
                                     className={[
-                                        "flex h-9 w-9 items-center justify-center rounded-xl",
+                                        "flex h-9 w-9 items-center justify-center",
+                                        appStyles.radius.xl,
                                         active
-                                            ? "bg-white/20 text-white"
-                                            : "bg-white text-blue-600 shadow-sm",
+                                            ? [
+                                                "bg-white/20",
+                                                appStyles.textColor.white,
+                                            ].join(" ")
+                                            : [
+                                                appStyles.background.white,
+                                                appStyles.textColor.accent,
+                                                "shadow-sm",
+                                            ].join(" "),
                                     ].join(" ")}
                                 >
                                     {tab.icon}
@@ -87,8 +104,8 @@ export const LineMessageTabs = ({
                                         className={[
                                             "mt-0.5 block text-xs",
                                             active
-                                                ? "text-blue-50"
-                                                : "text-slate-500",
+                                                ? appStyles.textColor.white
+                                                : appStyles.textColor.muted,
                                         ].join(" ")}
                                     >
                                         {tab.description}
