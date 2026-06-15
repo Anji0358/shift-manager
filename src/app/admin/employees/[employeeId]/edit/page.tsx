@@ -19,8 +19,8 @@ import { SubmitButton } from "@/components/shared/submit-button";
 import { SuccessMessage } from "@/components/shared/success-message";
 import { PageShell } from "@/components/shared/page-shell";
 import { PageHeader } from "@/components/shared/page-header";
-import { BridalCard } from "@/components/shared/bridal-card";
-import { bridalStyles } from "@/components/shared/design-tokens";
+import { AppCard } from "@/components/shared/bridal-card";
+import { appStyles } from "@/components/shared/design-tokens";
 import { updateEmployee } from "@/features/employees/actions";
 import { getEmployeeById } from "@/features/employees/queries";
 import {
@@ -66,7 +66,7 @@ const AdminEmployeeEditPage = async ({
                         href="/admin/employees"
                         variant="outline"
                         pendingText="スタッフ一覧へ移動中..."
-                        className={bridalStyles.button.secondary}
+                        className={appStyles.button.secondary}
                     >
                         <ArrowLeft className="mr-2 h-4 w-4" />
                         スタッフ一覧へ戻る
@@ -76,28 +76,28 @@ const AdminEmployeeEditPage = async ({
 
             <div className="space-y-6">
                 {message ? (
-                    <div className={[bridalStyles.card.base, "px-5 py-4"].join(" ")}>
+                    <div className={appStyles.section.message}>
                         <SuccessMessage message={message} />
                     </div>
                 ) : null}
 
-                <BridalCard>
+                <AppCard>
                     <CardHeader className="p-5 pb-3">
                         <div className="flex items-start gap-3">
-                            <div className={bridalStyles.icon.circle}>
+                            <div className={appStyles.icon.circle}>
                                 <UserPen className="h-5 w-5" />
                             </div>
 
                             <div>
                                 <CardTitle
                                     className={[
-                                        bridalStyles.text.title,
+                                        appStyles.text.title,
                                         "text-xl",
                                     ].join(" ")}
                                 >
                                     基本情報
                                 </CardTitle>
-                                <p className="mt-1 text-sm text-slate-500">
+                                <p className={["mt-1", appStyles.text.muted].join(" ")}>
                                     スタッフの表示情報、権限、在籍状況、ログイン用パスワードを管理します。
                                 </p>
                             </div>
@@ -112,7 +112,7 @@ const AdminEmployeeEditPage = async ({
                                 value={employee.id}
                             />
 
-                            <section className="rounded-2xl border border-[#f0e5d0] bg-white/70 p-5">
+                            <section className={appStyles.section.base}>
                                 <div className="grid gap-4 md:grid-cols-2">
                                     <FormField label="名前" htmlFor="name">
                                         <Input
@@ -120,7 +120,7 @@ const AdminEmployeeEditPage = async ({
                                             name="name"
                                             defaultValue={employee.name}
                                             required
-                                            className={bridalStyles.form.input}
+                                            className={appStyles.form.input}
                                         />
                                     </FormField>
 
@@ -131,7 +131,7 @@ const AdminEmployeeEditPage = async ({
                                             type="email"
                                             defaultValue={employee.email}
                                             required
-                                            className={bridalStyles.form.input}
+                                            className={appStyles.form.input}
                                         />
                                     </FormField>
 
@@ -142,7 +142,7 @@ const AdminEmployeeEditPage = async ({
                                         >
                                             <SelectTrigger
                                                 id="role"
-                                                className={bridalStyles.form.input}
+                                                className={appStyles.form.input}
                                             >
                                                 <SelectValue placeholder="権限を選択" />
                                             </SelectTrigger>
@@ -167,7 +167,7 @@ const AdminEmployeeEditPage = async ({
                                         >
                                             <SelectTrigger
                                                 id="employmentStatus"
-                                                className={bridalStyles.form.input}
+                                                className={appStyles.form.input}
                                             >
                                                 <SelectValue placeholder="在籍状況を選択" />
                                             </SelectTrigger>
@@ -191,7 +191,7 @@ const AdminEmployeeEditPage = async ({
                                             step={1}
                                             defaultValue={employee.hourlyWage}
                                             required
-                                            className={bridalStyles.form.input}
+                                            className={appStyles.form.input}
                                         />
                                     </FormField>
 
@@ -207,27 +207,41 @@ const AdminEmployeeEditPage = async ({
                                                 employee.startedWorkingAt,
                                             )}
                                             required
-                                            className={bridalStyles.form.input}
+                                            className={appStyles.form.input}
                                         />
                                     </FormField>
 
                                     <div className="space-y-2 md:col-span-2">
                                         <Label
                                             htmlFor="newPassword"
-                                            className={bridalStyles.form.label}
+                                            className={appStyles.form.label}
                                         >
                                             新しいパスワード
                                         </Label>
+
                                         <Input
                                             id="newPassword"
                                             name="newPassword"
                                             type="password"
                                             placeholder="変更する場合のみ入力"
-                                            className={bridalStyles.form.input}
+                                            className={appStyles.form.input}
                                         />
 
-                                        <div className="flex items-start gap-2 rounded-2xl border border-[#f0e5d0] bg-[#fffdf8]/80 p-4 text-sm text-slate-600">
-                                            <CircleAlert className="mt-0.5 h-4 w-4 shrink-0 text-[#b8872d]" />
+                                        <div
+                                            className={[
+                                                "flex items-start gap-2 border p-4 text-sm",
+                                                appStyles.radius["2xl"],
+                                                appStyles.border.soft,
+                                                appStyles.background.warmSoft,
+                                                appStyles.textColor.body,
+                                            ].join(" ")}
+                                        >
+                                            <CircleAlert
+                                                className={[
+                                                    "mt-0.5 h-4 w-4 shrink-0",
+                                                    appStyles.icon.accent,
+                                                ].join(" ")}
+                                            />
                                             <p>
                                                 空欄の場合、現在のパスワードは変更されません。
                                                 入力した場合は、このパスワードでスタッフがログインできるようになります。
@@ -237,12 +251,17 @@ const AdminEmployeeEditPage = async ({
                                 </div>
                             </section>
 
-                            <div className="flex flex-col-reverse gap-3 border-t border-[#f0e5d0] pt-5 sm:flex-row sm:justify-end">
+                            <div
+                                className={[
+                                    "flex flex-col-reverse gap-3 border-t pt-5 sm:flex-row sm:justify-end",
+                                    appStyles.border.soft,
+                                ].join(" ")}
+                            >
                                 <LinkButton
                                     href="/admin/employees"
                                     variant="outline"
                                     pendingText="スタッフ一覧へ移動中..."
-                                    className={bridalStyles.button.secondary}
+                                    className={appStyles.button.secondary}
                                 >
                                     キャンセル
                                 </LinkButton>
@@ -250,7 +269,7 @@ const AdminEmployeeEditPage = async ({
                                 <SubmitButton
                                     pendingText="保存中..."
                                     className={[
-                                        bridalStyles.button.primary,
+                                        appStyles.button.primary,
                                         "px-6",
                                     ].join(" ")}
                                 >
@@ -260,7 +279,7 @@ const AdminEmployeeEditPage = async ({
                             </div>
                         </form>
                     </CardContent>
-                </BridalCard>
+                </AppCard>
             </div>
         </PageShell>
     );
@@ -275,7 +294,7 @@ type FormFieldProps = {
 const FormField = ({ label, htmlFor, children }: FormFieldProps) => {
     return (
         <div className="space-y-2">
-            <Label htmlFor={htmlFor} className={bridalStyles.form.label}>
+            <Label htmlFor={htmlFor} className={appStyles.form.label}>
                 {label}
             </Label>
             {children}
