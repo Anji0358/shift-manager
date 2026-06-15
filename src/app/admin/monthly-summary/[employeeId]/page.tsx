@@ -1,16 +1,28 @@
 import { notFound } from "next/navigation";
+import type { ReactNode } from "react";
 import {
-    Card,
     CardContent,
     CardHeader,
     CardTitle,
 } from "@/components/ui/card";
 import { LinkButton } from "@/components/shared/link-button";
+import { PageShell } from "@/components/shared/page-shell";
+import { PageHeader } from "@/components/shared/page-header";
+import { AppCard } from "@/components/shared/bridal-card";
+import { appStyles } from "@/components/shared/design-tokens";
 import { getWorkReportsByMonth } from "@/features/work-reports/queries";
 import { buildMonthlyReportSummaries } from "@/features/monthly-reports/services";
 import { MonthlyReportDetailTable } from "@/features/monthly-reports/components/monthly-report-detail-table";
 import { formatYen } from "@/lib/format";
 import { getCurrentYearMonth, getMonthRange } from "@/lib/month";
+import {
+    ArrowLeft,
+    Clock,
+    Download,
+    ReceiptText,
+    WalletCards,
+    CalendarCheck,
+} from "lucide-react";
 
 type AdminEmployeeMonthlySummaryPageProps = {
     params: Promise<{
@@ -43,95 +55,118 @@ const AdminEmployeeMonthlySummaryPage = async ({
     }
 
     return (
-        <div className="space-y-6">
-            <section className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+        <PageShell>
+            <PageHeader
+                title="給与明細"
+                description={`${summary.employeeName}さんの${targetMonth}の勤務実績・諸経費・支給見込みを確認します。`}
+                action={
+                    <div className="flex flex-wrap gap-3">
+                        <LinkButton
+                            href={`/admin/monthly-summary?month=${targetMonth}`}
+                            variant="outline"
+                            pendingText="月次集計へ移動中..."
+                            className={appStyles.button.secondary}
+                        >
+                            <ArrowLeft className="mr-2 h-4 w-4" />
+                            月次集計へ戻る
+                        </LinkButton>
+
+                        <LinkButton
+                            href={`/admin/monthly-summary/${employeeId}/export?month=${targetMonth}`}
+                            pendingText="Excel出力中..."
+                            className={appStyles.button.primary}
+                        >
+                            <Download className="mr-2 h-4 w-4" />
+                            給与明細をExcel出力
+                        </LinkButton>
+                    </div>
+                }
+            />
+
+            <div className="space-y-6">
+                <section className="grid gap-4 md:grid-cols-4">
+                    <SummaryCard
+                        title="勤務回数"
+                        value={`${summary.totals.reportCount}回`}
+                        icon={<ReceiptText className="h-5 w-5" />}
+                    />
+
+                    <SummaryCard
+                        title="就労時間"
+                        value={`${summary.totals.workingHours.toFixed(1)}h`}
+                        icon={<Clock className="h-5 w-5" />}
+                    />
+
+                    <SummaryCard
+                        title="諸経費"
+                        value={formatYen(summary.totals.expensesTotal)}
+                        icon={<WalletCards className="h-5 w-5" />}
+                    />
+
+                    <SummaryCard
+                        title="支給見込み"
+                        value={formatYen(summary.totals.totalPay)}
+                        icon={<CalendarCheck className="h-5 w-5" />}
+                    />
+                </section>
+
+                <AppCard className="overflow-hidden">
+                    <CardHeader className="p-5 pb-3">
+                        <div className="flex items-start gap-3">
+                            <div className={appStyles.icon.circle}>
+                                <ReceiptText className="h-5 w-5" />
+                            </div>
+
+                            <div>
+                                <CardTitle
+                                    className={[
+                                        appStyles.text.title,
+                                        "text-xl",
+                                    ].join(" ")}
+                                >
+                                    日別給与明細
+                                </CardTitle>
+                                <p className={["mt-1", appStyles.text.muted].join(" ")}>
+                                    日ごとの勤務時間、経費、給与見込みを確認します。
+                                </p>
+                            </div>
+                        </div>
+                    </CardHeader>
+
+                    <CardContent className="p-5 pt-2">
+                        <MonthlyReportDetailTable summaries={[summary]} />
+                    </CardContent>
+                </AppCard>
+            </div>
+        </PageShell>
+    );
+};
+
+type SummaryCardProps = {
+    title: string;
+    value: string;
+    icon: ReactNode;
+};
+
+const SummaryCard = ({ title, value, icon }: SummaryCardProps) => {
+    return (
+        <AppCard className="p-5">
+            <div className="flex items-start justify-between gap-3">
                 <div>
-                    <h1 className="text-3xl font-bold">給与明細</h1>
-                    <p className="mt-2 text-slate-600">
-                        {summary.employeeName}さんの{targetMonth}の勤務実績・諸経費・支給見込みを確認します。
+                    <p className={appStyles.text.muted}>{title}</p>
+                    <p
+                        className={[
+                            "mt-2 text-3xl font-semibold tracking-tight",
+                            appStyles.textColor.default,
+                        ].join(" ")}
+                    >
+                        {value}
                     </p>
                 </div>
 
-                <div className="flex flex-wrap gap-3">
-                    <LinkButton
-                        href={`/admin/monthly-summary?month=${targetMonth}`}
-                        variant="outline"
-                    >
-                        月次集計へ戻る
-                    </LinkButton>
-
-                    <LinkButton
-                        href={`/admin/monthly-summary/${employeeId}/export?month=${targetMonth}`}
-                    >
-                        給与明細をExcel出力
-                    </LinkButton>
-                </div>
-            </section>
-
-            <section className="grid gap-4 md:grid-cols-4">
-                <Card>
-                    <CardHeader>
-                        <CardTitle className="text-sm text-slate-500">
-                            勤務回数
-                        </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <p className="text-3xl font-bold">
-                            {summary.totals.reportCount}回
-                        </p>
-                    </CardContent>
-                </Card>
-
-                <Card>
-                    <CardHeader>
-                        <CardTitle className="text-sm text-slate-500">
-                            就労時間
-                        </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <p className="text-3xl font-bold">
-                            {summary.totals.workingHours.toFixed(1)}h
-                        </p>
-                    </CardContent>
-                </Card>
-
-                <Card>
-                    <CardHeader>
-                        <CardTitle className="text-sm text-slate-500">
-                            諸経費
-                        </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <p className="text-3xl font-bold">
-                            {formatYen(summary.totals.expensesTotal)}
-                        </p>
-                    </CardContent>
-                </Card>
-
-                <Card>
-                    <CardHeader>
-                        <CardTitle className="text-sm text-slate-500">
-                            支給見込み
-                        </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <p className="text-3xl font-bold">
-                            {formatYen(summary.totals.totalPay)}
-                        </p>
-                    </CardContent>
-                </Card>
-            </section>
-
-            <Card>
-                <CardHeader>
-                    <CardTitle>日別給与明細</CardTitle>
-                </CardHeader>
-
-                <CardContent>
-                    <MonthlyReportDetailTable summaries={[summary]} />
-                </CardContent>
-            </Card>
-        </div>
+                <div className={appStyles.icon.smallCircle}>{icon}</div>
+            </div>
+        </AppCard>
     );
 };
 
