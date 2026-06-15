@@ -4,8 +4,8 @@ import { SubmitButton } from "@/components/shared/submit-button";
 import { LinkButton } from "@/components/shared/link-button";
 import { PageShell } from "@/components/shared/page-shell";
 import { PageHeader } from "@/components/shared/page-header";
-import { BridalCard } from "@/components/shared/bridal-card";
-import { bridalStyles } from "@/components/shared/design-tokens";
+import { AppCard } from "@/components/shared/bridal-card";
+import { appStyles } from "@/components/shared/design-tokens";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -33,7 +33,7 @@ const NewJobTemplatePage = () => {
                     <LinkButton
                         href="/admin/job-templates"
                         variant="outline"
-                        className={bridalStyles.button.secondary}
+                        className={appStyles.button.secondary}
                     >
                         <ArrowLeft className="mr-2 h-4 w-4" />
                         一覧へ戻る
@@ -41,23 +41,23 @@ const NewJobTemplatePage = () => {
                 }
             />
 
-            <BridalCard>
+            <AppCard>
                 <CardHeader className="p-5 pb-3">
                     <div className="flex items-start gap-3">
-                        <div className={bridalStyles.icon.circle}>
+                        <div className={appStyles.icon.circle}>
                             <ClipboardList className="h-5 w-5" />
                         </div>
 
                         <div>
                             <CardTitle
                                 className={[
-                                    bridalStyles.text.title,
+                                    appStyles.text.title,
                                     "text-xl",
                                 ].join(" ")}
                             >
                                 テンプレート情報
                             </CardTitle>
-                            <p className="mt-1 text-sm text-slate-500">
+                            <p className={["mt-1", appStyles.text.muted].join(" ")}>
                                 案件作成時に再利用できる基本情報、勤務枠、勤務条件を登録します。
                             </p>
                         </div>
@@ -78,7 +78,7 @@ const NewJobTemplatePage = () => {
                                         name="name"
                                         placeholder="例：ホテル宴会テンプレート"
                                         required
-                                        className={bridalStyles.form.input}
+                                        className={appStyles.form.input}
                                     />
                                 </FormField>
 
@@ -88,7 +88,7 @@ const NewJobTemplatePage = () => {
                                         name="title"
                                         placeholder="例：ホテル宴会スタッフ"
                                         required
-                                        className={bridalStyles.form.input}
+                                        className={appStyles.form.input}
                                     />
                                 </FormField>
 
@@ -98,7 +98,7 @@ const NewJobTemplatePage = () => {
                                         name="location"
                                         placeholder="例：横浜ベイホテル"
                                         required
-                                        className={bridalStyles.form.input}
+                                        className={appStyles.form.input}
                                     />
                                 </FormField>
 
@@ -107,7 +107,7 @@ const NewJobTemplatePage = () => {
                                         id="meetingPlace"
                                         name="meetingPlace"
                                         placeholder="例：ホテル1階ロビー"
-                                        className={bridalStyles.form.input}
+                                        className={appStyles.form.input}
                                     />
                                 </FormField>
                             </div>
@@ -126,7 +126,7 @@ const NewJobTemplatePage = () => {
                                         placeholder="例：通し勤務"
                                         defaultValue="基本勤務枠"
                                         required
-                                        className={bridalStyles.form.input}
+                                        className={appStyles.form.input}
                                     />
                                 </FormField>
 
@@ -136,7 +136,7 @@ const NewJobTemplatePage = () => {
                                         name="startTime"
                                         type="time"
                                         required
-                                        className={bridalStyles.form.input}
+                                        className={appStyles.form.input}
                                     />
                                 </FormField>
 
@@ -146,7 +146,7 @@ const NewJobTemplatePage = () => {
                                         name="endTime"
                                         type="time"
                                         required
-                                        className={bridalStyles.form.input}
+                                        className={appStyles.form.input}
                                     />
                                 </FormField>
 
@@ -159,7 +159,7 @@ const NewJobTemplatePage = () => {
                                         step={1}
                                         placeholder="例：5"
                                         required
-                                        className={bridalStyles.form.input}
+                                        className={appStyles.form.input}
                                     />
                                 </FormField>
                             </div>
@@ -178,7 +178,7 @@ const NewJobTemplatePage = () => {
                                         type="number"
                                         min={0}
                                         defaultValue={0}
-                                        className={bridalStyles.form.input}
+                                        className={appStyles.form.input}
                                     />
                                 </FormField>
 
@@ -189,7 +189,7 @@ const NewJobTemplatePage = () => {
                                         type="number"
                                         min={0}
                                         defaultValue={0}
-                                        className={bridalStyles.form.input}
+                                        className={appStyles.form.input}
                                     />
                                 </FormField>
 
@@ -202,7 +202,7 @@ const NewJobTemplatePage = () => {
                                         id="dressCode"
                                         name="dressCode"
                                         placeholder="例：黒パンツ、白シャツなど"
-                                        className={bridalStyles.form.input}
+                                        className={appStyles.form.input}
                                     />
                                 </FormField>
 
@@ -215,7 +215,7 @@ const NewJobTemplatePage = () => {
                                         id="belongings"
                                         name="belongings"
                                         placeholder="例：メモ帳、筆記用具など"
-                                        className={bridalStyles.form.input}
+                                        className={appStyles.form.input}
                                     />
                                 </FormField>
 
@@ -229,18 +229,30 @@ const NewJobTemplatePage = () => {
                                         name="note"
                                         rows={4}
                                         className={[
-                                            bridalStyles.form.input,
-                                            "min-h-28 w-full px-3 py-2 text-sm",
+                                            appStyles.form.textarea,
+                                            "w-full px-3 py-2 text-sm",
                                         ].join(" ")}
                                         placeholder="案件作成時に引き継ぎたい注意事項"
                                     />
                                 </FormField>
 
-                                <label className="flex items-center gap-3 rounded-2xl border border-[#f0e5d0] bg-[#fffdf8]/80 p-4 text-sm text-slate-700 md:col-span-2">
+                                <label
+                                    className={[
+                                        "flex items-center gap-3 border p-4 text-sm md:col-span-2",
+                                        appStyles.radius["2xl"],
+                                        appStyles.border.soft,
+                                        appStyles.background.warmSoft,
+                                        appStyles.textColor.tableHead,
+                                    ].join(" ")}
+                                >
                                     <input
                                         name="hasMeal"
                                         type="checkbox"
-                                        className="h-4 w-4 rounded border-[#d6b56d] accent-[#b8872d]"
+                                        className={[
+                                            "h-4 w-4 rounded accent-current",
+                                            appStyles.border.accent,
+                                            appStyles.textColor.accent,
+                                        ].join(" ")}
                                     />
                                     食事あり
                                 </label>
@@ -259,7 +271,7 @@ const NewJobTemplatePage = () => {
                                         name="wageType"
                                         defaultValue="EMPLOYEE"
                                         className={[
-                                            bridalStyles.form.input,
+                                            appStyles.form.input,
                                             "h-11 w-full px-3 text-sm",
                                         ].join(" ")}
                                     >
@@ -282,20 +294,25 @@ const NewJobTemplatePage = () => {
                                         type="number"
                                         min={0}
                                         placeholder="例：1300"
-                                        className={bridalStyles.form.input}
+                                        className={appStyles.form.input}
                                     />
-                                    <p className="text-xs text-slate-500">
+                                    <p className={["text-xs", appStyles.textColor.muted].join(" ")}>
                                         スタッフごとの時給を使う場合は空欄で問題ありません。
                                     </p>
                                 </FormField>
                             </div>
                         </FormSection>
 
-                        <div className="flex flex-col-reverse gap-3 border-t border-[#f0e5d0] pt-5 sm:flex-row sm:justify-end">
+                        <div
+                            className={[
+                                "flex flex-col-reverse gap-3 border-t pt-5 sm:flex-row sm:justify-end",
+                                appStyles.border.soft,
+                            ].join(" ")}
+                        >
                             <LinkButton
                                 href="/admin/job-templates"
                                 variant="outline"
-                                className={bridalStyles.button.secondary}
+                                className={appStyles.button.secondary}
                             >
                                 キャンセル
                             </LinkButton>
@@ -303,7 +320,7 @@ const NewJobTemplatePage = () => {
                             <SubmitButton
                                 pendingText="作成中..."
                                 className={[
-                                    bridalStyles.button.primary,
+                                    appStyles.button.primary,
                                     "px-6",
                                 ].join(" ")}
                             >
@@ -313,7 +330,7 @@ const NewJobTemplatePage = () => {
                         </div>
                     </form>
                 </CardContent>
-            </BridalCard>
+            </AppCard>
         </PageShell>
     );
 };
@@ -332,20 +349,20 @@ const FormSection = ({
     children,
 }: FormSectionProps) => {
     return (
-        <section className="space-y-4 rounded-2xl border border-[#f0e5d0] bg-white/70 p-5">
+        <section className={["space-y-4", appStyles.section.base].join(" ")}>
             <div className="flex items-start gap-3">
-                <div className={bridalStyles.icon.smallCircle}>{icon}</div>
+                <div className={appStyles.icon.smallCircle}>{icon}</div>
 
                 <div>
                     <h2
                         className={[
-                            bridalStyles.text.title,
+                            appStyles.text.title,
                             "text-lg",
                         ].join(" ")}
                     >
                         {title}
                     </h2>
-                    <p className="mt-1 text-sm text-slate-500">
+                    <p className={["mt-1", appStyles.text.muted].join(" ")}>
                         {description}
                     </p>
                 </div>
@@ -371,7 +388,7 @@ const FormField = ({
 }: FormFieldProps) => {
     return (
         <div className={["space-y-2", className].filter(Boolean).join(" ")}>
-            <Label htmlFor={htmlFor} className={bridalStyles.form.label}>
+            <Label htmlFor={htmlFor} className={appStyles.form.label}>
                 {label}
             </Label>
             {children}
