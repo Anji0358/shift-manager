@@ -1,3 +1,4 @@
+import { appStyles } from "@/components/shared/design-tokens";
 import type { LineMessageEmployee } from "../../types";
 
 type PersonalSummaryCardsProps = {
@@ -39,13 +40,28 @@ export const PersonalSummaryCards = ({
     ];
 
     return (
-        <div className="mt-6 grid gap-3 rounded-2xl bg-blue-50/60 p-4 md:grid-cols-5">
+        <div
+            className={[
+                "mt-6 grid gap-3 md:grid-cols-5",
+                appStyles.section.soft,
+            ].join(" ")}
+        >
             {summaryItems.map((item) => (
                 <div key={item.label}>
-                    <p className="text-xs font-medium text-blue-600">
+                    <p
+                        className={[
+                            "text-xs font-medium",
+                            appStyles.textColor.accent,
+                        ].join(" ")}
+                    >
                         {item.label}
                     </p>
-                    <p className="mt-2 font-semibold text-slate-900">
+                    <p
+                        className={[
+                            "mt-2 font-semibold",
+                            appStyles.textColor.default,
+                        ].join(" ")}
+                    >
                         {item.value}
                     </p>
                 </div>
