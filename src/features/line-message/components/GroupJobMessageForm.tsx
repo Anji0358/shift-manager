@@ -3,6 +3,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { MessageSquareText } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { AppCard } from "@/components/shared/bridal-card";
+import { appStyles } from "@/components/shared/design-tokens";
 import { generateGroupJobMessage } from "../message-generators";
 import type {
     GroupLineMessageJob,
@@ -10,12 +12,33 @@ import type {
     GroupMessageType,
 } from "../types";
 import { GeneratedMessagePanel } from "./GeneratedMessagePanel";
-import { inputClassName } from "../styles";
 
 type GroupJobMessageFormProps = {
     selectedMonth: string;
     jobs: GroupLineMessageJob[];
 };
+
+const messageOptionItems: {
+    key: keyof GroupMessageOptions;
+    label: string;
+}[] = [
+        {
+            key: "includeMeetingPlace",
+            label: "集合場所を含める",
+        },
+        {
+            key: "includeDressCode",
+            label: "服装を含める",
+        },
+        {
+            key: "includeBelongings",
+            label: "持ち物を含める",
+        },
+        {
+            key: "includeNote",
+            label: "備考を含める",
+        },
+    ];
 
 export const GroupJobMessageForm = ({
     jobs,
@@ -46,7 +69,7 @@ export const GroupJobMessageForm = ({
         selectedJob.shiftSlots.every(
             (slot) =>
                 slot.shiftAssignments.length === 0 &&
-                slot.externalStaffAssignments.length === 0
+                slot.externalStaffAssignments.length === 0,
         )
         : false;
 
@@ -55,7 +78,7 @@ export const GroupJobMessageForm = ({
             const internalCount = slot.shiftAssignments.length;
             const externalCount = slot.externalStaffAssignments.reduce(
                 (sum, assignment) => sum + assignment.headCount,
-                0
+                0,
             );
 
             return total + internalCount + externalCount;
@@ -114,30 +137,40 @@ export const GroupJobMessageForm = ({
 
     if (jobs.length === 0) {
         return (
-            <div className="rounded-2xl border bg-white p-6 shadow-sm">
-                <h2 className="text-lg font-semibold">
+            <AppCard className="p-6">
+                <h2
+                    className={[
+                        appStyles.text.title,
+                        "text-lg font-semibold",
+                    ].join(" ")}
+                >
                     案件グループ用メッセージ
                 </h2>
-                <p className="mt-2 text-sm text-slate-500">
+                <p className={["mt-2", appStyles.text.muted].join(" ")}>
                     メッセージを作成できる案件がまだありません。
                 </p>
-            </div>
+            </AppCard>
         );
     }
 
     return (
         <div className="space-y-6">
-            <div className="rounded-2xl border bg-white p-6 shadow-sm">
+            <AppCard className="p-6">
                 <div className="flex items-center gap-3">
-                    <div className="rounded-2xl bg-blue-50 p-3 shadow-sm">
-                        <MessageSquareText className="h-5 w-5 text-blue-600" />
+                    <div className={appStyles.icon.circle}>
+                        <MessageSquareText className="h-5 w-5" />
                     </div>
 
                     <div>
-                        <h2 className="text-lg font-semibold text-slate-900">
+                        <h2
+                            className={[
+                                appStyles.text.title,
+                                "text-lg font-semibold",
+                            ].join(" ")}
+                        >
                             案件グループ用メッセージ
                         </h2>
-                        <p className="mt-1 text-sm text-slate-500">
+                        <p className={["mt-1", appStyles.text.muted].join(" ")}>
                             案件ごとのLINEグループに送る確認文・詳細文を作成します。
                         </p>
                     </div>
@@ -145,32 +178,40 @@ export const GroupJobMessageForm = ({
 
                 <div className="mt-6 grid gap-5 lg:grid-cols-3">
                     <form className="space-y-2">
-                        <label className="text-sm font-medium text-slate-700">
+                        <label htmlFor="month" className={appStyles.form.label}>
                             対象月
                         </label>
                         <input
+                            id="month"
                             type="month"
                             name="month"
                             defaultValue={selectedMonth}
                             onChange={(event) => {
                                 event.currentTarget.form?.requestSubmit();
                             }}
-                            className={inputClassName}
+                            className={[
+                                appStyles.form.input,
+                                "h-11 w-full px-3 text-sm",
+                            ].join(" ")}
                         />
                     </form>
 
                     <div className="space-y-2">
-                        <label className="text-sm font-medium text-slate-700">
+                        <label htmlFor="jobId" className={appStyles.form.label}>
                             案件
                         </label>
                         <select
+                            id="jobId"
                             value={selectedJobId}
                             onChange={(event) => {
                                 setSelectedJobId(event.target.value);
                                 setMessage("");
                                 setCopied(false);
                             }}
-                            className={inputClassName}
+                            className={[
+                                appStyles.form.input,
+                                "h-11 w-full px-3 text-sm",
+                            ].join(" ")}
                         >
                             {jobs.map((job) => (
                                 <option key={job.id} value={job.id}>
@@ -179,31 +220,38 @@ export const GroupJobMessageForm = ({
                             ))}
                         </select>
 
-                        {hasNoShiftSlots && (
-                            <p className="text-sm text-amber-600">
+                        {hasNoShiftSlots ? (
+                            <WarningText>
                                 この案件には勤務枠が登録されていません。
-                            </p>
-                        )}
+                            </WarningText>
+                        ) : null}
 
-                        {hasNoAssignedStaff && (
-                            <p className="text-sm text-amber-600">
+                        {hasNoAssignedStaff ? (
+                            <WarningText>
                                 この案件にはまだ割当スタッフがいません。
-                            </p>
-                        )}
+                            </WarningText>
+                        ) : null}
                     </div>
 
                     <div className="space-y-2">
-                        <label className="text-sm font-medium text-slate-700">
+                        <label
+                            htmlFor="messageType"
+                            className={appStyles.form.label}
+                        >
                             メッセージ種類
                         </label>
                         <select
+                            id="messageType"
                             value={messageType}
                             onChange={(event) => {
                                 setMessageType(event.target.value as GroupMessageType);
                                 setMessage("");
                                 setCopied(false);
                             }}
-                            className={inputClassName}
+                            className={[
+                                appStyles.form.input,
+                                "h-11 w-full px-3 text-sm",
+                            ].join(" ")}
                         >
                             <option value="scheduleConfirm">
                                 スケジュール確認
@@ -213,90 +261,74 @@ export const GroupJobMessageForm = ({
                     </div>
                 </div>
 
-                <div className="mt-6 grid gap-3 rounded-2xl bg-blue-50/60 p-4 md:grid-cols-4">
-                    <div>
-                        <p className="text-xs font-medium text-blue-600">
-                            選択中の案件
-                        </p>
-                        <p className="mt-2 font-semibold text-slate-900">
-                            {selectedJob?.title ?? "未選択"}
-                        </p>
-                    </div>
+                <div
+                    className={[
+                        "mt-6 grid gap-3 p-4 md:grid-cols-4",
+                        appStyles.section.soft,
+                    ].join(" ")}
+                >
+                    <SummaryItem
+                        label="選択中の案件"
+                        value={selectedJob?.title ?? "未選択"}
+                    />
 
-                    <div>
-                        <p className="text-xs font-medium text-blue-600">
-                            勤務枠数
-                        </p>
-                        <p className="mt-2 font-semibold text-slate-900">
-                            {selectedJob?.shiftSlots.length ?? 0}件
-                        </p>
-                    </div>
+                    <SummaryItem
+                        label="勤務枠数"
+                        value={`${selectedJob?.shiftSlots.length ?? 0}件`}
+                    />
 
-                    <div>
-                        <p className="text-xs font-medium text-blue-600">
-                            割当人数
-                        </p>
-                        <p className="mt-2 font-semibold text-slate-900">
-                            {assignedStaffCount}人
-                        </p>
-                    </div>
+                    <SummaryItem
+                        label="割当人数"
+                        value={`${assignedStaffCount}人`}
+                    />
 
-                    <div>
-                        <p className="text-xs font-medium text-blue-600">
-                            種類
-                        </p>
-                        <p className="mt-2 font-semibold text-slate-900">
-                            {messageType === "scheduleConfirm"
+                    <SummaryItem
+                        label="種類"
+                        value={
+                            messageType === "scheduleConfirm"
                                 ? "確認"
-                                : "詳細"}
-                        </p>
-                    </div>
+                                : "詳細"
+                        }
+                    />
                 </div>
 
                 <div className="mt-6 space-y-3">
-                    <p className="text-sm font-medium text-slate-700">
-                        表示する項目
-                    </p>
+                    <p className={appStyles.form.label}>表示する項目</p>
 
                     <div className="grid gap-3 md:grid-cols-2">
-                        {[
-                            {
-                                key: "includeMeetingPlace",
-                                label: "集合場所を含める",
-                            },
-                            {
-                                key: "includeDressCode",
-                                label: "服装を含める",
-                            },
-                            {
-                                key: "includeBelongings",
-                                label: "持ち物を含める",
-                            },
-                            {
-                                key: "includeNote",
-                                label: "備考を含める",
-                            },
-                        ].map((item) => {
-                            const optionKey =
-                                item.key as keyof GroupMessageOptions;
-                            const checked = options[optionKey];
+                        {messageOptionItems.map((item) => {
+                            const checked = options[item.key];
 
                             return (
                                 <label
                                     key={item.key}
                                     className={[
-                                        "flex cursor-pointer items-center gap-2 rounded-xl border px-3 py-2 text-sm transition",
+                                        "flex cursor-pointer items-center gap-2 border px-3 py-2 text-sm transition",
+                                        appStyles.radius.xl,
                                         checked
-                                            ? "border-blue-400 bg-blue-50 text-slate-900"
-                                            : "bg-white text-slate-600 hover:bg-slate-50",
+                                            ? [
+                                                appStyles.border.accent,
+                                                appStyles.background.warm,
+                                                appStyles.textColor.default,
+                                            ].join(" ")
+                                            : [
+                                                appStyles.border.soft,
+                                                appStyles.background.white,
+                                                appStyles.textColor.body,
+                                                appStyles.tokens.color.background.hoverWarmSubtle,
+                                            ].join(" "),
                                     ].join(" ")}
                                 >
                                     <input
                                         type="checkbox"
                                         checked={checked}
                                         onChange={() =>
-                                            handleOptionChange(optionKey)
+                                            handleOptionChange(item.key)
                                         }
+                                        className={[
+                                            "h-4 w-4 rounded accent-current",
+                                            appStyles.textColor.accent,
+                                        ].join(" ")}
                                     />
                                     {item.label}
                                 </label>
@@ -310,12 +342,13 @@ export const GroupJobMessageForm = ({
                         type="button"
                         onClick={handleGenerate}
                         disabled={!selectedJob || hasNoShiftSlots}
+                        className={appStyles.button.primary}
                     >
                         <MessageSquareText className="mr-2 h-4 w-4" />
                         再生成
                     </Button>
                 </div>
-            </div>
+            </AppCard>
 
             <GeneratedMessagePanel
                 message={message}
@@ -326,6 +359,46 @@ export const GroupJobMessageForm = ({
                 }}
                 onCopy={handleCopy}
             />
+        </div>
+    );
+};
+
+type WarningTextProps = {
+    children: React.ReactNode;
+};
+
+const WarningText = ({ children }: WarningTextProps) => {
+    return (
+        <p className={["text-sm", appStyles.textColor.pending].join(" ")}>
+            {children}
+        </p>
+    );
+};
+
+type SummaryItemProps = {
+    label: string;
+    value: string;
+};
+
+const SummaryItem = ({ label, value }: SummaryItemProps) => {
+    return (
+        <div>
+            <p
+                className={[
+                    "text-xs font-medium",
+                    appStyles.textColor.accent,
+                ].join(" ")}
+            >
+                {label}
+            </p>
+            <p
+                className={[
+                    "mt-2 font-semibold",
+                    appStyles.textColor.default,
+                ].join(" ")}
+            >
+                {value}
+            </p>
         </div>
     );
 };
