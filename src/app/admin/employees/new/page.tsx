@@ -6,8 +6,8 @@ import {
 import { LinkButton } from "@/components/shared/link-button";
 import { PageShell } from "@/components/shared/page-shell";
 import { PageHeader } from "@/components/shared/page-header";
-import { BridalCard } from "@/components/shared/bridal-card";
-import { bridalStyles } from "@/components/shared/design-tokens";
+import { AppCard } from "@/components/shared/bridal-card";
+import { appStyles } from "@/components/shared/design-tokens";
 import { EmployeeCreateForm } from "@/features/employees/components/employee-create-form";
 import {
     ArrowLeft,
@@ -25,7 +25,7 @@ const AdminNewEmployeePage = () => {
                         href="/admin/employees"
                         variant="outline"
                         pendingText="スタッフ一覧へ移動中..."
-                        className={bridalStyles.button.secondary}
+                        className={appStyles.button.secondary}
                     >
                         <ArrowLeft className="mr-2 h-4 w-4" />
                         スタッフ一覧へ戻る
@@ -33,23 +33,23 @@ const AdminNewEmployeePage = () => {
                 }
             />
 
-            <BridalCard>
+            <AppCard>
                 <CardHeader className="p-5 pb-3">
                     <div className="flex items-start gap-3">
-                        <div className={bridalStyles.icon.circle}>
+                        <div className={appStyles.icon.circle}>
                             <UserPlus className="h-5 w-5" />
                         </div>
 
                         <div>
                             <CardTitle
                                 className={[
-                                    bridalStyles.text.title,
+                                    appStyles.text.title,
                                     "text-xl",
                                 ].join(" ")}
                             >
                                 スタッフ情報
                             </CardTitle>
-                            <p className="mt-1 text-sm text-slate-500">
+                            <p className={["mt-1", appStyles.text.muted].join(" ")}>
                                 登録後、スタッフは設定されたメールアドレスと初期パスワードでログインできます。
                             </p>
                         </div>
@@ -59,18 +59,23 @@ const AdminNewEmployeePage = () => {
                 <CardContent className="space-y-6 p-5 pt-2">
                     <EmployeeCreateForm />
 
-                    <div className="flex justify-end border-t border-[#f0e5d0] pt-5">
+                    <div
+                        className={[
+                            "flex justify-end border-t pt-5",
+                            appStyles.border.soft,
+                        ].join(" ")}
+                    >
                         <LinkButton
                             href="/admin/employees"
                             variant="outline"
                             pendingText="スタッフ一覧へ移動中..."
-                            className={bridalStyles.button.secondary}
+                            className={appStyles.button.secondary}
                         >
                             一覧に戻る
                         </LinkButton>
                     </div>
                 </CardContent>
-            </BridalCard>
+            </AppCard>
         </PageShell>
     );
 };
