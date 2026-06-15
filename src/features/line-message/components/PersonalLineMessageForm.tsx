@@ -1,8 +1,10 @@
 "use client";
 
-import { MessageSquareText } from "lucide-react";
 import { useMemo, useState } from "react";
+import { MessageSquareText } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { AppCard } from "@/components/shared/bridal-card";
+import { appStyles } from "@/components/shared/design-tokens";
 import type {
     AvailablePersonalSlot,
     LineMessageEmployee,
@@ -15,7 +17,6 @@ import { PersonalSummaryCards } from "./personal/PersonalSummaryCards";
 import { PersonalMessageTextFields } from "./personal/PersonalMessageTextFields";
 import { PersonalSlotList } from "./personal/PersonalSlotList";
 import { GeneratedMessagePanel } from "./GeneratedMessagePanel";
-import { inputClassName } from "../styles";
 
 type PersonalLineMessageFormProps = {
     selectedMonth: string;
@@ -31,14 +32,14 @@ export const PersonalLineMessageForm = ({
     unavailableTimes,
 }: PersonalLineMessageFormProps) => {
     const [selectedEmployeeId, setSelectedEmployeeId] = useState(
-        employees[0]?.id ?? ""
+        employees[0]?.id ?? "",
     );
     const [selectedSlotIds, setSelectedSlotIds] = useState<string[]>([]);
     const [message, setMessage] = useState("");
     const [copied, setCopied] = useState(false);
     const [greeting, setGreeting] = useState("おつかれさま～(^^)/");
     const [introText, setIntroText] = useState(
-        `${Number(selectedMonth.split("-")[1])}月の現状お願いしたい日を共有するね！`
+        `${Number(selectedMonth.split("-")[1])}月の現状お願いしたい日を共有するね！`,
     );
     const [closing, setClosing] = useState("こんな感じだよぉ～");
 
@@ -49,7 +50,7 @@ export const PersonalLineMessageForm = ({
     const selectedEmployeeUnavailableTimes = useMemo(() => {
         return unavailableTimes.filter(
             (unavailableTime) =>
-                unavailableTime.employeeId === selectedEmployeeId
+                unavailableTime.employeeId === selectedEmployeeId,
         );
     }, [unavailableTimes, selectedEmployeeId]);
 
@@ -65,20 +66,20 @@ export const PersonalLineMessageForm = ({
                 endTime: slot.endTime,
                 startTimeMinutes: slot.startTimeMinutes,
                 endTimeMinutes: slot.endTimeMinutes,
-            }))
+            })),
         );
     }, [jobs]);
 
     const requestableSlots = useMemo(() => {
         return availableSlots.filter(
             (slot) =>
-                !isSlotUnavailable(slot, selectedEmployeeUnavailableTimes)
+                !isSlotUnavailable(slot, selectedEmployeeUnavailableTimes),
         );
     }, [availableSlots, selectedEmployeeUnavailableTimes]);
 
     const selectedSlots = useMemo(() => {
         return requestableSlots.filter((slot) =>
-            selectedSlotIds.includes(slot.slotId)
+            selectedSlotIds.includes(slot.slotId),
         );
     }, [requestableSlots, selectedSlotIds]);
 
@@ -116,28 +117,40 @@ export const PersonalLineMessageForm = ({
 
     if (employees.length === 0) {
         return (
-            <div className="rounded-2xl border bg-white p-6 shadow-sm">
-                <h2 className="text-lg font-semibold">個人依頼文</h2>
-                <p className="mt-2 text-sm text-slate-500">
+            <AppCard className="p-6">
+                <h2
+                    className={[
+                        appStyles.text.title,
+                        "text-lg font-semibold",
+                    ].join(" ")}
+                >
+                    個人依頼文
+                </h2>
+                <p className={["mt-2", appStyles.text.muted].join(" ")}>
                     依頼文を作成できる有効なスタッフがいません。
                 </p>
-            </div>
+            </AppCard>
         );
     }
 
     return (
         <div className="space-y-6">
-            <div className="rounded-2xl border bg-white p-6 shadow-sm">
+            <AppCard className="p-6">
                 <div className="flex items-center gap-3">
-                    <div className="rounded-2xl bg-blue-50 p-3 shadow-sm">
-                        <MessageSquareText className="h-5 w-5 text-blue-600" />
+                    <div className={appStyles.icon.circle}>
+                        <MessageSquareText className="h-5 w-5" />
                     </div>
 
                     <div>
-                        <h2 className="text-lg font-semibold text-slate-900">
+                        <h2
+                            className={[
+                                appStyles.text.title,
+                                "text-lg font-semibold",
+                            ].join(" ")}
+                        >
                             個人依頼文
                         </h2>
-                        <p className="mt-1 text-sm text-slate-500">
+                        <p className={["mt-1", appStyles.text.muted].join(" ")}>
                             スタッフのNG日時と重複しない勤務枠を選び、個人LINEに送る依頼文を作成します。
                         </p>
                     </div>
@@ -145,25 +158,33 @@ export const PersonalLineMessageForm = ({
 
                 <div className="mt-6 grid gap-5 md:grid-cols-2">
                     <form className="space-y-2">
-                        <label className="text-sm font-medium text-slate-700">
+                        <label htmlFor="month" className={appStyles.form.label}>
                             対象月
                         </label>
                         <input
+                            id="month"
                             type="month"
                             name="month"
                             defaultValue={selectedMonth}
                             onChange={(event) => {
                                 event.currentTarget.form?.requestSubmit();
                             }}
-                            className={inputClassName}
+                            className={[
+                                appStyles.form.input,
+                                "h-11 w-full px-3 text-sm",
+                            ].join(" ")}
                         />
                     </form>
 
                     <div className="space-y-2">
-                        <label className="text-sm font-medium text-slate-700">
+                        <label
+                            htmlFor="employeeId"
+                            className={appStyles.form.label}
+                        >
                             スタッフ
                         </label>
                         <select
+                            id="employeeId"
                             value={selectedEmployeeId}
                             onChange={(event) => {
                                 setSelectedEmployeeId(event.target.value);
@@ -171,7 +192,10 @@ export const PersonalLineMessageForm = ({
                                 setMessage("");
                                 setCopied(false);
                             }}
-                            className={inputClassName}
+                            className={[
+                                appStyles.form.input,
+                                "h-11 w-full px-3 text-sm",
+                            ].join(" ")}
                         >
                             {employees.map((employee) => (
                                 <option key={employee.id} value={employee.id}>
@@ -214,6 +238,7 @@ export const PersonalLineMessageForm = ({
                             type="button"
                             onClick={handleGenerateMessage}
                             disabled={selectedSlots.length === 0}
+                            className={appStyles.button.primary}
                         >
                             <MessageSquareText className="mr-2 h-4 w-4" />
                             文章生成
@@ -226,7 +251,7 @@ export const PersonalLineMessageForm = ({
                         onToggleSlot={handleToggleSlot}
                     />
                 </div>
-            </div>
+            </AppCard>
 
             <GeneratedMessagePanel
                 message={message}
