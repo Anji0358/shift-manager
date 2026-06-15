@@ -6,7 +6,7 @@ import { createEmployee } from "@/features/employees/actions";
 import { SubmitButton } from "@/components/shared/submit-button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { bridalStyles } from "@/components/shared/design-tokens";
+import { appStyles } from "@/components/shared/design-tokens";
 import {
     CircleAlert,
     UserPlus,
@@ -20,13 +20,21 @@ export const EmployeeCreateForm = () => {
     return (
         <form action={formAction} className="space-y-5">
             {state.error && (
-                <div className="flex items-start gap-2 rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+                <div
+                    className={[
+                        "flex items-start gap-2 border p-4 text-sm",
+                        appStyles.radius["2xl"],
+                        appStyles.border.danger,
+                        appStyles.tokens.color.background.danger,
+                        appStyles.textColor.danger,
+                    ].join(" ")}
+                >
                     <CircleAlert className="mt-0.5 h-4 w-4 shrink-0" />
                     <p>{state.error}</p>
                 </div>
             )}
 
-            <section className="rounded-2xl border border-[#f0e5d0] bg-white/70 p-5">
+            <section className={appStyles.section.base}>
                 <div className="grid gap-4 md:grid-cols-2">
                     <FormField label="氏名" htmlFor="name">
                         <Input
@@ -34,7 +42,7 @@ export const EmployeeCreateForm = () => {
                             name="name"
                             placeholder="山田 太郎"
                             required
-                            className={bridalStyles.form.input}
+                            className={appStyles.form.input}
                         />
                     </FormField>
 
@@ -45,7 +53,7 @@ export const EmployeeCreateForm = () => {
                             type="email"
                             placeholder="staff@example.com"
                             required
-                            className={bridalStyles.form.input}
+                            className={appStyles.form.input}
                         />
                     </FormField>
 
@@ -54,7 +62,7 @@ export const EmployeeCreateForm = () => {
                             id="role"
                             name="role"
                             className={[
-                                bridalStyles.form.input,
+                                appStyles.form.input,
                                 "h-11 w-full px-3 text-sm",
                             ].join(" ")}
                             defaultValue="STAFF"
@@ -72,7 +80,7 @@ export const EmployeeCreateForm = () => {
                             min={0}
                             defaultValue={1200}
                             required
-                            className={bridalStyles.form.input}
+                            className={appStyles.form.input}
                         />
                     </FormField>
 
@@ -82,7 +90,7 @@ export const EmployeeCreateForm = () => {
                             name="startedWorkingAt"
                             type="date"
                             required
-                            className={bridalStyles.form.input}
+                            className={appStyles.form.input}
                         />
                     </FormField>
 
@@ -94,17 +102,22 @@ export const EmployeeCreateForm = () => {
                             placeholder="8文字以上"
                             minLength={8}
                             required
-                            className={bridalStyles.form.input}
+                            className={appStyles.form.input}
                         />
                     </FormField>
                 </div>
             </section>
 
-            <div className="flex justify-end border-t border-[#f0e5d0] pt-5">
+            <div
+                className={[
+                    "flex justify-end border-t pt-5",
+                    appStyles.border.soft,
+                ].join(" ")}
+            >
                 <SubmitButton
                     pendingText="登録中..."
                     className={[
-                        bridalStyles.button.primary,
+                        appStyles.button.primary,
                         "px-6",
                     ].join(" ")}
                 >
@@ -125,7 +138,7 @@ type FormFieldProps = {
 const FormField = ({ label, htmlFor, children }: FormFieldProps) => {
     return (
         <div className="space-y-2">
-            <Label htmlFor={htmlFor} className={bridalStyles.form.label}>
+            <Label htmlFor={htmlFor} className={appStyles.form.label}>
                 {label}
             </Label>
             {children}
