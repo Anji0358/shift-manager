@@ -17,8 +17,8 @@ import { SubmitButton } from "@/components/shared/submit-button";
 import { SuccessMessage } from "@/components/shared/success-message";
 import { PageShell } from "@/components/shared/page-shell";
 import { PageHeader } from "@/components/shared/page-header";
-import { BridalCard } from "@/components/shared/bridal-card";
-import { bridalStyles } from "@/components/shared/design-tokens";
+import { AppCard } from "@/components/shared/bridal-card";
+import { appStyles } from "@/components/shared/design-tokens";
 import { getEmployees } from "@/features/employees/queries";
 import { deactivateEmployee } from "@/features/employees/actions";
 import { formatMonth, formatYen } from "@/lib/format";
@@ -41,18 +41,18 @@ const employmentStatusLabel: Record<EmploymentStatus, string> = {
 
 const getRoleBadgeClassName = (role: EmployeeRole) => {
     if (role === "ADMIN") {
-        return bridalStyles.badge.fulfilled;
+        return appStyles.badge.fulfilled;
     }
 
-    return bridalStyles.badge.neutral;
+    return appStyles.badge.neutral;
 };
 
 const getEmploymentStatusBadgeClassName = (status: EmploymentStatus) => {
     if (status === "ACTIVE") {
-        return bridalStyles.badge.fulfilled;
+        return appStyles.badge.fulfilled;
     }
 
-    return "rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-medium text-slate-500 shadow-none hover:bg-slate-50";
+    return appStyles.badge.neutral;
 };
 
 type AdminEmployeesPageProps = {
@@ -76,7 +76,7 @@ const AdminEmployeesPage = async ({
                     <LinkButton
                         href="/admin/employees/new"
                         pendingText="追加画面へ移動中..."
-                        className={bridalStyles.button.primary}
+                        className={appStyles.button.primary}
                     >
                         <UserPlus className="mr-2 h-4 w-4" />
                         スタッフを追加
@@ -86,28 +86,28 @@ const AdminEmployeesPage = async ({
 
             <div className="space-y-6">
                 {message ? (
-                    <div className={[bridalStyles.card.base, "px-5 py-4"].join(" ")}>
+                    <div className={appStyles.section.message}>
                         <SuccessMessage message={message} />
                     </div>
                 ) : null}
 
-                <BridalCard className="overflow-hidden">
+                <AppCard className="overflow-hidden">
                     <CardHeader className="p-5 pb-3">
                         <div className="flex items-start gap-3">
-                            <div className={bridalStyles.icon.circle}>
+                            <div className={appStyles.icon.circle}>
                                 <UsersRound className="h-5 w-5" />
                             </div>
 
                             <div>
                                 <CardTitle
                                     className={[
-                                        bridalStyles.text.title,
+                                        appStyles.text.title,
                                         "text-xl",
                                     ].join(" ")}
                                 >
                                     スタッフ一覧
                                 </CardTitle>
-                                <p className="mt-1 text-sm text-slate-500">
+                                <p className={["mt-1", appStyles.text.muted].join(" ")}>
                                     登録スタッフの権限、時給、在籍状況を確認します。
                                 </p>
                             </div>
@@ -115,42 +115,42 @@ const AdminEmployeesPage = async ({
                     </CardHeader>
 
                     <CardContent className="p-5 pt-2">
-                        <div className={bridalStyles.table.wrapper}>
+                        <div className={appStyles.table.wrapper}>
                             <Table>
                                 <TableHeader>
-                                    <TableRow className={bridalStyles.table.headerRow}>
-                                        <TableHead className={bridalStyles.table.head}>
+                                    <TableRow className={appStyles.table.headerRow}>
+                                        <TableHead className={appStyles.table.head}>
                                             名前
                                         </TableHead>
 
-                                        <TableHead className={bridalStyles.table.head}>
+                                        <TableHead className={appStyles.table.head}>
                                             メールアドレス
                                         </TableHead>
 
-                                        <TableHead className={bridalStyles.table.head}>
+                                        <TableHead className={appStyles.table.head}>
                                             権限
                                         </TableHead>
 
                                         <TableHead
                                             className={[
-                                                bridalStyles.table.head,
+                                                appStyles.table.head,
                                                 "text-right",
                                             ].join(" ")}
                                         >
                                             時給
                                         </TableHead>
 
-                                        <TableHead className={bridalStyles.table.head}>
+                                        <TableHead className={appStyles.table.head}>
                                             勤め始めた年月
                                         </TableHead>
 
-                                        <TableHead className={bridalStyles.table.head}>
+                                        <TableHead className={appStyles.table.head}>
                                             在籍状況
                                         </TableHead>
 
                                         <TableHead
                                             className={[
-                                                bridalStyles.table.head,
+                                                appStyles.table.head,
                                                 "text-right",
                                             ].join(" ")}
                                         >
@@ -163,12 +163,12 @@ const AdminEmployeesPage = async ({
                                     {employees.map((employee) => (
                                         <TableRow
                                             key={employee.id}
-                                            className={bridalStyles.table.row}
+                                            className={appStyles.table.row}
                                         >
                                             <TableCell>
                                                 <p
                                                     className={[
-                                                        bridalStyles.text.title,
+                                                        appStyles.text.title,
                                                         "text-base",
                                                     ].join(" ")}
                                                 >
@@ -176,7 +176,7 @@ const AdminEmployeesPage = async ({
                                                 </p>
                                             </TableCell>
 
-                                            <TableCell className="text-sm text-slate-600">
+                                            <TableCell className={appStyles.table.cellMuted}>
                                                 {employee.email}
                                             </TableCell>
 
@@ -190,11 +190,21 @@ const AdminEmployeesPage = async ({
                                                 </Badge>
                                             </TableCell>
 
-                                            <TableCell className="whitespace-nowrap text-right text-sm font-medium text-slate-900">
+                                            <TableCell
+                                                className={[
+                                                    "whitespace-nowrap text-right text-sm font-medium",
+                                                    appStyles.textColor.default,
+                                                ].join(" ")}
+                                            >
                                                 {formatYen(employee.hourlyWage)}
                                             </TableCell>
 
-                                            <TableCell className="whitespace-nowrap text-sm text-slate-600">
+                                            <TableCell
+                                                className={[
+                                                    "whitespace-nowrap",
+                                                    appStyles.table.cellMuted,
+                                                ].join(" ")}
+                                            >
                                                 {formatMonth(employee.startedWorkingAt)}
                                             </TableCell>
 
@@ -219,7 +229,7 @@ const AdminEmployeesPage = async ({
                                                         size="sm"
                                                         variant="outline"
                                                         pendingText="編集画面へ移動中..."
-                                                        className={bridalStyles.button.secondary}
+                                                        className={appStyles.button.secondary}
                                                     >
                                                         <PenLine className="mr-2 h-4 w-4" />
                                                         編集
@@ -237,7 +247,7 @@ const AdminEmployeesPage = async ({
                                                                 size="sm"
                                                                 variant="outline"
                                                                 pendingText="処理中..."
-                                                                className={bridalStyles.button.danger}
+                                                                className={appStyles.button.danger}
                                                             >
                                                                 退職済みにする
                                                             </SubmitButton>
@@ -252,7 +262,7 @@ const AdminEmployeesPage = async ({
                                         <TableRow>
                                             <TableCell
                                                 colSpan={7}
-                                                className="py-10 text-center text-sm text-slate-500"
+                                                className={appStyles.table.empty}
                                             >
                                                 登録されているスタッフはいません。
                                             </TableCell>
@@ -262,7 +272,7 @@ const AdminEmployeesPage = async ({
                             </Table>
                         </div>
                     </CardContent>
-                </BridalCard>
+                </AppCard>
             </div>
         </PageShell>
     );
