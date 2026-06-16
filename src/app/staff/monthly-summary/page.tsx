@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import {
     CardContent,
     CardHeader,
@@ -15,8 +16,8 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { PageShell } from "@/components/shared/page-shell";
 import { PageHeader } from "@/components/shared/page-header";
-import { BridalCard } from "@/components/shared/app-card";
-import { bridalStyles } from "@/components/shared/design-tokens";
+import { AppCard } from "@/components/shared/app-card";
+import { appStyles } from "@/components/shared/design-tokens";
 import { getCurrentEmployeeId } from "@/lib/auth/current-user";
 import { getCurrentYearMonth } from "@/lib/month";
 import { formatDate, formatYen } from "@/lib/format";
@@ -65,7 +66,7 @@ const StaffMonthlySummaryPage = async ({
             />
 
             <div className="space-y-6">
-                <BridalCard>
+                <AppCard>
                     <CardContent className="p-5">
                         <form
                             className="flex flex-col gap-3 sm:flex-row sm:items-end"
@@ -74,7 +75,7 @@ const StaffMonthlySummaryPage = async ({
                             <div className="space-y-2">
                                 <label
                                     htmlFor="month"
-                                    className={bridalStyles.form.label}
+                                    className={appStyles.form.label}
                                 >
                                     対象月
                                 </label>
@@ -83,14 +84,14 @@ const StaffMonthlySummaryPage = async ({
                                     name="month"
                                     type="month"
                                     defaultValue={targetMonth}
-                                    className={bridalStyles.form.input}
+                                    className={appStyles.form.input}
                                 />
                             </div>
 
                             <Button
                                 type="submit"
                                 className={[
-                                    bridalStyles.button.primary,
+                                    appStyles.button.primary,
                                     "h-11 px-6",
                                 ].join(" ")}
                             >
@@ -99,7 +100,7 @@ const StaffMonthlySummaryPage = async ({
                             </Button>
                         </form>
                     </CardContent>
-                </BridalCard>
+                </AppCard>
 
                 <section className="grid gap-4 md:grid-cols-5">
                     <SummaryCard
@@ -133,23 +134,23 @@ const StaffMonthlySummaryPage = async ({
                     />
                 </section>
 
-                <BridalCard className="overflow-hidden">
+                <AppCard className="overflow-hidden">
                     <CardHeader className="p-5 pb-3">
                         <div className="flex items-start gap-3">
-                            <div className={bridalStyles.icon.circle}>
+                            <div className={appStyles.icon.circle}>
                                 <ReceiptText className="h-5 w-5" />
                             </div>
 
                             <div>
                                 <CardTitle
                                     className={[
-                                        bridalStyles.text.title,
+                                        appStyles.text.title,
                                         "text-xl",
                                     ].join(" ")}
                                 >
                                     {targetMonth} の明細
                                 </CardTitle>
-                                <p className="mt-1 text-sm text-slate-500">
+                                <p className={["mt-1", appStyles.text.muted].join(" ")}>
                                     承認済みの就労報告ごとの給与・交通費・食事手当を確認します。
                                 </p>
                             </div>
@@ -158,49 +159,49 @@ const StaffMonthlySummaryPage = async ({
 
                     <CardContent className="p-5 pt-2">
                         <div className="hidden md:block">
-                            <div className={bridalStyles.table.wrapper}>
+                            <div className={appStyles.table.wrapper}>
                                 <Table>
                                     <TableHeader>
-                                        <TableRow className={bridalStyles.table.headerRow}>
-                                            <TableHead className={bridalStyles.table.head}>
+                                        <TableRow className={appStyles.table.headerRow}>
+                                            <TableHead className={appStyles.table.head}>
                                                 勤務日
                                             </TableHead>
 
-                                            <TableHead className={bridalStyles.table.head}>
+                                            <TableHead className={appStyles.table.head}>
                                                 案件
                                             </TableHead>
 
-                                            <TableHead className={bridalStyles.table.head}>
+                                            <TableHead className={appStyles.table.head}>
                                                 勤務時間
                                             </TableHead>
 
-                                            <TableHead className={bridalStyles.table.head}>
+                                            <TableHead className={appStyles.table.head}>
                                                 休憩
                                             </TableHead>
 
-                                            <TableHead className={bridalStyles.table.head}>
+                                            <TableHead className={appStyles.table.head}>
                                                 時給
                                             </TableHead>
 
-                                            <TableHead className={bridalStyles.table.head}>
+                                            <TableHead className={appStyles.table.head}>
                                                 給与
                                             </TableHead>
 
-                                            <TableHead className={bridalStyles.table.head}>
+                                            <TableHead className={appStyles.table.head}>
                                                 交通費
                                             </TableHead>
 
-                                            <TableHead className={bridalStyles.table.head}>
+                                            <TableHead className={appStyles.table.head}>
                                                 食事
                                             </TableHead>
 
-                                            <TableHead className={bridalStyles.table.head}>
+                                            <TableHead className={appStyles.table.head}>
                                                 食事手当
                                             </TableHead>
 
                                             <TableHead
                                                 className={[
-                                                    bridalStyles.table.head,
+                                                    appStyles.table.head,
                                                     "text-right",
                                                 ].join(" ")}
                                             >
@@ -213,16 +214,21 @@ const StaffMonthlySummaryPage = async ({
                                         {summary.rows.map((row) => (
                                             <TableRow
                                                 key={row.id}
-                                                className={bridalStyles.table.row}
+                                                className={appStyles.table.row}
                                             >
-                                                <TableCell className="whitespace-nowrap text-sm text-slate-600">
+                                                <TableCell
+                                                    className={[
+                                                        "whitespace-nowrap",
+                                                        appStyles.table.cellMuted,
+                                                    ].join(" ")}
+                                                >
                                                     {formatDate(row.workDate)}
                                                 </TableCell>
 
                                                 <TableCell>
                                                     <p
                                                         className={[
-                                                            bridalStyles.text.title,
+                                                            appStyles.text.title,
                                                             "text-base",
                                                         ].join(" ")}
                                                     >
@@ -230,39 +236,84 @@ const StaffMonthlySummaryPage = async ({
                                                     </p>
                                                 </TableCell>
 
-                                                <TableCell className="whitespace-nowrap text-sm text-slate-600">
+                                                <TableCell
+                                                    className={[
+                                                        "whitespace-nowrap",
+                                                        appStyles.table.cellMuted,
+                                                    ].join(" ")}
+                                                >
                                                     {row.actualStartTime}〜{row.actualEndTime}
-                                                    <div className="text-xs text-slate-500">
+                                                    <div
+                                                        className={[
+                                                            "text-xs",
+                                                            appStyles.textColor.muted,
+                                                        ].join(" ")}
+                                                    >
                                                         実働{" "}
                                                         {formatMinutesAsHour(row.workingMinutes)}
                                                     </div>
                                                 </TableCell>
 
-                                                <TableCell className="whitespace-nowrap text-sm text-slate-600">
+                                                <TableCell
+                                                    className={[
+                                                        "whitespace-nowrap",
+                                                        appStyles.table.cellMuted,
+                                                    ].join(" ")}
+                                                >
                                                     {row.actualBreakMinutes}分
                                                 </TableCell>
 
-                                                <TableCell className="whitespace-nowrap text-sm text-slate-600">
+                                                <TableCell
+                                                    className={[
+                                                        "whitespace-nowrap",
+                                                        appStyles.table.cellMuted,
+                                                    ].join(" ")}
+                                                >
                                                     {formatYen(row.hourlyWage)}
                                                 </TableCell>
 
-                                                <TableCell className="whitespace-nowrap text-sm text-slate-600">
+                                                <TableCell
+                                                    className={[
+                                                        "whitespace-nowrap",
+                                                        appStyles.table.cellMuted,
+                                                    ].join(" ")}
+                                                >
                                                     {formatYen(row.wageAmount)}
                                                 </TableCell>
 
-                                                <TableCell className="whitespace-nowrap text-sm text-slate-600">
+                                                <TableCell
+                                                    className={[
+                                                        "whitespace-nowrap",
+                                                        appStyles.table.cellMuted,
+                                                    ].join(" ")}
+                                                >
                                                     {formatYen(row.transportationFee)}
                                                 </TableCell>
 
-                                                <TableCell className="whitespace-nowrap text-sm text-slate-600">
+                                                <TableCell
+                                                    className={[
+                                                        "whitespace-nowrap",
+                                                        appStyles.table.cellMuted,
+                                                    ].join(" ")}
+                                                >
                                                     {row.hasMeal ? "あり" : "なし"}
                                                 </TableCell>
 
-                                                <TableCell className="whitespace-nowrap text-sm text-slate-600">
+                                                <TableCell
+                                                    className={[
+                                                        "whitespace-nowrap",
+                                                        appStyles.table.cellMuted,
+                                                    ].join(" ")}
+                                                >
                                                     {formatYen(row.mealAllowance)}
                                                 </TableCell>
 
-                                                <TableCell className="whitespace-nowrap text-right text-sm font-medium text-slate-900">
+                                                <TableCell
+                                                    className={[
+                                                        "whitespace-nowrap text-right text-sm font-medium",
+                                                        appStyles.textColor.default,
+                                                    ].join(" ")}
+                                                >
                                                     {formatYen(row.totalAmount)}
                                                 </TableCell>
                                             </TableRow>
@@ -272,7 +323,7 @@ const StaffMonthlySummaryPage = async ({
                                             <TableRow>
                                                 <TableCell
                                                     colSpan={10}
-                                                    className="py-10 text-center text-sm text-slate-500"
+                                                    className={appStyles.table.empty}
                                                 >
                                                     この月の承認済み就労報告はありません。
                                                 </TableCell>
@@ -287,7 +338,7 @@ const StaffMonthlySummaryPage = async ({
                             <PayrollCardList rows={summary.rows} />
                         </div>
                     </CardContent>
-                </BridalCard>
+                </AppCard>
             </div>
         </PageShell>
     );
@@ -296,28 +347,38 @@ const StaffMonthlySummaryPage = async ({
 type SummaryCardProps = {
     title: string;
     value: string;
-    icon: React.ReactNode;
+    icon: ReactNode;
 };
 
 const SummaryCard = ({ title, value, icon }: SummaryCardProps) => {
     return (
-        <BridalCard>
+        <AppCard>
             <CardHeader className="p-4 pb-2">
                 <div className="flex items-center gap-3">
-                    <div className={bridalStyles.icon.smallCircle}>{icon}</div>
+                    <div className={appStyles.icon.smallCircle}>{icon}</div>
 
-                    <CardTitle className="text-sm font-medium text-slate-500">
+                    <CardTitle
+                        className={[
+                            "text-sm font-medium",
+                            appStyles.textColor.muted,
+                        ].join(" ")}
+                    >
                         {title}
                     </CardTitle>
                 </div>
             </CardHeader>
 
             <CardContent className="p-4 pt-2">
-                <p className="text-2xl font-semibold tracking-tight text-slate-900">
+                <p
+                    className={[
+                        "text-2xl font-semibold tracking-tight",
+                        appStyles.textColor.default,
+                    ].join(" ")}
+                >
                     {value}
                 </p>
             </CardContent>
-        </BridalCard>
+        </AppCard>
     );
 };
 
