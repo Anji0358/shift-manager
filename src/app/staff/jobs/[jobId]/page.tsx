@@ -22,8 +22,8 @@ import { GoogleMapsLink } from "@/components/shared/google-maps-link";
 import { LinkButton } from "@/components/shared/link-button";
 import { PageShell } from "@/components/shared/page-shell";
 import { PageHeader } from "@/components/shared/page-header";
-import { BridalCard } from "@/components/shared/bridal-card";
-import { bridalStyles } from "@/components/shared/design-tokens";
+import { AppCard } from "@/components/shared/bridal-card";
+import { appStyles } from "@/components/shared/design-tokens";
 
 type StaffJobDetailPageProps = {
     params: Promise<{
@@ -69,7 +69,7 @@ const StaffJobDetailPage = async ({ params }: StaffJobDetailPageProps) => {
                     <LinkButton
                         href="/staff/shifts"
                         variant="outline"
-                        className={bridalStyles.button.secondary}
+                        className={appStyles.button.secondary}
                     >
                         <ArrowLeft className="mr-2 h-4 w-4" />
                         確定シフトへ戻る
@@ -99,23 +99,23 @@ const StaffJobDetailPage = async ({ params }: StaffJobDetailPageProps) => {
                     />
                 </section>
 
-                <BridalCard>
+                <AppCard>
                     <CardHeader className="p-5 pb-3">
                         <div className="flex items-start gap-3">
-                            <div className={bridalStyles.icon.circle}>
+                            <div className={appStyles.icon.circle}>
                                 <ClipboardList className="h-5 w-5" />
                             </div>
 
                             <div>
                                 <CardTitle
                                     className={[
-                                        bridalStyles.text.title,
+                                        appStyles.text.title,
                                         "text-xl",
                                     ].join(" ")}
                                 >
                                     集合・勤務情報
                                 </CardTitle>
-                                <p className="mt-1 text-sm text-slate-500">
+                                <p className={["mt-1", appStyles.text.muted].join(" ")}>
                                     当日の勤務場所、集合場所、服装、持ち物、備考を確認します。
                                 </p>
                             </div>
@@ -176,7 +176,7 @@ const StaffJobDetailPage = async ({ params }: StaffJobDetailPageProps) => {
                             preWrap
                         />
                     </CardContent>
-                </BridalCard>
+                </AppCard>
             </div>
         </PageShell>
     );
@@ -196,29 +196,39 @@ const SummaryCard = ({
     icon,
 }: SummaryCardProps) => {
     return (
-        <BridalCard>
+        <AppCard>
             <CardHeader className="p-4 pb-2">
                 <div className="flex items-center gap-3">
-                    <div className={bridalStyles.icon.smallCircle}>{icon}</div>
+                    <div className={appStyles.icon.smallCircle}>{icon}</div>
 
-                    <CardTitle className="text-sm font-medium text-slate-500">
+                    <CardTitle
+                        className={[
+                            "text-sm font-medium",
+                            appStyles.textColor.muted,
+                        ].join(" ")}
+                    >
                         {title}
                     </CardTitle>
                 </div>
             </CardHeader>
 
             <CardContent className="p-4 pt-2">
-                <p className="text-xl font-semibold tracking-tight text-slate-900">
+                <p
+                    className={[
+                        "text-xl font-semibold tracking-tight",
+                        appStyles.textColor.default,
+                    ].join(" ")}
+                >
                     {value}
                 </p>
 
                 {description ? (
-                    <p className="mt-1 text-sm text-slate-500">
+                    <p className={["mt-1", appStyles.text.muted].join(" ")}>
                         {description}
                     </p>
                 ) : null}
             </CardContent>
-        </BridalCard>
+        </AppCard>
     );
 };
 
@@ -238,17 +248,20 @@ const InfoBlock = ({
     preWrap = false,
 }: InfoBlockProps) => {
     return (
-        <div className="rounded-2xl border border-[#f0e5d0] bg-[#fffdf8]/80 p-4">
+        <div className={appStyles.section.soft}>
             <div className="flex gap-3">
                 {icon ? (
-                    <span className="mt-0.5 text-[#b8872d]">{icon}</span>
+                    <span className={["mt-0.5", appStyles.icon.accent].join(" ")}>
+                        {icon}
+                    </span>
                 ) : null}
 
                 <div className="min-w-0">
-                    <p className="text-slate-500">{label}</p>
+                    <p className={appStyles.textColor.muted}>{label}</p>
                     <p
                         className={[
-                            "font-medium text-slate-900",
+                            "font-medium",
+                            appStyles.textColor.default,
                             preWrap ? "whitespace-pre-wrap" : "",
                         ]
                             .filter(Boolean)
