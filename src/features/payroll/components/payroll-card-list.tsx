@@ -1,7 +1,8 @@
+import type { ReactNode } from "react";
 import { CalendarDays, Clock, Wallet } from "lucide-react";
 import { formatDate, formatYen } from "@/lib/format";
-import { BridalCard } from "@/components/shared/app-card";
-import { bridalStyles } from "@/components/shared/design-tokens";
+import { AppCard } from "@/components/shared/app-card";
+import { appStyles } from "@/components/shared/design-tokens";
 
 type PayrollRow = {
     id: string;
@@ -28,28 +29,40 @@ const formatMinutesAsHour = (minutes: number) => {
 export const PayrollCardList = ({ rows }: PayrollCardListProps) => {
     if (rows.length === 0) {
         return (
-            <BridalCard className="p-6 text-center text-sm text-slate-500">
-                この月の承認済み就労報告はありません。
-            </BridalCard>
+            <AppCard className="p-6 text-center">
+                <p className={appStyles.text.muted}>
+                    この月の承認済み就労報告はありません。
+                </p>
+            </AppCard>
         );
     }
 
     return (
         <div className="space-y-4">
             {rows.map((row) => (
-                <BridalCard key={row.id} className="p-4">
+                <AppCard key={row.id} className="p-4">
                     <div>
                         <h2
                             className={[
-                                bridalStyles.text.title,
+                                appStyles.text.title,
                                 "text-lg",
                             ].join(" ")}
                         >
                             {row.jobTitle}
                         </h2>
 
-                        <div className="mt-2 flex items-center gap-2 text-sm text-slate-600">
-                            <CalendarDays className="h-4 w-4 text-[#b8872d]" />
+                        <div
+                            className={[
+                                "mt-2 flex items-center gap-2 text-sm",
+                                appStyles.textColor.body,
+                            ].join(" ")}
+                        >
+                            <CalendarDays
+                                className={[
+                                    "h-4 w-4",
+                                    appStyles.icon.accent,
+                                ].join(" ")}
+                            />
                             <span>{formatDate(row.workDate)}</span>
                         </div>
                     </div>
@@ -87,17 +100,37 @@ export const PayrollCardList = ({ rows }: PayrollCardListProps) => {
                         />
                     </div>
 
-                    <div className="mt-4 flex items-center justify-between rounded-2xl border border-[#f0e5d0] bg-[#fffdf8]/80 p-4">
-                        <span className="flex items-center gap-2 text-sm text-slate-500">
-                            <Wallet className="h-4 w-4 text-[#b8872d]" />
+                    <div
+                        className={[
+                            "mt-4 flex items-center justify-between",
+                            appStyles.section.soft,
+                        ].join(" ")}
+                    >
+                        <span
+                            className={[
+                                "flex items-center gap-2 text-sm",
+                                appStyles.textColor.muted,
+                            ].join(" ")}
+                        >
+                            <Wallet
+                                className={[
+                                    "h-4 w-4",
+                                    appStyles.icon.accent,
+                                ].join(" ")}
+                            />
                             合計
                         </span>
 
-                        <span className="text-lg font-semibold text-slate-900">
+                        <span
+                            className={[
+                                "text-lg font-semibold",
+                                appStyles.textColor.default,
+                            ].join(" ")}
+                        >
                             {formatYen(row.totalAmount)}
                         </span>
                     </div>
-                </BridalCard>
+                </AppCard>
             ))}
         </div>
     );
@@ -106,18 +139,35 @@ export const PayrollCardList = ({ rows }: PayrollCardListProps) => {
 type InfoRowProps = {
     label: string;
     value: string;
-    icon?: React.ReactNode;
+    icon?: ReactNode;
 };
 
 const InfoRow = ({ label, value, icon }: InfoRowProps) => {
     return (
-        <div className="flex items-center justify-between gap-4 border-b border-[#f0e5d0] pb-2 last:border-b-0 last:pb-0">
-            <span className="flex items-center gap-2 text-slate-500">
-                {icon ? <span className="text-[#b8872d]">{icon}</span> : null}
+        <div
+            className={[
+                "flex items-center justify-between gap-4 border-b pb-2 last:border-b-0 last:pb-0",
+                appStyles.border.soft,
+            ].join(" ")}
+        >
+            <span
+                className={[
+                    "flex items-center gap-2",
+                    appStyles.textColor.muted,
+                ].join(" ")}
+            >
+                {icon ? (
+                    <span className={appStyles.icon.accent}>{icon}</span>
+                ) : null}
                 {label}
             </span>
 
-            <span className="text-right font-medium text-slate-900">
+            <span
+                className={[
+                    "text-right font-medium",
+                    appStyles.textColor.default,
+                ].join(" ")}
+            >
                 {value}
             </span>
         </div>
