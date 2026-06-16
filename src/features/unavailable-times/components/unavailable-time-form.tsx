@@ -14,7 +14,7 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import { SubmitButton } from "@/components/shared/submit-button";
-import { bridalStyles } from "@/components/shared/design-tokens";
+import { appStyles } from "@/components/shared/design-tokens";
 import { createUnavailableTime } from "@/features/unavailable-times/actions";
 import {
     CalendarDays,
@@ -50,7 +50,7 @@ export const UnavailableTimeForm = () => {
                     >
                         <SelectTrigger
                             id="type"
-                            className={bridalStyles.form.input}
+                            className={appStyles.form.input}
                         >
                             <SelectValue placeholder="NG日時の種類を選択" />
                         </SelectTrigger>
@@ -71,7 +71,13 @@ export const UnavailableTimeForm = () => {
                     </Select>
                 </FormField>
 
-                <div className="rounded-2xl border border-[#f0e5d0] bg-[#fffdf8]/80 p-4 text-sm leading-6 text-slate-600">
+                <div
+                    className={[
+                        appStyles.section.soft,
+                        "text-sm leading-6",
+                        appStyles.textColor.body,
+                    ].join(" ")}
+                >
                     {type === "FULL_DAY" && (
                         <p>
                             例：試験、帰省、私用などで、その日まるごとNGの場合に使います。
@@ -111,7 +117,7 @@ export const UnavailableTimeForm = () => {
                                 name="date"
                                 type="date"
                                 required
-                                className={bridalStyles.form.input}
+                                className={appStyles.form.input}
                             />
                         </FormField>
                     )}
@@ -121,7 +127,7 @@ export const UnavailableTimeForm = () => {
                             <Select name="dayOfWeek" defaultValue="MONDAY">
                                 <SelectTrigger
                                     id="dayOfWeek"
-                                    className={bridalStyles.form.input}
+                                    className={appStyles.form.input}
                                 >
                                     <SelectValue placeholder="曜日を選択" />
                                 </SelectTrigger>
@@ -147,7 +153,7 @@ export const UnavailableTimeForm = () => {
                                     name="startTime"
                                     type="time"
                                     required
-                                    className={bridalStyles.form.input}
+                                    className={appStyles.form.input}
                                 />
                             </FormField>
 
@@ -157,7 +163,7 @@ export const UnavailableTimeForm = () => {
                                     name="endTime"
                                     type="time"
                                     required
-                                    className={bridalStyles.form.input}
+                                    className={appStyles.form.input}
                                 />
                             </FormField>
                         </>
@@ -175,29 +181,28 @@ export const UnavailableTimeForm = () => {
                         id="reason"
                         name="reason"
                         placeholder="例：大学の授業、試験、帰省、別予定など"
-                        className={[
-                            bridalStyles.form.input,
-                            "min-h-28",
-                        ].join(" ")}
+                        className={appStyles.form.textarea}
                     />
                 </FormField>
             </FormSection>
 
-            <div className="flex flex-col-reverse gap-3 border-t border-[#f0e5d0] pt-5 sm:flex-row sm:justify-end">
+            <div
+                className={[
+                    "flex flex-col-reverse gap-3 border-t pt-5 sm:flex-row sm:justify-end",
+                    appStyles.border.soft,
+                ].join(" ")}
+            >
                 <LinkButton
                     href="/staff/unavailable-times"
                     variant="outline"
-                    className={bridalStyles.button.secondary}
+                    className={appStyles.button.secondary}
                 >
                     キャンセル
                 </LinkButton>
 
                 <SubmitButton
                     pendingText="登録中..."
-                    className={[
-                        bridalStyles.button.primary,
-                        "px-6",
-                    ].join(" ")}
+                    className={[appStyles.button.primary, "px-6"].join(" ")}
                 >
                     <CheckCircle2 className="mr-2 h-4 w-4" />
                     NG日時を登録
@@ -221,20 +226,20 @@ const FormSection = ({
     children,
 }: FormSectionProps) => {
     return (
-        <section className="space-y-4 rounded-2xl border border-[#f0e5d0] bg-white/70 p-5">
+        <section className={["space-y-4", appStyles.section.base].join(" ")}>
             <div className="flex items-start gap-3">
-                <div className={bridalStyles.icon.smallCircle}>{icon}</div>
+                <div className={appStyles.icon.smallCircle}>{icon}</div>
 
                 <div>
                     <h2
                         className={[
-                            bridalStyles.text.title,
+                            appStyles.text.title,
                             "text-lg",
                         ].join(" ")}
                     >
                         {title}
                     </h2>
-                    <p className="mt-1 text-sm text-slate-500">
+                    <p className={["mt-1", appStyles.text.muted].join(" ")}>
                         {description}
                     </p>
                 </div>
@@ -254,7 +259,7 @@ type FormFieldProps = {
 const FormField = ({ label, htmlFor, children }: FormFieldProps) => {
     return (
         <div className="space-y-2">
-            <Label htmlFor={htmlFor} className={bridalStyles.form.label}>
+            <Label htmlFor={htmlFor} className={appStyles.form.label}>
                 {label}
             </Label>
             {children}
