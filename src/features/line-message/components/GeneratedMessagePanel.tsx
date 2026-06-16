@@ -1,6 +1,7 @@
 import { Copy } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { resultTextareaClassName } from "../styles";
+import { AppCard } from "@/components/shared/bridal-card";
+import { appStyles } from "@/components/shared/design-tokens";
 
 type GeneratedMessagePanelProps = {
     title?: string;
@@ -22,11 +23,18 @@ export const GeneratedMessagePanel = ({
     onCopy,
 }: GeneratedMessagePanelProps) => {
     return (
-        <div className="rounded-2xl border bg-white p-6 shadow-sm">
+        <AppCard className="p-6">
             <div className="flex items-center justify-between gap-3">
                 <div>
-                    <h3 className="font-semibold text-slate-900">{title}</h3>
-                    <p className="mt-1 text-sm text-slate-500">
+                    <h3
+                        className={[
+                            appStyles.text.title,
+                            "font-semibold",
+                        ].join(" ")}
+                    >
+                        {title}
+                    </h3>
+                    <p className={["mt-1", appStyles.text.muted].join(" ")}>
                         {description}
                     </p>
                 </div>
@@ -36,6 +44,7 @@ export const GeneratedMessagePanel = ({
                     variant="outline"
                     onClick={onCopy}
                     disabled={!message}
+                    className={appStyles.button.secondary}
                 >
                     <Copy className="mr-2 h-4 w-4" />
                     {copied ? "コピー済み" : "コピー"}
@@ -46,8 +55,11 @@ export const GeneratedMessagePanel = ({
                 value={message}
                 onChange={(event) => onMessageChange(event.target.value)}
                 placeholder={placeholder}
-                className={resultTextareaClassName}
+                className={[
+                    appStyles.form.textarea,
+                    "mt-5 min-h-[320px] w-full p-4 font-mono text-sm leading-7 outline-none transition",
+                ].join(" ")}
             />
-        </div>
+        </AppCard>
     );
 };
