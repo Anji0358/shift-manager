@@ -17,8 +17,8 @@ import { LinkButton } from "@/components/shared/link-button";
 import { SuccessMessage } from "@/components/shared/success-message";
 import { PageShell } from "@/components/shared/page-shell";
 import { PageHeader } from "@/components/shared/page-header";
-import { BridalCard } from "@/components/shared/bridal-card";
-import { bridalStyles } from "@/components/shared/design-tokens";
+import { AppCard } from "@/components/shared/bridal-card";
+import { appStyles } from "@/components/shared/design-tokens";
 import { UnavailableTimeCardList } from "@/features/unavailable-times/components/unavailable-time-card-list";
 import { deleteUnavailableTime } from "@/features/unavailable-times/actions";
 import { getUnavailableTimesByEmployeeId } from "@/features/unavailable-times/queries";
@@ -86,7 +86,7 @@ const StaffUnavailableTimesPage = async ({
                 action={
                     <LinkButton
                         href="/staff/unavailable-times/new"
-                        className={bridalStyles.button.primary}
+                        className={appStyles.button.primary}
                     >
                         <Plus className="mr-2 h-4 w-4" />
                         NGの日時を追加
@@ -96,28 +96,28 @@ const StaffUnavailableTimesPage = async ({
 
             <div className="space-y-6">
                 {message ? (
-                    <div className={[bridalStyles.card.base, "px-5 py-4"].join(" ")}>
+                    <div className={appStyles.section.message}>
                         <SuccessMessage message={message} />
                     </div>
                 ) : null}
 
-                <BridalCard className="overflow-hidden">
+                <AppCard className="overflow-hidden">
                     <CardHeader className="p-5 pb-3">
                         <div className="flex items-start gap-3">
-                            <div className={bridalStyles.icon.circle}>
+                            <div className={appStyles.icon.circle}>
                                 <CalendarX2 className="h-5 w-5" />
                             </div>
 
                             <div>
                                 <CardTitle
                                     className={[
-                                        bridalStyles.text.title,
+                                        appStyles.text.title,
                                         "text-xl",
                                     ].join(" ")}
                                 >
                                     登録済みのNGの日時
                                 </CardTitle>
-                                <p className="mt-1 text-sm text-slate-500">
+                                <p className={["mt-1", appStyles.text.muted].join(" ")}>
                                     自分が勤務できない日時や毎週固定の予定を確認・削除できます。
                                 </p>
                             </div>
@@ -126,33 +126,33 @@ const StaffUnavailableTimesPage = async ({
 
                     <CardContent className="p-5 pt-2">
                         <div className="hidden md:block">
-                            <div className={bridalStyles.table.wrapper}>
+                            <div className={appStyles.table.wrapper}>
                                 <Table>
                                     <TableHeader>
-                                        <TableRow className={bridalStyles.table.headerRow}>
-                                            <TableHead className={bridalStyles.table.head}>
+                                        <TableRow className={appStyles.table.headerRow}>
+                                            <TableHead className={appStyles.table.head}>
                                                 種類
                                             </TableHead>
 
-                                            <TableHead className={bridalStyles.table.head}>
+                                            <TableHead className={appStyles.table.head}>
                                                 日付
                                             </TableHead>
 
-                                            <TableHead className={bridalStyles.table.head}>
+                                            <TableHead className={appStyles.table.head}>
                                                 曜日
                                             </TableHead>
 
-                                            <TableHead className={bridalStyles.table.head}>
+                                            <TableHead className={appStyles.table.head}>
                                                 時間
                                             </TableHead>
 
-                                            <TableHead className={bridalStyles.table.head}>
+                                            <TableHead className={appStyles.table.head}>
                                                 理由・メモ
                                             </TableHead>
 
                                             <TableHead
                                                 className={[
-                                                    bridalStyles.table.head,
+                                                    appStyles.table.head,
                                                     "text-right",
                                                 ].join(" ")}
                                             >
@@ -165,10 +165,10 @@ const StaffUnavailableTimesPage = async ({
                                         {myUnavailableTimes.map((unavailableTime) => (
                                             <TableRow
                                                 key={unavailableTime.id}
-                                                className={bridalStyles.table.row}
+                                                className={appStyles.table.row}
                                             >
                                                 <TableCell>
-                                                    <Badge className={bridalStyles.badge.neutral}>
+                                                    <Badge className={appStyles.badge.neutral}>
                                                         {
                                                             unavailableTypeLabel[
                                                             unavailableTime.type
@@ -177,22 +177,42 @@ const StaffUnavailableTimesPage = async ({
                                                     </Badge>
                                                 </TableCell>
 
-                                                <TableCell className="whitespace-nowrap text-sm text-slate-600">
+                                                <TableCell
+                                                    className={[
+                                                        "whitespace-nowrap",
+                                                        appStyles.table.cellMuted,
+                                                    ].join(" ")}
+                                                >
                                                     {getUnavailableDateText(unavailableTime)}
                                                 </TableCell>
 
-                                                <TableCell className="whitespace-nowrap text-sm text-slate-600">
+                                                <TableCell
+                                                    className={[
+                                                        "whitespace-nowrap",
+                                                        appStyles.table.cellMuted,
+                                                    ].join(" ")}
+                                                >
                                                     {getUnavailableDayOfWeekText(
                                                         unavailableTime,
                                                     )}
                                                 </TableCell>
 
-                                                <TableCell className="whitespace-nowrap text-sm text-slate-600">
+                                                <TableCell
+                                                    className={[
+                                                        "whitespace-nowrap",
+                                                        appStyles.table.cellMuted,
+                                                    ].join(" ")}
+                                                >
                                                     {getUnavailableTimeText(unavailableTime)}
                                                 </TableCell>
 
                                                 <TableCell>
-                                                    <p className="max-w-sm text-sm leading-6 text-slate-600">
+                                                    <p
+                                                        className={[
+                                                            "max-w-sm leading-6",
+                                                            appStyles.table.cellMuted,
+                                                        ].join(" ")}
+                                                    >
                                                         {unavailableTime.reason || "-"}
                                                     </p>
                                                 </TableCell>
@@ -208,7 +228,7 @@ const StaffUnavailableTimesPage = async ({
                                                         <ConfirmSubmitButton
                                                             size="sm"
                                                             variant="outline"
-                                                            className={bridalStyles.button.danger}
+                                                            className={appStyles.button.danger}
                                                             message="このNGの日時を削除します。よろしいですか？"
                                                         >
                                                             <Trash2 className="mr-2 h-4 w-4" />
@@ -223,7 +243,7 @@ const StaffUnavailableTimesPage = async ({
                                             <TableRow>
                                                 <TableCell
                                                     colSpan={6}
-                                                    className="py-10 text-center text-sm text-slate-500"
+                                                    className={appStyles.table.empty}
                                                 >
                                                     NGの日時はまだ登録されていません。
                                                 </TableCell>
@@ -240,7 +260,7 @@ const StaffUnavailableTimesPage = async ({
                             />
                         </div>
                     </CardContent>
-                </BridalCard>
+                </AppCard>
             </div>
         </PageShell>
     );
