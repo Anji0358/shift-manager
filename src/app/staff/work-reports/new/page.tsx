@@ -1,22 +1,11 @@
-import { notFound, redirect } from "next/navigation";
+"use client";
+
+import { useState } from "react";
 import type { ReactNode } from "react";
-import {
-    ArrowLeft,
-    BriefcaseBusiness,
-    CheckCircle2,
-    Clock,
-    MapPin,
-    ReceiptText,
-    Utensils,
-    User,
-} from "lucide-react";
-import {
-    CardContent,
-    CardHeader,
-    CardTitle,
-} from "@/components/ui/card";
+import { LinkButton } from "@/components/shared/link-button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import {
     Select,
     SelectContent,
@@ -24,303 +13,240 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
-import { LinkButton } from "@/components/shared/link-button";
 import { SubmitButton } from "@/components/shared/submit-button";
-import { PageShell } from "@/components/shared/page-shell";
-import { PageHeader } from "@/components/shared/page-header";
-import { BridalCard } from "@/components/shared/bridal-card";
-import { bridalStyles } from "@/components/shared/design-tokens";
-import { getAssignmentById } from "@/features/shift-assignments/queries";
-import { createWorkReport } from "@/features/work-reports/actions";
-import { getWorkReportByEmployeeIdAndJobId } from "@/features/work-reports/queries";
-import { formatDate } from "@/lib/format";
-import { getCurrentEmployeeId } from "@/lib/auth/current-user";
+import { appStyles } from "@/components/shared/design-tokens";
+import { createUnavailableTime } from "@/features/unavailable-times/actions";
+import {
+    CalendarDays,
+    CalendarX2,
+    CheckCircle2,
+    Clock,
+    Repeat,
+} from "lucide-react";
 
-type StaffNewWorkReportPageProps = {
-    searchParams: Promise<{
-        assignmentId?: string;
-    }>;
-};
+type UnavailableFormType = "FULL_DAY" | "TIME_RANGE" | "WEEKLY_FIXED";
 
-const StaffNewWorkReportPage = async ({
-    searchParams,
-}: StaffNewWorkReportPageProps) => {
-    const { assignmentId } = await searchParams;
+export const UnavailableTimeForm = () => {
+    const [type, setType] = useState<UnavailableFormType>("FULL_DAY");
 
-    if (!assignmentId) {
-        notFound();
-    }
-
-    const currentEmployeeId = await getCurrentEmployeeId();
-
-    const assignment = await getAssignmentById(assignmentId);
-
-    if (!assignment) {
-        notFound();
-    }
-
-    if (assignment.employeeId !== currentEmployeeId) {
-        notFound();
-    }
-
-    const job = assignment.slot.job;
-    const slot = assignment.slot;
-    const employee = assignment.employee;
-
-    const existingReport = await getWorkReportByEmployeeIdAndJobId(
-        currentEmployeeId,
-        job.id,
-    );
-
-    if (existingReport) {
-        redirect("/staff/shifts");
-    }
+    const showDate = type === "FULL_DAY" || type === "TIME_RANGE";
+    const showDayOfWeek = type === "WEEKLY_FIXED";
+    const showTimeRange = type === "TIME_RANGE" || type === "WEEKLY_FIXED";
 
     return (
-        <PageShell>
-            <PageHeader
-                title="就労報告提出"
-                description="実際の勤務時間、休憩時間、交通費などを報告します。"
-                action={
-                    <LinkButton
-                        href="/staff/shifts"
-                        variant="outline"
-                        className={bridalStyles.button.secondary}
+        <form action={createUnavailableTime} className="space-y-6">
+            <FormSection
+                title="NG日時の種類"
+                description="選択した内容に合わせて、必要な入力欄だけ表示されます。"
+                icon={<CalendarX2 className="h-5 w-5" />}
+            >
+                <FormField label="どのような予定ですか？" htmlFor="type">
+                    <Select
+                        name="type"
+                        value={type}
+                        onValueChange={(value) =>
+                            setType(value as UnavailableFormType)
+                        }
                     >
-                        <ArrowLeft className="mr-2 h-4 w-4" />
-                        確定シフトへ戻る
-                    </LinkButton>
+                        <SelectTrigger
+                            id="type"
+                            className={appStyles.form.input}
+                        >
+                            <SelectValue placeholder="NG日時の種類を選択" />
+                        </SelectTrigger>
+
+                        <SelectContent>
+                            <SelectItem value="FULL_DAY">
+                                この日は終日NG
+                            </SelectItem>
+
+                            <SelectItem value="TIME_RANGE">
+                                この日の一部時間だけNG
+                            </SelectItem>
+
+                            <SelectItem value="WEEKLY_FIXED">
+                                毎週決まった時間にNG
+                            </SelectItem>
+                        </SelectContent>
+                    </Select>
+                </FormField>
+
+                <div
+                    className={[
+                        appStyles.section.soft,
+                        "text-sm leading-6",
+                        appStyles.textColor.body,
+                    ].join(" ")}
+                >
+                    {type === "FULL_DAY" && (
+                        <p>
+                            例：試験、帰省、私用などで、その日まるごとNGの場合に使います。
+                        </p>
+                    )}
+
+                    {type === "TIME_RANGE" && (
+                        <p>
+                            例：13:00〜17:00は授業があるなど、その日の一部時間だけNGの場合に使います。
+                        </p>
+                    )}
+
+                    {type === "WEEKLY_FIXED" && (
+                        <p>
+                            例：毎週月曜の9:00〜12:00は授業があるなど、毎週決まった予定がある場合に使います。
+                        </p>
+                    )}
+                </div>
+            </FormSection>
+
+            <FormSection
+                title="日時"
+                description="NGになる日付・曜日・時間帯を入力します。"
+                icon={
+                    type === "WEEKLY_FIXED" ? (
+                        <Repeat className="h-5 w-5" />
+                    ) : (
+                        <CalendarDays className="h-5 w-5" />
+                    )
                 }
-            />
+            >
+                <div className="grid gap-4 md:grid-cols-2">
+                    {showDate && (
+                        <FormField label="日付" htmlFor="date">
+                            <Input
+                                id="date"
+                                name="date"
+                                type="date"
+                                required
+                                className={appStyles.form.input}
+                            />
+                        </FormField>
+                    )}
 
-            <div className="space-y-6">
-                <BridalCard>
-                    <CardHeader className="p-5 pb-3">
-                        <div className="flex items-start gap-3">
-                            <div className={bridalStyles.icon.circle}>
-                                <BriefcaseBusiness className="h-5 w-5" />
-                            </div>
-
-                            <div>
-                                <CardTitle
-                                    className={[
-                                        bridalStyles.text.title,
-                                        "text-xl",
-                                    ].join(" ")}
+                    {showDayOfWeek && (
+                        <FormField label="曜日" htmlFor="dayOfWeek">
+                            <Select name="dayOfWeek" defaultValue="MONDAY">
+                                <SelectTrigger
+                                    id="dayOfWeek"
+                                    className={appStyles.form.input}
                                 >
-                                    報告対象の案件
-                                </CardTitle>
-                                <p className="mt-1 text-sm text-slate-500">
-                                    提出する就労報告の対象案件を確認してください。
-                                </p>
-                            </div>
-                        </div>
-                    </CardHeader>
+                                    <SelectValue placeholder="曜日を選択" />
+                                </SelectTrigger>
 
-                    <CardContent className="p-5 pt-2">
-                        <div className="grid gap-4 rounded-2xl border border-[#f0e5d0] bg-[#fffdf8]/80 p-5 text-sm md:grid-cols-2">
-                            <InfoRow
-                                label="スタッフ"
-                                value={employee.name}
-                                icon={<User className="h-4 w-4" />}
-                            />
+                                <SelectContent>
+                                    <SelectItem value="MONDAY">月曜日</SelectItem>
+                                    <SelectItem value="TUESDAY">火曜日</SelectItem>
+                                    <SelectItem value="WEDNESDAY">水曜日</SelectItem>
+                                    <SelectItem value="THURSDAY">木曜日</SelectItem>
+                                    <SelectItem value="FRIDAY">金曜日</SelectItem>
+                                    <SelectItem value="SATURDAY">土曜日</SelectItem>
+                                    <SelectItem value="SUNDAY">日曜日</SelectItem>
+                                </SelectContent>
+                            </Select>
+                        </FormField>
+                    )}
 
-                            <InfoRow
-                                label="案件名"
-                                value={job.title}
-                                icon={<BriefcaseBusiness className="h-4 w-4" />}
-                            />
+                    {showTimeRange && (
+                        <>
+                            <FormField label="開始時間" htmlFor="startTime">
+                                <Input
+                                    id="startTime"
+                                    name="startTime"
+                                    type="time"
+                                    required
+                                    className={appStyles.form.input}
+                                />
+                            </FormField>
 
-                            <InfoRow
-                                label="勤務日"
-                                value={formatDate(job.workDate)}
-                                icon={<ReceiptText className="h-4 w-4" />}
-                            />
+                            <FormField label="終了時間" htmlFor="endTime">
+                                <Input
+                                    id="endTime"
+                                    name="endTime"
+                                    type="time"
+                                    required
+                                    className={appStyles.form.input}
+                                />
+                            </FormField>
+                        </>
+                    )}
+                </div>
+            </FormSection>
 
-                            <InfoRow
-                                label="勤務枠"
-                                value={slot.name}
-                                icon={<Clock className="h-4 w-4" />}
-                            />
+            <FormSection
+                title="理由・メモ"
+                description="管理者が割り振り時に確認しやすいように、必要に応じて理由を書きます。"
+                icon={<Clock className="h-5 w-5" />}
+            >
+                <FormField label="理由・メモ" htmlFor="reason">
+                    <Textarea
+                        id="reason"
+                        name="reason"
+                        placeholder="例：大学の授業、試験、帰省、別予定など"
+                        className={appStyles.form.textarea}
+                    />
+                </FormField>
+            </FormSection>
 
-                            <InfoRow
-                                label="勤務時間"
-                                value={`${slot.startTime}〜${slot.endTime}`}
-                                icon={<Clock className="h-4 w-4" />}
-                            />
+            <div
+                className={[
+                    "flex flex-col-reverse gap-3 border-t pt-5 sm:flex-row sm:justify-end",
+                    appStyles.border.soft,
+                ].join(" ")}
+            >
+                <LinkButton
+                    href="/staff/unavailable-times"
+                    variant="outline"
+                    className={appStyles.button.secondary}
+                >
+                    キャンセル
+                </LinkButton>
 
-                            <InfoRow
-                                label="場所"
-                                value={job.location}
-                                icon={<MapPin className="h-4 w-4" />}
-                            />
-
-                            <InfoRow
-                                label="集合場所"
-                                value={job.meetingPlace || "未設定"}
-                                icon={<MapPin className="h-4 w-4" />}
-                            />
-                        </div>
-                    </CardContent>
-                </BridalCard>
-
-                <BridalCard>
-                    <CardHeader className="p-5 pb-3">
-                        <div className="flex items-start gap-3">
-                            <div className={bridalStyles.icon.circle}>
-                                <ReceiptText className="h-5 w-5" />
-                            </div>
-
-                            <div>
-                                <CardTitle
-                                    className={[
-                                        bridalStyles.text.title,
-                                        "text-xl",
-                                    ].join(" ")}
-                                >
-                                    就労報告内容
-                                </CardTitle>
-                                <p className="mt-1 text-sm text-slate-500">
-                                    実際の勤務内容に合わせて、勤務時間・休憩・交通費・食事の有無を入力します。
-                                </p>
-                            </div>
-                        </div>
-                    </CardHeader>
-
-                    <CardContent className="p-5 pt-2">
-                        <form action={createWorkReport} className="space-y-6">
-                            <input type="hidden" name="jobId" value={job.id} />
-
-                            <section className="rounded-2xl border border-[#f0e5d0] bg-white/70 p-5">
-                                <div className="grid gap-4 md:grid-cols-2">
-                                    <FormField
-                                        label="実勤務開始時間"
-                                        htmlFor="actualStartTime"
-                                    >
-                                        <Input
-                                            id="actualStartTime"
-                                            name="actualStartTime"
-                                            type="time"
-                                            defaultValue={slot.startTime}
-                                            required
-                                            className={bridalStyles.form.input}
-                                        />
-                                    </FormField>
-
-                                    <FormField
-                                        label="実勤務終了時間"
-                                        htmlFor="actualEndTime"
-                                    >
-                                        <Input
-                                            id="actualEndTime"
-                                            name="actualEndTime"
-                                            type="time"
-                                            defaultValue={slot.endTime}
-                                            required
-                                            className={bridalStyles.form.input}
-                                        />
-                                    </FormField>
-
-                                    <FormField
-                                        label="実休憩時間"
-                                        htmlFor="actualBreakMinutes"
-                                    >
-                                        <Input
-                                            id="actualBreakMinutes"
-                                            name="actualBreakMinutes"
-                                            type="number"
-                                            min={0}
-                                            defaultValue={job.breakMinutes}
-                                            required
-                                            className={bridalStyles.form.input}
-                                        />
-                                    </FormField>
-
-                                    <FormField
-                                        label="交通費"
-                                        htmlFor="transportationFee"
-                                    >
-                                        <Input
-                                            id="transportationFee"
-                                            name="transportationFee"
-                                            type="number"
-                                            min={0}
-                                            defaultValue={job.transportationFee}
-                                            required
-                                            className={bridalStyles.form.input}
-                                        />
-                                    </FormField>
-
-                                    <FormField label="食事の有無" htmlFor="hasMeal">
-                                        <Select
-                                            name="hasMeal"
-                                            defaultValue={
-                                                job.hasMeal ? "true" : "false"
-                                            }
-                                        >
-                                            <SelectTrigger
-                                                id="hasMeal"
-                                                className={bridalStyles.form.input}
-                                            >
-                                                <SelectValue placeholder="食事の有無を選択" />
-                                            </SelectTrigger>
-
-                                            <SelectContent>
-                                                <SelectItem value="true">
-                                                    あり
-                                                </SelectItem>
-                                                <SelectItem value="false">
-                                                    なし
-                                                </SelectItem>
-                                            </SelectContent>
-                                        </Select>
-                                    </FormField>
-                                </div>
-                            </section>
-
-                            <div className="flex flex-col-reverse gap-3 border-t border-[#f0e5d0] pt-5 sm:flex-row sm:justify-end">
-                                <LinkButton
-                                    href="/staff/shifts"
-                                    variant="outline"
-                                    className={bridalStyles.button.secondary}
-                                >
-                                    キャンセル
-                                </LinkButton>
-
-                                <SubmitButton
-                                    pendingText="提出中..."
-                                    className={[
-                                        bridalStyles.button.primary,
-                                        "px-6",
-                                    ].join(" ")}
-                                >
-                                    <CheckCircle2 className="mr-2 h-4 w-4" />
-                                    提出する
-                                </SubmitButton>
-                            </div>
-                        </form>
-                    </CardContent>
-                </BridalCard>
+                <SubmitButton
+                    pendingText="登録中..."
+                    className={[appStyles.button.primary, "px-6"].join(" ")}
+                >
+                    <CheckCircle2 className="mr-2 h-4 w-4" />
+                    NG日時を登録
+                </SubmitButton>
             </div>
-        </PageShell>
+        </form>
     );
 };
 
-type InfoRowProps = {
-    label: string;
-    value: string;
+type FormSectionProps = {
+    title: string;
+    description: string;
     icon: ReactNode;
+    children: ReactNode;
 };
 
-const InfoRow = ({ label, value, icon }: InfoRowProps) => {
+const FormSection = ({
+    title,
+    description,
+    icon,
+    children,
+}: FormSectionProps) => {
     return (
-        <div className="flex items-start gap-2">
-            <span className="mt-0.5 text-[#b8872d]">{icon}</span>
-            <p>
-                <span className="text-slate-500">{label}：</span>
-                <span className="font-medium text-slate-900">{value}</span>
-            </p>
-        </div>
+        <section className={["space-y-4", appStyles.section.base].join(" ")}>
+            <div className="flex items-start gap-3">
+                <div className={appStyles.icon.smallCircle}>{icon}</div>
+
+                <div>
+                    <h2
+                        className={[
+                            appStyles.text.title,
+                            "text-lg",
+                        ].join(" ")}
+                    >
+                        {title}
+                    </h2>
+                    <p className={["mt-1", appStyles.text.muted].join(" ")}>
+                        {description}
+                    </p>
+                </div>
+            </div>
+
+            <div className="space-y-4">{children}</div>
+        </section>
     );
 };
 
@@ -333,12 +259,10 @@ type FormFieldProps = {
 const FormField = ({ label, htmlFor, children }: FormFieldProps) => {
     return (
         <div className="space-y-2">
-            <Label htmlFor={htmlFor} className={bridalStyles.form.label}>
+            <Label htmlFor={htmlFor} className={appStyles.form.label}>
                 {label}
             </Label>
             {children}
         </div>
     );
 };
-
-export default StaffNewWorkReportPage;
