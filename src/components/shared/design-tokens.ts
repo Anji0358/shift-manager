@@ -234,6 +234,8 @@ export const appStyles = {
 
     radius: tokens.radius,
 
+    shadow: tokens.shadow,
+
     icon: {
         circle: [
             "flex h-11 w-11 shrink-0 items-center justify-center border",
@@ -438,5 +440,3 @@ export const appStyles = {
         accent: tokens.color.text.accent,
     },
 };
-
-export const bridalStyles = appStyles;
