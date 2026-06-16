@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { Badge } from "@/components/ui/badge";
 import {
     CardContent,
@@ -7,8 +8,8 @@ import {
 import { LinkButton } from "@/components/shared/link-button";
 import { PageShell } from "@/components/shared/page-shell";
 import { PageHeader } from "@/components/shared/page-header";
-import { BridalCard } from "@/components/shared/bridal-card";
-import { bridalStyles } from "@/components/shared/design-tokens";
+import { AppCard } from "@/components/shared/bridal-card";
+import { appStyles } from "@/components/shared/design-tokens";
 import { getStaffDashboardStats } from "@/features/dashboard/staff-queries";
 import {
     getCurrentEmployee,
@@ -37,20 +38,20 @@ const StaffPage = async () => {
             />
 
             <div className="space-y-6">
-                {currentEmployee && (
-                    <BridalCard className="p-5">
+                {currentEmployee ? (
+                    <AppCard className="p-5">
                         <div className="flex items-center gap-3">
-                            <div className={bridalStyles.icon.smallCircle}>
+                            <div className={appStyles.icon.smallCircle}>
                                 <User className="h-5 w-5" />
                             </div>
 
                             <div>
-                                <p className="text-sm text-slate-500">
+                                <p className={appStyles.text.muted}>
                                     現在のスタッフ
                                 </p>
                                 <p
                                     className={[
-                                        bridalStyles.text.title,
+                                        appStyles.text.title,
                                         "text-lg",
                                     ].join(" ")}
                                 >
@@ -58,8 +59,8 @@ const StaffPage = async () => {
                                 </p>
                             </div>
                         </div>
-                    </BridalCard>
-                )}
+                    </AppCard>
+                ) : null}
 
                 <section className="grid gap-4 md:grid-cols-3">
                     <SummaryCard
@@ -76,14 +77,19 @@ const StaffPage = async () => {
                         icon={<ClipboardCheck className="h-5 w-5" />}
                     />
 
-                    <BridalCard>
+                    <AppCard>
                         <CardHeader className="p-4 pb-2">
                             <div className="flex items-center gap-3">
-                                <div className={bridalStyles.icon.smallCircle}>
+                                <div className={appStyles.icon.smallCircle}>
                                     <Clock className="h-5 w-5" />
                                 </div>
 
-                                <CardTitle className="text-sm font-medium text-slate-500">
+                                <CardTitle
+                                    className={[
+                                        "text-sm font-medium",
+                                        appStyles.textColor.muted,
+                                    ].join(" ")}
+                                >
                                     次回シフト
                                 </CardTitle>
                             </div>
@@ -91,37 +97,37 @@ const StaffPage = async () => {
 
                         <CardContent className="p-4 pt-2">
                             {stats.nextAssignment ? (
-                                <Badge className={bridalStyles.badge.fulfilled}>
+                                <Badge className={appStyles.badge.fulfilled}>
                                     {formatDate(
                                         stats.nextAssignment.slot.job.workDate,
                                     )}
                                 </Badge>
                             ) : (
-                                <p className="text-sm text-slate-500">
+                                <p className={appStyles.text.muted}>
                                     予定なし
                                 </p>
                             )}
                         </CardContent>
-                    </BridalCard>
+                    </AppCard>
                 </section>
 
-                <BridalCard>
+                <AppCard>
                     <CardHeader className="p-5 pb-3">
                         <div className="flex items-start gap-3">
-                            <div className={bridalStyles.icon.circle}>
+                            <div className={appStyles.icon.circle}>
                                 <CalendarDays className="h-5 w-5" />
                             </div>
 
                             <div>
                                 <CardTitle
                                     className={[
-                                        bridalStyles.text.title,
+                                        appStyles.text.title,
                                         "text-xl",
                                     ].join(" ")}
                                 >
                                     次回シフト
                                 </CardTitle>
-                                <p className="mt-1 text-sm text-slate-500">
+                                <p className={["mt-1", appStyles.text.muted].join(" ")}>
                                     次に予定されている勤務内容を確認します。
                                 </p>
                             </div>
@@ -131,17 +137,22 @@ const StaffPage = async () => {
                     <CardContent className="p-5 pt-2">
                         {stats.nextAssignment ? (
                             <div className="space-y-5">
-                                <div className="rounded-2xl border border-[#f0e5d0] bg-[#fffdf8]/80 p-5">
+                                <div className={appStyles.section.base}>
                                     <p
                                         className={[
-                                            bridalStyles.text.title,
+                                            appStyles.text.title,
                                             "text-lg",
                                         ].join(" ")}
                                     >
                                         {stats.nextAssignment.slot.job.title}
                                     </p>
 
-                                    <div className="mt-4 grid gap-3 text-sm text-slate-600 md:grid-cols-2">
+                                    <div
+                                        className={[
+                                            "mt-4 grid gap-3 text-sm md:grid-cols-2",
+                                            appStyles.textColor.body,
+                                        ].join(" ")}
+                                    >
                                         <InfoRow
                                             label="勤務日"
                                             value={formatDate(
@@ -196,28 +207,28 @@ const StaffPage = async () => {
                                 <LinkButton
                                     href="/staff/shifts"
                                     variant="outline"
-                                    className={bridalStyles.button.secondary}
+                                    className={appStyles.button.secondary}
                                 >
                                     確定シフト一覧へ
                                 </LinkButton>
                             </div>
                         ) : (
-                            <div className="space-y-4 rounded-2xl border border-[#f0e5d0] bg-[#fffdf8]/80 p-5">
-                                <p className="text-sm text-slate-500">
+                            <div className={["space-y-4", appStyles.section.base].join(" ")}>
+                                <p className={appStyles.text.muted}>
                                     現在、今後の確定シフトはありません。
                                 </p>
 
                                 <LinkButton
                                     href="/staff/calendar"
                                     variant="outline"
-                                    className={bridalStyles.button.secondary}
+                                    className={appStyles.button.secondary}
                                 >
                                     カレンダーを見る
                                 </LinkButton>
                             </div>
                         )}
                     </CardContent>
-                </BridalCard>
+                </AppCard>
             </div>
         </PageShell>
     );
@@ -227,7 +238,7 @@ type SummaryCardProps = {
     title: string;
     value: string;
     description: string;
-    icon: React.ReactNode;
+    icon: ReactNode;
 };
 
 const SummaryCard = ({
@@ -237,42 +248,66 @@ const SummaryCard = ({
     icon,
 }: SummaryCardProps) => {
     return (
-        <BridalCard>
+        <AppCard>
             <CardHeader className="p-4 pb-2">
                 <div className="flex items-center gap-3">
-                    <div className={bridalStyles.icon.smallCircle}>{icon}</div>
+                    <div className={appStyles.icon.smallCircle}>{icon}</div>
 
-                    <CardTitle className="text-sm font-medium text-slate-500">
+                    <CardTitle
+                        className={[
+                            "text-sm font-medium",
+                            appStyles.textColor.muted,
+                        ].join(" ")}
+                    >
                         {title}
                     </CardTitle>
                 </div>
             </CardHeader>
 
             <CardContent className="p-4 pt-2">
-                <p className="text-3xl font-semibold tracking-tight text-slate-900">
+                <p
+                    className={[
+                        "text-3xl font-semibold tracking-tight",
+                        appStyles.textColor.default,
+                    ].join(" ")}
+                >
                     {value}
                 </p>
-                <p className="mt-1 text-sm text-slate-500">
+                <p className={["mt-1", appStyles.text.muted].join(" ")}>
                     {description}
                 </p>
             </CardContent>
-        </BridalCard>
+        </AppCard>
     );
 };
 
 type InfoRowProps = {
     label: string;
     value: string;
-    icon: React.ReactNode;
+    icon: ReactNode;
 };
 
 const InfoRow = ({ label, value, icon }: InfoRowProps) => {
     return (
         <div className="flex items-start gap-2">
-            <span className="mt-0.5 text-[#b8872d]">{icon}</span>
+            <span
+                className={[
+                    "mt-0.5",
+                    appStyles.icon.accent,
+                ].join(" ")}
+            >
+                {icon}
+            </span>
             <p>
-                <span className="text-slate-500">{label}：</span>
-                <span className="font-medium text-slate-800">{value}</span>
+                <span className={appStyles.textColor.muted}>{label}：</span>
+                <span
+                    className={[
+                        "font-medium",
+                        appStyles.textColor.default,
+                    ].join(" ")}
+                >
+                    {value}
+                </span>
             </p>
         </div>
     );
