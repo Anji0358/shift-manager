@@ -1,3 +1,5 @@
+import { appStyles } from "@/components/shared/design-tokens";
+
 type PersonalMessageTextFieldsProps = {
     greeting: string;
     introText: string;
@@ -6,9 +8,6 @@ type PersonalMessageTextFieldsProps = {
     onIntroTextChange: (value: string) => void;
     onClosingChange: (value: string) => void;
 };
-
-const textareaClassName =
-    "w-full rounded-xl border bg-white p-3 text-sm leading-6 shadow-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100";
 
 export const PersonalMessageTextFields = ({
     greeting,
@@ -20,38 +19,64 @@ export const PersonalMessageTextFields = ({
 }: PersonalMessageTextFieldsProps) => {
     return (
         <div className="space-y-4">
-            <div className="space-y-2">
-                <label className="text-sm font-medium text-slate-700">
-                    冒頭の挨拶
-                </label>
-                <textarea
-                    value={greeting}
-                    onChange={(event) => onGreetingChange(event.target.value)}
-                    className={`${textareaClassName} min-h-20`}
-                />
-            </div>
+            <TextAreaField
+                id="greeting"
+                label="冒頭の挨拶"
+                value={greeting}
+                minHeightClassName="min-h-20"
+                onChange={onGreetingChange}
+            />
 
-            <div className="space-y-2">
-                <label className="text-sm font-medium text-slate-700">
-                    案内文
-                </label>
-                <textarea
-                    value={introText}
-                    onChange={(event) => onIntroTextChange(event.target.value)}
-                    className={`${textareaClassName} min-h-24`}
-                />
-            </div>
+            <TextAreaField
+                id="introText"
+                label="案内文"
+                value={introText}
+                minHeightClassName="min-h-24"
+                onChange={onIntroTextChange}
+            />
 
-            <div className="space-y-2">
-                <label className="text-sm font-medium text-slate-700">
-                    最後の文言
-                </label>
-                <textarea
-                    value={closing}
-                    onChange={(event) => onClosingChange(event.target.value)}
-                    className={`${textareaClassName} min-h-24`}
-                />
-            </div>
+            <TextAreaField
+                id="closing"
+                label="最後の文言"
+                value={closing}
+                minHeightClassName="min-h-24"
+                onChange={onClosingChange}
+            />
+        </div>
+    );
+};
+
+type TextAreaFieldProps = {
+    id: string;
+    label: string;
+    value: string;
+    minHeightClassName: string;
+    onChange: (value: string) => void;
+};
+
+const TextAreaField = ({
+    id,
+    label,
+    value,
+    minHeightClassName,
+    onChange,
+}: TextAreaFieldProps) => {
+    return (
+        <div className="space-y-2">
+            <label htmlFor={id} className={appStyles.form.label}>
+                {label}
+            </label>
+
+            <textarea
+                id={id}
+                value={value}
+                onChange={(event) => onChange(event.target.value)}
+                className={[
+                    appStyles.form.textarea,
+                    "w-full p-3 text-sm leading-6 outline-none transition",
+                    minHeightClassName,
+                ].join(" ")}
+            />
         </div>
     );
 };
