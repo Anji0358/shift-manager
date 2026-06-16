@@ -15,8 +15,8 @@ import {
 import { LinkButton } from "@/components/shared/link-button";
 import { PageShell } from "@/components/shared/page-shell";
 import { PageHeader } from "@/components/shared/page-header";
-import { BridalCard } from "@/components/shared/bridal-card";
-import { bridalStyles } from "@/components/shared/design-tokens";
+import { AppCard } from "@/components/shared/bridal-card";
+import { appStyles } from "@/components/shared/design-tokens";
 import { getAssignmentsByEmployeeId } from "@/features/shift-assignments/queries";
 import { getWorkReportsByEmployeeId } from "@/features/work-reports/queries";
 import { formatDate } from "@/lib/format";
@@ -44,23 +44,23 @@ const StaffShiftsPage = async () => {
                 description="自分に確定された勤務予定を確認します。"
             />
 
-            <BridalCard className="overflow-hidden">
+            <AppCard className="overflow-hidden">
                 <CardHeader className="p-5 pb-3">
                     <div className="flex items-start gap-3">
-                        <div className={bridalStyles.icon.circle}>
+                        <div className={appStyles.icon.circle}>
                             <CalendarDays className="h-5 w-5" />
                         </div>
 
                         <div>
                             <CardTitle
                                 className={[
-                                    bridalStyles.text.title,
+                                    appStyles.text.title,
                                     "text-xl",
                                 ].join(" ")}
                             >
                                 確定シフト一覧
                             </CardTitle>
-                            <p className="mt-1 text-sm text-slate-500">
+                            <p className={["mt-1", appStyles.text.muted].join(" ")}>
                                 勤務日、勤務時間、集合場所、就労報告の提出状況を確認します。
                             </p>
                         </div>
@@ -68,41 +68,41 @@ const StaffShiftsPage = async () => {
                 </CardHeader>
 
                 <CardContent className="p-5 pt-2">
-                    <div className={bridalStyles.table.wrapper}>
+                    <div className={appStyles.table.wrapper}>
                         <Table>
                             <TableHeader>
-                                <TableRow className={bridalStyles.table.headerRow}>
-                                    <TableHead className={bridalStyles.table.head}>
+                                <TableRow className={appStyles.table.headerRow}>
+                                    <TableHead className={appStyles.table.head}>
                                         日付
                                     </TableHead>
 
-                                    <TableHead className={bridalStyles.table.head}>
+                                    <TableHead className={appStyles.table.head}>
                                         案件名
                                     </TableHead>
 
-                                    <TableHead className={bridalStyles.table.head}>
+                                    <TableHead className={appStyles.table.head}>
                                         勤務枠
                                     </TableHead>
 
-                                    <TableHead className={bridalStyles.table.head}>
+                                    <TableHead className={appStyles.table.head}>
                                         勤務時間
                                     </TableHead>
 
-                                    <TableHead className={bridalStyles.table.head}>
+                                    <TableHead className={appStyles.table.head}>
                                         場所
                                     </TableHead>
 
-                                    <TableHead className={bridalStyles.table.head}>
+                                    <TableHead className={appStyles.table.head}>
                                         集合場所
                                     </TableHead>
 
-                                    <TableHead className={bridalStyles.table.head}>
+                                    <TableHead className={appStyles.table.head}>
                                         食事
                                     </TableHead>
 
                                     <TableHead
                                         className={[
-                                            bridalStyles.table.head,
+                                            appStyles.table.head,
                                             "text-right",
                                         ].join(" ")}
                                     >
@@ -119,16 +119,21 @@ const StaffShiftsPage = async () => {
                                     return (
                                         <TableRow
                                             key={assignment.id}
-                                            className={bridalStyles.table.row}
+                                            className={appStyles.table.row}
                                         >
-                                            <TableCell className="whitespace-nowrap text-sm text-slate-600">
+                                            <TableCell
+                                                className={[
+                                                    "whitespace-nowrap",
+                                                    appStyles.table.cellMuted,
+                                                ].join(" ")}
+                                            >
                                                 {formatDate(job.workDate)}
                                             </TableCell>
 
                                             <TableCell>
                                                 <p
                                                     className={[
-                                                        bridalStyles.text.title,
+                                                        appStyles.text.title,
                                                         "text-base",
                                                     ].join(" ")}
                                                 >
@@ -136,23 +141,33 @@ const StaffShiftsPage = async () => {
                                                 </p>
                                             </TableCell>
 
-                                            <TableCell className="text-sm text-slate-600">
+                                            <TableCell className={appStyles.table.cellMuted}>
                                                 {assignment.slot.name}
                                             </TableCell>
 
-                                            <TableCell className="whitespace-nowrap text-sm text-slate-600">
+                                            <TableCell
+                                                className={[
+                                                    "whitespace-nowrap",
+                                                    appStyles.table.cellMuted,
+                                                ].join(" ")}
+                                            >
                                                 {assignment.slot.startTime}〜
                                                 {assignment.slot.endTime}
                                             </TableCell>
 
-                                            <TableCell className="text-sm text-slate-600">
+                                            <TableCell className={appStyles.table.cellMuted}>
                                                 <span className="inline-flex items-center gap-1.5">
-                                                    <MapPin className="h-4 w-4 text-[#b8872d]" />
+                                                    <MapPin
+                                                        className={[
+                                                            "h-4 w-4",
+                                                            appStyles.icon.accent,
+                                                        ].join(" ")}
+                                                    />
                                                     {job.location}
                                                 </span>
                                             </TableCell>
 
-                                            <TableCell className="text-sm text-slate-600">
+                                            <TableCell className={appStyles.table.cellMuted}>
                                                 {job.meetingPlace || "未設定"}
                                             </TableCell>
 
@@ -160,8 +175,8 @@ const StaffShiftsPage = async () => {
                                                 <Badge
                                                     className={
                                                         job.hasMeal
-                                                            ? bridalStyles.badge.fulfilled
-                                                            : bridalStyles.badge.neutral
+                                                            ? appStyles.badge.fulfilled
+                                                            : appStyles.badge.neutral
                                                     }
                                                 >
                                                     <Utensils className="mr-1 h-3 w-3" />
@@ -175,14 +190,14 @@ const StaffShiftsPage = async () => {
                                                         href={`/staff/jobs/${job.id}`}
                                                         size="sm"
                                                         variant="outline"
-                                                        className={bridalStyles.button.secondary}
+                                                        className={appStyles.button.secondary}
                                                     >
                                                         <FileText className="mr-2 h-4 w-4" />
                                                         詳細
                                                     </LinkButton>
 
                                                     {alreadyReported ? (
-                                                        <Badge className={bridalStyles.badge.fulfilled}>
+                                                        <Badge className={appStyles.badge.fulfilled}>
                                                             <ClipboardCheck className="mr-1 h-3 w-3" />
                                                             提出済み
                                                         </Badge>
@@ -190,7 +205,7 @@ const StaffShiftsPage = async () => {
                                                         <LinkButton
                                                             href={`/staff/work-reports/new?assignmentId=${assignment.id}`}
                                                             size="sm"
-                                                            className={bridalStyles.button.primary}
+                                                            className={appStyles.button.primary}
                                                         >
                                                             報告する
                                                         </LinkButton>
@@ -205,7 +220,7 @@ const StaffShiftsPage = async () => {
                                     <TableRow>
                                         <TableCell
                                             colSpan={8}
-                                            className="py-10 text-center text-sm text-slate-500"
+                                            className={appStyles.table.empty}
                                         >
                                             確定しているシフトはありません。
                                         </TableCell>
@@ -215,7 +230,7 @@ const StaffShiftsPage = async () => {
                         </Table>
                     </div>
                 </CardContent>
-            </BridalCard>
+            </AppCard>
         </PageShell>
     );
 };
