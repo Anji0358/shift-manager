@@ -18,8 +18,8 @@ import { SubmitButton } from "@/components/shared/submit-button";
 import { LinkButton } from "@/components/shared/link-button";
 import { PageShell } from "@/components/shared/page-shell";
 import { PageHeader } from "@/components/shared/page-header";
-import { BridalCard } from "@/components/shared/bridal-card";
-import { bridalStyles } from "@/components/shared/design-tokens";
+import { AppCard } from "@/components/shared/bridal-card";
+import { appStyles } from "@/components/shared/design-tokens";
 import { getAssignmentsByEmployeeIdAndMonth } from "@/features/shift-assignments/queries";
 import { getUnavailableTimesByEmployeeIdAndMonth } from "@/features/unavailable-times/queries";
 import {
@@ -214,7 +214,7 @@ const StaffCalendarPage = async ({ searchParams }: StaffCalendarPageProps) => {
             />
 
             <div className="space-y-6">
-                <BridalCard>
+                <AppCard>
                     <CardContent className="p-5">
                         <form
                             className="flex flex-col gap-3 sm:flex-row sm:items-end"
@@ -223,7 +223,7 @@ const StaffCalendarPage = async ({ searchParams }: StaffCalendarPageProps) => {
                             <div className="space-y-2">
                                 <label
                                     htmlFor="month"
-                                    className={bridalStyles.form.label}
+                                    className={appStyles.form.label}
                                 >
                                     対象月
                                 </label>
@@ -232,14 +232,14 @@ const StaffCalendarPage = async ({ searchParams }: StaffCalendarPageProps) => {
                                     name="month"
                                     type="month"
                                     defaultValue={targetMonth}
-                                    className={bridalStyles.form.input}
+                                    className={appStyles.form.input}
                                 />
                             </div>
 
                             <SubmitButton
                                 pendingText="表示中..."
                                 className={[
-                                    bridalStyles.button.primary,
+                                    appStyles.button.primary,
                                     "h-11 px-6",
                                 ].join(" ")}
                             >
@@ -248,7 +248,7 @@ const StaffCalendarPage = async ({ searchParams }: StaffCalendarPageProps) => {
                             </SubmitButton>
                         </form>
                     </CardContent>
-                </BridalCard>
+                </AppCard>
 
                 <section className="flex flex-wrap gap-2">
                     {(["confirmed", "unavailable", "open"] as CalendarStatus[]).map(
@@ -256,7 +256,8 @@ const StaffCalendarPage = async ({ searchParams }: StaffCalendarPageProps) => {
                             <div
                                 key={status}
                                 className={[
-                                    "rounded-full border px-3 py-1 text-xs font-medium shadow-sm",
+                                    appStyles.radius.full,
+                                    "border px-3 py-1 text-xs font-medium shadow-sm",
                                     getCalendarStatusClassName(status),
                                 ].join(" ")}
                             >
@@ -266,23 +267,23 @@ const StaffCalendarPage = async ({ searchParams }: StaffCalendarPageProps) => {
                     )}
                 </section>
 
-                <BridalCard className="overflow-hidden">
+                <AppCard className="overflow-hidden">
                     <CardHeader className="p-5 pb-3">
                         <div className="flex items-start gap-3">
-                            <div className={bridalStyles.icon.circle}>
+                            <div className={appStyles.icon.circle}>
                                 <CalendarDays className="h-5 w-5" />
                             </div>
 
                             <div>
                                 <CardTitle
                                     className={[
-                                        bridalStyles.text.title,
+                                        appStyles.text.title,
                                         "text-xl",
                                     ].join(" ")}
                                 >
                                     {targetMonth}
                                 </CardTitle>
-                                <p className="mt-1 text-sm text-slate-500">
+                                <p className={["mt-1", appStyles.text.muted].join(" ")}>
                                     勤務予定と勤務不可情報をカレンダー形式で確認します。
                                 </p>
                             </div>
@@ -290,11 +291,24 @@ const StaffCalendarPage = async ({ searchParams }: StaffCalendarPageProps) => {
                     </CardHeader>
 
                     <CardContent className="p-5 pt-2">
-                        <div className="grid grid-cols-7 overflow-hidden rounded-2xl border border-[#eadcc1] bg-white/90 shadow-lg shadow-yellow-900/5">
+                        <div
+                            className={[
+                                "grid grid-cols-7 overflow-hidden border",
+                                appStyles.radius["2xl"],
+                                appStyles.border.default,
+                                appStyles.background.whiteGlass,
+                                appStyles.tokens.shadow.card,
+                            ].join(" ")}
+                        >
                             {["日", "月", "火", "水", "木", "金", "土"].map((day) => (
                                 <div
                                     key={day}
-                                    className="border-b border-[#eadcc1] bg-[#fff8e8] p-2 text-center text-sm font-medium text-slate-700"
+                                    className={[
+                                        "border-b p-2 text-center text-sm font-medium",
+                                        appStyles.border.default,
+                                        appStyles.background.warmHover,
+                                        appStyles.textColor.tableHead,
+                                    ].join(" ")}
                                 >
                                     {day}
                                 </div>
@@ -303,7 +317,11 @@ const StaffCalendarPage = async ({ searchParams }: StaffCalendarPageProps) => {
                             {blankDays.map((blankDay) => (
                                 <div
                                     key={`blank-${blankDay}`}
-                                    className="min-h-32 border-r border-b border-[#f0e5d0] bg-[#fffdf8]/70 p-2"
+                                    className={[
+                                        "min-h-32 border-r border-b p-2",
+                                        appStyles.border.soft,
+                                        appStyles.background.warmSoft,
+                                    ].join(" ")}
                                 />
                             ))}
 
@@ -332,9 +350,19 @@ const StaffCalendarPage = async ({ searchParams }: StaffCalendarPageProps) => {
                                 return (
                                     <div
                                         key={day}
-                                        className="min-h-32 border-r border-b border-[#f0e5d0] bg-white/70 p-2 transition hover:bg-[#fffdf8]"
+                                        className={[
+                                            "min-h-32 border-r border-b p-2 transition",
+                                            appStyles.border.soft,
+                                            appStyles.background.whiteSoft,
+                                            appStyles.tokens.color.background.hoverWarmSubtle,
+                                        ].join(" ")}
                                     >
-                                        <p className="mb-2 text-sm font-medium text-slate-700">
+                                        <p
+                                            className={[
+                                                "mb-2 text-sm font-medium",
+                                                appStyles.textColor.tableHead,
+                                            ].join(" ")}
+                                        >
                                             {day}
                                         </p>
 
@@ -344,7 +372,8 @@ const StaffCalendarPage = async ({ searchParams }: StaffCalendarPageProps) => {
                                                     key={assignment.id}
                                                     href={`/staff/jobs/${assignment.slot.jobId}`}
                                                     className={[
-                                                        "block rounded-xl border px-2 py-1.5 text-xs shadow-sm transition hover:opacity-80 active:scale-[0.98]",
+                                                        "block border px-2 py-1.5 text-xs shadow-sm transition hover:opacity-80 active:scale-[0.98]",
+                                                        appStyles.radius.xl,
                                                         getCalendarStatusClassName("confirmed"),
                                                     ].join(" ")}
                                                 >
@@ -363,7 +392,8 @@ const StaffCalendarPage = async ({ searchParams }: StaffCalendarPageProps) => {
                                                 <div
                                                     key={`${unavailableTime.id}-${day}`}
                                                     className={[
-                                                        "rounded-xl border px-2 py-1.5 text-xs shadow-sm",
+                                                        "border px-2 py-1.5 text-xs shadow-sm",
+                                                        appStyles.radius.xl,
                                                         getCalendarStatusClassName("unavailable"),
                                                     ].join(" ")}
                                                 >
@@ -382,25 +412,25 @@ const StaffCalendarPage = async ({ searchParams }: StaffCalendarPageProps) => {
                             })}
                         </div>
                     </CardContent>
-                </BridalCard>
+                </AppCard>
 
-                <BridalCard className="overflow-hidden">
+                <AppCard className="overflow-hidden">
                     <CardHeader className="p-5 pb-3">
                         <div className="flex items-start gap-3">
-                            <div className={bridalStyles.icon.circle}>
+                            <div className={appStyles.icon.circle}>
                                 <FileText className="h-5 w-5" />
                             </div>
 
                             <div>
                                 <CardTitle
                                     className={[
-                                        bridalStyles.text.title,
+                                        appStyles.text.title,
                                         "text-xl",
                                     ].join(" ")}
                                 >
                                     一覧表示
                                 </CardTitle>
-                                <p className="mt-1 text-sm text-slate-500">
+                                <p className={["mt-1", appStyles.text.muted].join(" ")}>
                                     対象月の勤務予定と勤務不可情報を一覧で確認します。
                                 </p>
                             </div>
@@ -408,37 +438,37 @@ const StaffCalendarPage = async ({ searchParams }: StaffCalendarPageProps) => {
                     </CardHeader>
 
                     <CardContent className="p-5 pt-2">
-                        <div className={bridalStyles.table.wrapper}>
+                        <div className={appStyles.table.wrapper}>
                             <Table>
                                 <TableHeader>
-                                    <TableRow className={bridalStyles.table.headerRow}>
-                                        <TableHead className={bridalStyles.table.head}>
+                                    <TableRow className={appStyles.table.headerRow}>
+                                        <TableHead className={appStyles.table.head}>
                                             日付
                                         </TableHead>
 
-                                        <TableHead className={bridalStyles.table.head}>
+                                        <TableHead className={appStyles.table.head}>
                                             状態
                                         </TableHead>
 
-                                        <TableHead className={bridalStyles.table.head}>
+                                        <TableHead className={appStyles.table.head}>
                                             内容
                                         </TableHead>
 
-                                        <TableHead className={bridalStyles.table.head}>
+                                        <TableHead className={appStyles.table.head}>
                                             時間
                                         </TableHead>
 
-                                        <TableHead className={bridalStyles.table.head}>
+                                        <TableHead className={appStyles.table.head}>
                                             場所・種別
                                         </TableHead>
 
-                                        <TableHead className={bridalStyles.table.head}>
+                                        <TableHead className={appStyles.table.head}>
                                             集合場所
                                         </TableHead>
 
                                         <TableHead
                                             className={[
-                                                bridalStyles.table.head,
+                                                appStyles.table.head,
                                                 "text-right",
                                             ].join(" ")}
                                         >
@@ -451,16 +481,22 @@ const StaffCalendarPage = async ({ searchParams }: StaffCalendarPageProps) => {
                                     {listItems.map((item) => (
                                         <TableRow
                                             key={`${item.status}-${item.id}`}
-                                            className={bridalStyles.table.row}
+                                            className={appStyles.table.row}
                                         >
-                                            <TableCell className="whitespace-nowrap text-sm text-slate-600">
+                                            <TableCell
+                                                className={[
+                                                    "whitespace-nowrap",
+                                                    appStyles.table.cellMuted,
+                                                ].join(" ")}
+                                            >
                                                 {formatDate(item.date)}
                                             </TableCell>
 
                                             <TableCell>
                                                 <span
                                                     className={[
-                                                        "inline-flex rounded-full border px-2 py-1 text-xs font-medium",
+                                                        "inline-flex border px-2 py-1 text-xs font-medium",
+                                                        appStyles.radius.full,
                                                         getCalendarStatusClassName(item.status),
                                                     ].join(" ")}
                                                 >
@@ -471,7 +507,7 @@ const StaffCalendarPage = async ({ searchParams }: StaffCalendarPageProps) => {
                                             <TableCell>
                                                 <p
                                                     className={[
-                                                        bridalStyles.text.title,
+                                                        appStyles.text.title,
                                                         "text-base",
                                                     ].join(" ")}
                                                 >
@@ -479,15 +515,20 @@ const StaffCalendarPage = async ({ searchParams }: StaffCalendarPageProps) => {
                                                 </p>
                                             </TableCell>
 
-                                            <TableCell className="whitespace-nowrap text-sm text-slate-600">
+                                            <TableCell
+                                                className={[
+                                                    "whitespace-nowrap",
+                                                    appStyles.table.cellMuted,
+                                                ].join(" ")}
+                                            >
                                                 {item.timeText || "-"}
                                             </TableCell>
 
-                                            <TableCell className="text-sm text-slate-600">
+                                            <TableCell className={appStyles.table.cellMuted}>
                                                 {item.locationText || "-"}
                                             </TableCell>
 
-                                            <TableCell className="text-sm text-slate-600">
+                                            <TableCell className={appStyles.table.cellMuted}>
                                                 {item.meetingPlaceText || "-"}
                                             </TableCell>
 
@@ -497,12 +538,17 @@ const StaffCalendarPage = async ({ searchParams }: StaffCalendarPageProps) => {
                                                         href={item.href}
                                                         size="sm"
                                                         variant="outline"
-                                                        className={bridalStyles.button.secondary}
+                                                        className={appStyles.button.secondary}
                                                     >
                                                         詳細
                                                     </LinkButton>
                                                 ) : (
-                                                    <span className="text-sm text-slate-400">
+                                                    <span
+                                                        className={[
+                                                            "text-sm",
+                                                            appStyles.textColor.muted,
+                                                        ].join(" ")}
+                                                    >
                                                         -
                                                     </span>
                                                 )}
@@ -514,7 +560,7 @@ const StaffCalendarPage = async ({ searchParams }: StaffCalendarPageProps) => {
                                         <TableRow>
                                             <TableCell
                                                 colSpan={7}
-                                                className="py-10 text-center text-sm text-slate-500"
+                                                className={appStyles.table.empty}
                                             >
                                                 対象月に予定はありません。
                                             </TableCell>
@@ -524,7 +570,7 @@ const StaffCalendarPage = async ({ searchParams }: StaffCalendarPageProps) => {
                             </Table>
                         </div>
                     </CardContent>
-                </BridalCard>
+                </AppCard>
             </div>
         </PageShell>
     );
