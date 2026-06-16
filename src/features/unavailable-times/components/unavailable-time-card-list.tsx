@@ -3,8 +3,8 @@ import type { UnavailableTime } from "@prisma/client";
 import { CalendarDays, Clock, Repeat, Trash2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { ConfirmSubmitButton } from "@/components/shared/confirm-submit-button";
-import { BridalCard } from "@/components/shared/bridal-card";
-import { bridalStyles } from "@/components/shared/design-tokens";
+import { AppCard } from "@/components/shared/bridal-card";
+import { appStyles } from "@/components/shared/design-tokens";
 import { deleteUnavailableTime } from "@/features/unavailable-times/actions";
 import { formatDate } from "@/lib/format";
 import {
@@ -61,23 +61,30 @@ export const UnavailableTimeCardList = ({
 }: UnavailableTimeCardListProps) => {
     if (unavailableTimes.length === 0) {
         return (
-            <BridalCard className="p-6 text-center text-sm text-slate-500">
-                NGの日時はまだ登録されていません。
-            </BridalCard>
+            <AppCard className="p-6 text-center">
+                <p className={appStyles.text.muted}>
+                    NGの日時はまだ登録されていません。
+                </p>
+            </AppCard>
         );
     }
 
     return (
         <div className="space-y-4">
             {unavailableTimes.map((unavailableTime) => (
-                <BridalCard key={unavailableTime.id} className="p-4">
+                <AppCard key={unavailableTime.id} className="p-4">
                     <div className="flex items-start justify-between gap-3">
                         <div>
-                            <Badge className={bridalStyles.badge.neutral}>
+                            <Badge className={appStyles.badge.neutral}>
                                 {unavailableTypeLabel[unavailableTime.type]}
                             </Badge>
 
-                            <p className="mt-2 text-sm leading-6 text-slate-500">
+                            <p
+                                className={[
+                                    "mt-2 leading-6",
+                                    appStyles.text.muted,
+                                ].join(" ")}
+                            >
                                 {getUnavailableDescription(unavailableTime)}
                             </p>
                         </div>
@@ -92,7 +99,7 @@ export const UnavailableTimeCardList = ({
                             <ConfirmSubmitButton
                                 size="sm"
                                 variant="outline"
-                                className={bridalStyles.button.danger}
+                                className={appStyles.button.danger}
                                 message="このNGの日時を削除します。よろしいですか？"
                             >
                                 <Trash2 className="mr-1 h-4 w-4" />
@@ -101,7 +108,12 @@ export const UnavailableTimeCardList = ({
                         </form>
                     </div>
 
-                    <div className="mt-4 space-y-3 text-sm text-slate-700">
+                    <div
+                        className={[
+                            "mt-4 space-y-3 text-sm",
+                            appStyles.textColor.tableHead,
+                        ].join(" ")}
+                    >
                         <InfoRow
                             icon={
                                 unavailableTime.type === "WEEKLY_FIXED" ? (
@@ -119,12 +131,18 @@ export const UnavailableTimeCardList = ({
                         />
 
                         {unavailableTime.reason ? (
-                            <div className="rounded-2xl border border-[#f0e5d0] bg-[#fffdf8]/80 p-4 text-sm leading-6 text-slate-600">
+                            <div
+                                className={[
+                                    "text-sm leading-6",
+                                    appStyles.section.soft,
+                                    appStyles.textColor.body,
+                                ].join(" ")}
+                            >
                                 {unavailableTime.reason}
                             </div>
                         ) : null}
                     </div>
-                </BridalCard>
+                </AppCard>
             ))}
         </div>
     );
@@ -138,8 +156,15 @@ type InfoRowProps = {
 const InfoRow = ({ icon, value }: InfoRowProps) => {
     return (
         <div className="flex items-center gap-2">
-            <span className="text-[#b8872d]">{icon}</span>
-            <span className="font-medium text-slate-800">{value}</span>
+            <span className={appStyles.icon.accent}>{icon}</span>
+            <span
+                className={[
+                    "font-medium",
+                    appStyles.textColor.default,
+                ].join(" ")}
+            >
+                {value}
+            </span>
         </div>
     );
 };
