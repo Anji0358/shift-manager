@@ -6,7 +6,7 @@ import {
     CardTitle,
 } from "@/components/ui/card";
 import { GoogleMapsLink } from "@/components/shared/google-maps-link";
-import { AppCard } from "@/components/shared/bridal-card";
+import { AppCard } from "@/components/shared/app-card";
 import { appStyles } from "@/components/shared/design-tokens";
 import { formatDate, formatYen } from "@/lib/format";
 import { wageTypeLabel } from "@/features/jobs/labels";

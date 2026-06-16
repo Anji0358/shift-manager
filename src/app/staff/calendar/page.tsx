@@ -18,7 +18,7 @@ import { SubmitButton } from "@/components/shared/submit-button";
 import { LinkButton } from "@/components/shared/link-button";
 import { PageShell } from "@/components/shared/page-shell";
 import { PageHeader } from "@/components/shared/page-header";
-import { AppCard } from "@/components/shared/bridal-card";
+import { AppCard } from "@/components/shared/app-card";
 import { appStyles } from "@/components/shared/design-tokens";
 import { getAssignmentsByEmployeeIdAndMonth } from "@/features/shift-assignments/queries";
 import { getUnavailableTimesByEmployeeIdAndMonth } from "@/features/unavailable-times/queries";

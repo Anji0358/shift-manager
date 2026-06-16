@@ -1,7 +1,7 @@
 import type { Job, JobShiftSlot } from "@prisma/client";
 import { Badge } from "@/components/ui/badge";
 import { LinkButton } from "@/components/shared/link-button";
-import { AppCard } from "@/components/shared/bridal-card";
+import { AppCard } from "@/components/shared/app-card";
 import { appStyles } from "@/components/shared/design-tokens";
 import { formatDate } from "@/lib/format";
 import {

@@ -1,6 +1,6 @@
 import { CalendarDays, Clock, Wallet } from "lucide-react";
 import { formatDate, formatYen } from "@/lib/format";
-import { BridalCard } from "@/components/shared/bridal-card";
+import { BridalCard } from "@/components/shared/app-card";
 import { bridalStyles } from "@/components/shared/design-tokens";
 
 type PayrollRow = {

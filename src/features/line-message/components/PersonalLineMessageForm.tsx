@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { MessageSquareText } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { AppCard } from "@/components/shared/bridal-card";
+import { AppCard } from "@/components/shared/app-card";
 import { appStyles } from "@/components/shared/design-tokens";
 import type {
     AvailablePersonalSlot,

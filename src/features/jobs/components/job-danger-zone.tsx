@@ -1,5 +1,5 @@
 import { ConfirmSubmitButton } from "@/components/shared/confirm-submit-button";
-import { AppCard } from "@/components/shared/bridal-card";
+import { AppCard } from "@/components/shared/app-card";
 import { appStyles } from "@/components/shared/design-tokens";
 import {
     CardContent,

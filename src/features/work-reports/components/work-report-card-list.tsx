@@ -14,7 +14,7 @@ import {
 } from "@/features/work-reports/actions";
 import { SubmitButton } from "@/components/shared/submit-button";
 import { Badge } from "@/components/ui/badge";
-import { AppCard } from "@/components/shared/bridal-card";
+import { AppCard } from "@/components/shared/app-card";
 import { appStyles } from "@/components/shared/design-tokens";
 
 type WorkReportWithRelations = WorkReport & {

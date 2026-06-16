@@ -19,7 +19,7 @@ import { SubmitButton } from "@/components/shared/submit-button";
 import { SuccessMessage } from "@/components/shared/success-message";
 import { PageShell } from "@/components/shared/page-shell";
 import { PageHeader } from "@/components/shared/page-header";
-import { AppCard } from "@/components/shared/bridal-card";
+import { AppCard } from "@/components/shared/app-card";
 import { appStyles } from "@/components/shared/design-tokens";
 import { updateEmployee } from "@/features/employees/actions";
 import { getEmployeeById } from "@/features/employees/queries";

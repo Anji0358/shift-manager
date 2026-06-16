@@ -16,7 +16,7 @@ import { Input } from "@/components/ui/input";
 import { LinkButton } from "@/components/shared/link-button";
 import { PageShell } from "@/components/shared/page-shell";
 import { PageHeader } from "@/components/shared/page-header";
-import { AppCard } from "@/components/shared/bridal-card";
+import { AppCard } from "@/components/shared/app-card";
 import { appStyles } from "@/components/shared/design-tokens";
 import { getWorkReportsByMonth } from "@/features/work-reports/queries";
 import { buildMonthlyReportSummaries } from "@/features/monthly-reports/services";

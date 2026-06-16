@@ -15,7 +15,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { PageShell } from "@/components/shared/page-shell";
 import { PageHeader } from "@/components/shared/page-header";
-import { BridalCard } from "@/components/shared/bridal-card";
+import { BridalCard } from "@/components/shared/app-card";
 import { bridalStyles } from "@/components/shared/design-tokens";
 import { getCurrentEmployeeId } from "@/lib/auth/current-user";
 import { getCurrentYearMonth } from "@/lib/month";

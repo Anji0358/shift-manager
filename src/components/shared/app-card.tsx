@@ -18,5 +18,3 @@ export const AppCard = ({ children, className }: AppCardProps) => {
         </Card>
     );
 };
-
-export const BridalCard = AppCard;

@@ -8,7 +8,7 @@ import { getJobs } from "@/features/jobs/queries";
 import { getCurrentYearMonth, getMonthRange } from "@/lib/month";
 import { PageShell } from "@/components/shared/page-shell";
 import { PageHeader } from "@/components/shared/page-header";
-import { AppCard } from "@/components/shared/bridal-card";
+import { AppCard } from "@/components/shared/app-card";
 import { appStyles } from "@/components/shared/design-tokens";
 import { CalendarDays, ClipboardList, Plus } from "lucide-react";
 

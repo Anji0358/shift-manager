@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 import type { JobShiftSlot } from "@prisma/client";
 import { createExternalShiftAssignment } from "@/features/external-shift-assignments/actions";
 import { SubmitButton } from "@/components/shared/submit-button";
-import { AppCard } from "@/components/shared/bridal-card";
+import { AppCard } from "@/components/shared/app-card";
 import { appStyles } from "@/components/shared/design-tokens";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";

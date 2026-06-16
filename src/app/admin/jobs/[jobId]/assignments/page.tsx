@@ -18,7 +18,7 @@ import { SuccessMessage } from "@/components/shared/success-message";
 import { ConfirmSubmitButton } from "@/components/shared/confirm-submit-button";
 import { PageShell } from "@/components/shared/page-shell";
 import { PageHeader } from "@/components/shared/page-header";
-import { AppCard } from "@/components/shared/bridal-card";
+import { AppCard } from "@/components/shared/app-card";
 import { appStyles } from "@/components/shared/design-tokens";
 import { LinkButton } from "@/components/shared/link-button";
 import { StaffAssignmentForm } from "@/features/shift-assignments/components/staff-assignment-form";

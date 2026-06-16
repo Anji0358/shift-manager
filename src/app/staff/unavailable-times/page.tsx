@@ -17,7 +17,7 @@ import { LinkButton } from "@/components/shared/link-button";
 import { SuccessMessage } from "@/components/shared/success-message";
 import { PageShell } from "@/components/shared/page-shell";
 import { PageHeader } from "@/components/shared/page-header";
-import { AppCard } from "@/components/shared/bridal-card";
+import { AppCard } from "@/components/shared/app-card";
 import { appStyles } from "@/components/shared/design-tokens";
 import { UnavailableTimeCardList } from "@/features/unavailable-times/components/unavailable-time-card-list";
 import { deleteUnavailableTime } from "@/features/unavailable-times/actions";
