@@ -53,7 +53,7 @@ export const PersonalSlotList = ({
                                         ? [
                                             appStyles.border.accent,
                                             appStyles.background.warm,
-                                            appStyles.shadow.nav,
+                                            appStyles.tokens.shadow.nav,
                                         ].join(" ")
                                         : [
                                             appStyles.border.soft,
